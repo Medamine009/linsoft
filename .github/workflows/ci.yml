@@ -400,10 +400,33 @@ jobs:
             sleep 5
           done
 
+      # Keycloak est la dépendance du script de seed (authentification admin et
+      # création des comptes) mais n'expose pas d'endpoint Actuator : l'attente
+      # ci-dessus ne le couvrait pas. Sans ce contrôle, le seed pouvait démarrer
+      # avant l'import du realm — c'est ce qui l'a fait échouer.
+      - name: Attente de Keycloak et du realm
+        run: |
+          set -e
+          for i in $(seq 1 60); do
+            if curl -fsS http://localhost:8085/realms/pfe-events/.well-known/openid-configuration > /dev/null 2>&1; then
+              echo "Realm pfe-events disponible."; break
+            fi
+            if [ "$i" -eq 60 ]; then
+              echo "::error::Keycloak ou le realm pfe-events n'est jamais devenu disponible."
+              docker compose logs keycloak --tail=120
+              exit 1
+            fi
+            sleep 5
+          done
+
       # pwsh est préinstallé sur les runners Ubuntu ; le script est
       # multi-plateforme et rejouable.
       - name: Jeu de données de test
         run: pwsh -File scripts/seed-test-data.ps1
+
+      - name: Journaux Keycloak si le seed a échoué
+        if: failure()
+        run: docker compose logs keycloak --tail=120
 
       - name: Installation des dépendances frontend
         working-directory: frontend
