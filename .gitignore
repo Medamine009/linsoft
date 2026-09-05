@@ -47,3 +47,15 @@ Thumbs.db
 
 # Preferences locales Claude Code (specifiques au poste)
 .claude/settings.local.json
+
+# ─────────────── Artefacts accidentels ───────────────
+# npm lance par erreur dans le module Maven backend/ (dependances Angular
+# dans un projet Java) : sans objet, et 21 Mo de node_modules a la cle.
+backend/package.json
+backend/package-lock.json
+# Journaux d'execution captures pendant le developpement
+**/run_output.txt
+# Fichiers temporaires draw.io
+**/.$*.drawio.bkp
+**/*.drawio.bkp
+**/*.drawio.dtmp
