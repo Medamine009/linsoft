@@ -1,0 +1,40 @@
+# 02-configmap.yaml
+# Configuration partagée par tous les microservices.
+# Après avoir créé la Route Keycloak, mettre à jour KEYCLOAK_ISSUER_URI avec
+# l'URL réelle :
+#   oc get route keycloak -o jsonpath='{.spec.host}'
+#   oc patch configmap eventify-config --type merge -p \
+#     '{"data":{"KEYCLOAK_ISSUER_URI":"https://<route-host>/realms/pfe-events"}}'
+#   puis redémarrer les microservices :
+#   oc rollout restart deployment user-service event-service registration-service notification-service ticket-service feedback-service api-gateway
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: eventify-config
+data:
+  # Config Server (Spring Cloud Config) — les services importent leur config d'ici
+  CONFIG_IMPORT: "configserver:http://config-service:8888"
+
+  # Service discovery
+  EUREKA_URL: "http://discovery-service:8761/eureka/"
+
+  # Bases de données (résolues par nom de Service OpenShift)
+  MONGODB_URI_EVENT:        "mongodb://mongodb:27017/event_db"
+  MONGODB_URI_REGISTRATION: "mongodb://mongodb:27017/registration_db"
+  MONGODB_URI_TICKET:       "mongodb://mongodb:27017/ticket_db"
+  MONGODB_URI_FEEDBACK:     "mongodb://mongodb:27017/feedback_db"
+  MONGODB_URI_NOTIFICATION: "mongodb://mongodb:27017/notification_db"
+  POSTGRES_JDBC_URL:        "jdbc:postgresql://postgresdb:5432/user_db"
+
+  # Messaging
+  RABBITMQ_HOST: "rabbitmq"
+  RABBITMQ_PORT: "5672"
+
+  # Mail (MailHog dans le cluster, ou un vrai SMTP en prod)
+  MAIL_HOST: "mailhog"
+  MAIL_PORT: "1025"
+  MAIL_FROM: "noreply@eventify.local"
+
+  # Keycloak — URL PUBLIQUE de la Route (issuer réel des jetons)
+  KEYCLOAK_ISSUER_URI: "https://keycloak-akh901736-dev.apps.rm1.0a51.p1.openshiftapps.com/realms/pfe-events"

@@ -1,0 +1,163 @@
+/* ==================================================================
+   LINSOFT Learning Center — console de compte (Keycloak account v2)
+   L'interface est une application React PatternFly : on ne peut pas en
+   changer la structure, mais on redéfinit ses variables de thème pour
+   l'aligner sur l'identité LINSOFT.
+   Chargée après base.css / app.css / layout.css.
+   ================================================================== */
+
+:root {
+  --linsoft-red: #e2231a;
+  --linsoft-red-dark: #c41d14;
+  --linsoft-red-soft: #fdecea;
+
+  /* --- Couleurs globales PatternFly --- */
+  --pf-global--primary-color--100: #e2231a;
+  --pf-global--primary-color--200: #c41d14;
+  --pf-global--active-color--100: #e2231a;
+  --pf-global--active-color--400: #e2231a;
+  --pf-global--link--Color: #e2231a;
+  --pf-global--link--Color--hover: #c41d14;
+  --pf-global--link--Color--light: #ffffff;
+  --pf-global--FontFamily--sans-serif: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --pf-global--FontFamily--redhat-updated--sans-serif: 'Inter', -apple-system, 'Segoe UI', system-ui, sans-serif;
+  --pf-global--BorderRadius--sm: 8px;
+  --pf-global--BorderRadius--lg: 12px;
+}
+
+/* ---- En-tête : dégradé rouge corporate au lieu du noir ---- */
+.pf-c-page__header {
+  background: linear-gradient(115deg, #9f0410 0%, #c41d14 45%, #e2231a 100%) !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+  border-bottom: none !important;
+}
+
+/* Logo LINSOFT */
+.pf-c-page__header-brand-link .pf-c-brand,
+img.brand {
+  height: 34px !important;
+  max-height: 34px !important;
+  width: auto !important;
+}
+
+/* Bouton hamburger + textes de l'en-tête en blanc */
+.pf-c-page__header-brand-toggle .pf-c-button,
+.pf-c-page__header-tools,
+.pf-c-page__header-tools a,
+.pf-c-page__header-tools .pf-c-button.pf-m-link,
+#landingLoggedInUser {
+  color: #ffffff !important;
+}
+.pf-c-page__header-tools .pf-c-button.pf-m-link:hover {
+  color: rgba(255, 255, 255, 0.82) !important;
+  text-decoration: underline;
+}
+
+/* Bouton « Sign out » : blanc plein, texte rouge (comme la carte de login) */
+.pf-c-page__header-tools .pf-c-button.pf-m-primary {
+  background: #ffffff !important;
+  color: var(--linsoft-red) !important;
+  border: none !important;
+  border-radius: 9px !important;
+  font-weight: 700 !important;
+}
+.pf-c-page__header-tools .pf-c-button.pf-m-primary:hover {
+  background: #f4f4f5 !important;
+}
+
+/* ---- Navigation latérale : fond clair, sélection rouge ---- */
+.pf-c-page__sidebar {
+  --pf-c-page__sidebar--BackgroundColor: #ffffff;
+  background-color: #ffffff !important;
+  border-right: 1px solid #ececef;
+}
+.pf-c-nav__link {
+  color: #3f3f46 !important;
+  font-size: 14px !important;
+  font-weight: 500;
+  border-radius: 8px;
+}
+.pf-c-nav__link:hover {
+  background-color: #f7f7f8 !important;
+  color: #18181b !important;
+}
+.pf-c-nav__item .pf-c-nav__link.pf-m-current,
+.pf-c-nav__link[aria-current="page"] {
+  background-color: var(--linsoft-red-soft) !important;
+  color: var(--linsoft-red) !important;
+  font-weight: 700 !important;
+}
+/* Filet actif de PatternFly, repeint en rouge */
+.pf-c-nav__link.pf-m-current::before,
+.pf-c-nav__link[aria-current="page"]::before {
+  border-left-color: var(--linsoft-red) !important;
+  border-inline-start-color: var(--linsoft-red) !important;
+}
+.pf-c-nav__section-title { color: #8e8e93 !important; }
+
+/* ---- Contenu ---- */
+.pf-c-page__main-section { background-color: #fafafa; }
+.pf-c-page__main-section.pf-m-light { background-color: #ffffff; }
+
+h1, h2, h3,
+.pf-c-title {
+  color: #18181b !important;
+  letter-spacing: -0.2px;
+}
+.pf-c-content p { color: #52525b; }
+
+/* Cartes / blocs de contenu */
+.pf-c-card {
+  border: 1px solid #ececef !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+}
+
+/* ---- Boutons ---- */
+.pf-c-button {
+  border-radius: 9px !important;
+  font-weight: 600 !important;
+}
+.pf-c-page__main .pf-c-button.pf-m-primary {
+  background: var(--linsoft-red) !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+.pf-c-page__main .pf-c-button.pf-m-primary:hover {
+  background: var(--linsoft-red-dark) !important;
+}
+/* Boutons secondaires (« Update », « Set up… ») : contour rouge */
+.pf-c-button.pf-m-secondary,
+.pf-c-button.pf-m-tertiary {
+  color: var(--linsoft-red) !important;
+  border: 1px solid var(--linsoft-red) !important;
+  background: #ffffff !important;
+}
+.pf-c-button.pf-m-secondary:hover,
+.pf-c-button.pf-m-tertiary:hover {
+  background: var(--linsoft-red-soft) !important;
+}
+.pf-c-button.pf-m-danger {
+  background: #dc2626 !important;
+  border: none !important;
+}
+
+/* ---- Liens ---- */
+.pf-c-page__main a:not(.pf-c-button) { color: var(--linsoft-red) !important; font-weight: 600; }
+.pf-c-page__main a:not(.pf-c-button):hover { color: var(--linsoft-red-dark) !important; }
+
+/* ---- Champs ---- */
+.pf-c-form-control {
+  border-radius: 9px !important;
+  border: 1px solid #e4e4e7 !important;
+  box-shadow: none !important;
+  font-size: 14px !important;
+}
+.pf-c-form-control:focus {
+  border-color: var(--linsoft-red) !important;
+  box-shadow: 0 0 0 3px rgba(226, 35, 26, 0.12) !important;
+}
+
+/* ---- Écran de chargement : spinner aux couleurs LINSOFT ---- */
+#spinner_screen svg path { fill: var(--linsoft-red) !important; }
+#spinner_screen p { color: #52525b; font-family: var(--pf-global--FontFamily--sans-serif); }

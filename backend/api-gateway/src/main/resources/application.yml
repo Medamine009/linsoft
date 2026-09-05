@@ -1,0 +1,7 @@
+# Config minimale — port, routes du gateway, CORS, Eureka, Keycloak sont servis
+# par le Config Server (config-service, port 8888).
+spring:
+  application:
+    name: api-gateway
+  config:
+    import: optional:configserver:http://localhost:8888

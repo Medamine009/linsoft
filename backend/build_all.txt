@@ -1,0 +1,166 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] discovery-service                                                  [jar]
+[INFO] api-gateway                                                        [jar]
+[INFO] user-service                                                       [jar]
+[INFO] event-service                                                      [jar]
+[INFO] registration-service                                               [jar]
+[INFO] notification-service                                               [jar]
+[INFO] ticket-service                                                     [jar]
+[INFO] feedback-service                                                   [jar]
+[INFO] Backend Parent POM                                                 [pom]
+[INFO] 
+[INFO] ------------------< com.pfe.events:discovery-service >------------------
+[INFO] Building discovery-service 1.0.0-SNAPSHOT                          [1/9]
+[INFO]   from discovery-service\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ discovery-service ---
+[INFO] Deleting C:\Users\DELL\.gemini\antigravity\scratch\pfe_event_management\backend\discovery-service\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ discovery-service ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ discovery-service ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 1 source file with javac [debug release 17] to target\classes
+[INFO] 
+[INFO] ---------------------< com.pfe.events:api-gateway >---------------------
+[INFO] Building api-gateway 1.0.0-SNAPSHOT                                [2/9]
+[INFO]   from api-gateway\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ api-gateway ---
+[INFO] Deleting C:\Users\DELL\.gemini\antigravity\scratch\pfe_event_management\backend\api-gateway\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ api-gateway ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ api-gateway ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 1 source file with javac [debug release 17] to target\classes
+[INFO] 
+[INFO] --------------------< com.pfe.events:user-service >---------------------
+[INFO] Building user-service 1.0.0-SNAPSHOT                               [3/9]
+[INFO]   from user-service\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ user-service ---
+[INFO] Deleting C:\Users\DELL\.gemini\antigravity\scratch\pfe_event_management\backend\user-service\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ user-service ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ user-service ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 5 source files with javac [debug release 17] to target\classes
+[INFO] 
+[INFO] --------------------< com.pfe.events:event-service >--------------------
+[INFO] Building event-service 1.0.0-SNAPSHOT                              [4/9]
+[INFO]   from event-service\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ event-service ---
+[INFO] Deleting C:\Users\DELL\.gemini\antigravity\scratch\pfe_event_management\backend\event-service\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ event-service ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ event-service ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 5 source files with javac [debug release 17] to target\classes
+[INFO] 
+[INFO] ----------------< com.pfe.events:registration-service >-----------------
+[INFO] Building registration-service 1.0.0-SNAPSHOT                       [5/9]
+[INFO]   from registration-service\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ registration-service ---
+[INFO] Deleting C:\Users\DELL\.gemini\antigravity\scratch\pfe_event_management\backend\registration-service\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ registration-service ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ registration-service ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 5 source files with javac [debug release 17] to target\classes
+[INFO] 
+[INFO] ----------------< com.pfe.events:notification-service >-----------------
+[INFO] Building notification-service 1.0.0-SNAPSHOT                       [6/9]
+[INFO]   from notification-service\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ notification-service ---
+[INFO] Deleting C:\Users\DELL\.gemini\antigravity\scratch\pfe_event_management\backend\notification-service\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ notification-service ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ notification-service ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 4 source files with javac [debug release 17] to target\classes
+[INFO] 
+[INFO] -------------------< com.pfe.events:ticket-service >--------------------
+[INFO] Building ticket-service 1.0.0-SNAPSHOT                             [7/9]
+[INFO]   from ticket-service\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ ticket-service ---
+[INFO] Deleting C:\Users\DELL\.gemini\antigravity\scratch\pfe_event_management\backend\ticket-service\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ ticket-service ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ ticket-service ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 1 source file with javac [debug release 17] to target\classes
+[INFO] 
+[INFO] ------------------< com.pfe.events:feedback-service >-------------------
+[INFO] Building feedback-service 1.0.0-SNAPSHOT                           [8/9]
+[INFO]   from feedback-service\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ feedback-service ---
+[INFO] Deleting C:\Users\DELL\.gemini\antigravity\scratch\pfe_event_management\backend\feedback-service\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ feedback-service ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ feedback-service ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 1 source file with javac [debug release 17] to target\classes
+[INFO] 
+[INFO] -------------------< com.pfe.events:backend-parent >--------------------
+[INFO] Building Backend Parent POM 1.0.0-SNAPSHOT                         [9/9]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ backend-parent ---
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for Backend Parent POM 1.0.0-SNAPSHOT:
+[INFO] 
+[INFO] discovery-service .................................. SUCCESS [  5.990 s]
+[INFO] api-gateway ........................................ SUCCESS [  2.440 s]
+[INFO] user-service ....................................... SUCCESS [  2.985 s]
+[INFO] event-service ...................................... SUCCESS [  1.887 s]
+[INFO] registration-service ............................... SUCCESS [  2.056 s]
+[INFO] notification-service ............................... SUCCESS [  1.526 s]
+[INFO] ticket-service ..................................... SUCCESS [  1.010 s]
+[INFO] feedback-service ................................... SUCCESS [  1.189 s]
+[INFO] Backend Parent POM ................................. SUCCESS [  0.093 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  19.859 s
+[INFO] Finished at: 2026-04-07T04:31:16+01:00
+[INFO] ------------------------------------------------------------------------

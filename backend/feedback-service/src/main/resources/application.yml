@@ -1,0 +1,7 @@
+# Config minimale — port, Mongo, Eureka, Keycloak sont servis
+# par le Config Server (config-service, port 8888).
+spring:
+  application:
+    name: feedback-service
+  config:
+    import: optional:configserver:http://localhost:8888

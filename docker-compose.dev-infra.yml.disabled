@@ -1,0 +1,55 @@
+version: '3.8'
+services:
+  postgresdb:
+    image: postgres:15
+    container_name: postgres-user-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: user_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  mongodb:
+    image: mongo:6.0
+    container_name: mongodb-events
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq-bus
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0.0
+    container_name: keycloak-auth
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    command: start-dev
+    ports:
+      - "8085:8080" # Exposed on 8085 to avoid port collision with Api Gateway
+    # NB : le thème LINSOFT "linsoft" est copié dans le conteneur (docker cp) et le realm
+    # n'a pas de persistance (start-dev/H2 en mémoire conteneur). NE PAS faire
+    # `docker compose up --force-recreate` / `down` sans réimporter le realm + recopier le thème.
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: mailhog-smtp
+    ports:
+      - "1025:1025"  # SMTP server
+      - "8025:8025"  # Web UI (open http://localhost:8025)
+
+volumes:
+  postgres_data:
+  mongodb_data:
+  rabbitmq_data:

@@ -1,0 +1,33 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Etats - Inscription" id="etatins">
+    <mxGraphModel dx="900" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="700" pageHeight="560" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Etat initial -->
+        <mxCell id="init" value="" style="ellipse;fillColor=#000000;strokeColor=#000000;html=1;" vertex="1" parent="1"><mxGeometry x="330" y="30" width="24" height="24" as="geometry"/></mxCell>
+
+        <!-- Etats -->
+        <mxCell id="PENDING" value="PENDING&#10;(en attente)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1"><mxGeometry x="270" y="120" width="150" height="56" as="geometry"/></mxCell>
+        <mxCell id="CONFIRMED" value="CONFIRMED&#10;(confirmée)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1"><mxGeometry x="60" y="270" width="150" height="56" as="geometry"/></mxCell>
+        <mxCell id="CANCELLED" value="CANCELLED&#10;(annulée)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="270" y="270" width="150" height="56" as="geometry"/></mxCell>
+        <mxCell id="REJECTED" value="REJECTED&#10;(refusée)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1"><mxGeometry x="480" y="270" width="150" height="56" as="geometry"/></mxCell>
+
+        <!-- Etat final (anneau + point) -->
+        <mxCell id="finOut" value="" style="ellipse;fillColor=none;strokeColor=#000000;strokeWidth=2;html=1;" vertex="1" parent="1"><mxGeometry x="329" y="440" width="28" height="28" as="geometry"/></mxCell>
+        <mxCell id="finIn" value="" style="ellipse;fillColor=#000000;strokeColor=none;html=1;" vertex="1" parent="1"><mxGeometry x="335" y="446" width="16" height="16" as="geometry"/></mxCell>
+
+        <!-- Transitions -->
+        <mxCell id="t0" value="demande créée" style="endArrow=block;html=1;fontSize=11;" edge="1" parent="1" source="init" target="PENDING"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="t1" value="valider (admin)" style="endArrow=block;html=1;fontSize=11;" edge="1" parent="1" source="PENDING" target="CONFIRMED"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="t2" value="annuler (participant)" style="endArrow=block;html=1;fontSize=11;" edge="1" parent="1" source="PENDING" target="CANCELLED"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="t3" value="refuser (admin)" style="endArrow=block;html=1;fontSize=11;" edge="1" parent="1" source="PENDING" target="REJECTED"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="t4" value="annuler" style="endArrow=block;html=1;fontSize=11;" edge="1" parent="1" source="CONFIRMED" target="CANCELLED"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="t5" value="" style="endArrow=block;html=1;fontSize=11;" edge="1" parent="1" source="CONFIRMED" target="finOut"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="t6" value="" style="endArrow=block;html=1;fontSize=11;" edge="1" parent="1" source="CANCELLED" target="finOut"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="t7" value="" style="endArrow=block;html=1;fontSize=11;" edge="1" parent="1" source="REJECTED" target="finOut"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

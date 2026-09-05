@@ -1,0 +1,203 @@
+/* ==================================================================
+   LINSOFT Learning Center — page de connexion professionnelle
+   Photo plein écran + voile rouge corporate + carte blanche flottante.
+   Chargé APRÈS css/login.css → surcharge le thème Keycloak.
+   ================================================================== */
+
+:root {
+  --linsoft-red: #e2231a;
+  --linsoft-red-dark: #c41d14;
+}
+
+/* ---- Photo de fond plein écran ---- */
+.login-pf body,
+body {
+  background: #0d1018 url('../img/login-bg.jpg') center center / cover no-repeat fixed !important;
+  margin: 0;
+}
+
+/* Voile dégradé (lisibilité + teinte LINSOFT) au-dessus de la photo */
+.login-pf body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(125deg,
+    rgba(160, 12, 8, 0.86) 0%,
+    rgba(18, 20, 30, 0.80) 52%,
+    rgba(12, 14, 22, 0.92) 100%);
+}
+
+/* ---- Conteneur : centre la carte ---- */
+.login-pf-page {
+  position: relative;
+  z-index: 1;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 32px 16px !important;
+  margin: 0 !important;
+  max-width: none !important;
+}
+
+/* En-tête realm (« pfe-events ») totalement masqué — la marque passe dans la carte */
+#kc-header,
+#kc-header-wrapper,
+.login-pf-page-header,
+.login-pf-page .login-pf-page-header {
+  display: none !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* ---- Carte de connexion ---- */
+.login-pf-page .card-pf {
+  position: relative;
+  width: 100%;
+  max-width: 410px;
+  margin: 0 !important;
+  background: #ffffff !important;
+  border: none !important;
+  border-radius: 18px !important;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+  padding: 34px 36px 34px !important;
+  overflow: hidden;
+}
+
+/* Logo officiel LINSOFT (PNG transparent) — posé en FOND de l'en-tête de la carte.
+   (sur ::before ça disparaissait car .login-pf-header est un conteneur flex) */
+.login-pf-page .card-pf .login-pf-header {
+  background-image: url('../img/linsoft-logo.png') !important;
+  background-repeat: no-repeat !important;
+  background-position: top center !important;
+  background-size: 60px 60px !important;
+  padding-top: 78px !important;
+  min-height: 60px;
+}
+
+/* Titre (sous la marque, séparé d'un filet) */
+#kc-page-title {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.1px;
+  color: #52525b !important;
+  text-align: center;
+  margin: 16px 0 20px !important;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f2;
+}
+
+/* ---- Libellés ---- */
+label,
+.pf-c-form__label,
+.pf-c-form__label-text {
+  color: #3f3f46 !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+}
+
+/* ---- Champs ---- */
+input.pf-c-form-control,
+input#username,
+input#password,
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  width: 100% !important;
+  border-radius: 10px !important;
+  border: 1px solid #e4e4e7 !important;
+  padding: 11px 13px !important;
+  font-size: 14px !important;
+  background: #fbfbfc !important;
+  box-shadow: none !important;
+  transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+input.pf-c-form-control:focus,
+input#username:focus,
+input#password:focus,
+input[type="text"]:focus,
+input[type="password"]:focus {
+  border-color: var(--linsoft-red) !important;
+  background: #fff !important;
+  box-shadow: 0 0 0 3px rgba(226, 35, 26, 0.12) !important;
+  outline: none !important;
+}
+
+/* ---- Bouton « Se connecter » ---- */
+#kc-login,
+input[type="submit"],
+.pf-c-button.pf-m-primary,
+.btn-primary {
+  width: 100% !important;
+  background: var(--linsoft-red) !important;
+  border: none !important;
+  color: #fff !important;
+  border-radius: 11px !important;
+  font-weight: 700 !important;
+  font-size: 14.5px !important;
+  padding: 12px 16px !important;
+  letter-spacing: 0.2px;
+  box-shadow: 0 8px 20px rgba(226, 35, 26, 0.28) !important;
+  transition: background .15s ease, transform .12s ease, box-shadow .15s ease;
+}
+#kc-login:hover,
+input[type="submit"]:hover,
+.pf-c-button.pf-m-primary:hover,
+.btn-primary:hover {
+  background: var(--linsoft-red-dark) !important;
+  box-shadow: 0 10px 26px rgba(226, 35, 26, 0.36) !important;
+}
+#kc-login:active,
+.pf-c-button.pf-m-primary:active { transform: translateY(1px); }
+
+/* ---- Liens ---- */
+a,
+#kc-registration a,
+#kc-info-message a,
+.pf-c-button.pf-m-link {
+  color: var(--linsoft-red) !important;
+  font-weight: 600;
+}
+a:hover { color: var(--linsoft-red-dark) !important; }
+
+/* Checkbox « Se souvenir de moi » */
+input[type="checkbox"] { accent-color: var(--linsoft-red); }
+
+/* ---- Alertes ---- */
+.pf-c-alert.pf-m-danger,
+.alert-error {
+  border-radius: 10px !important;
+  border-left: 3px solid var(--linsoft-red) !important;
+}
+
+/* ---- Pied « New user? Register » : plus de rectangle gris ---- */
+#kc-info,
+.login-pf-page #kc-info,
+#kc-info-wrapper,
+.login-pf-page #kc-info-wrapper {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  margin: 18px 0 0 !important;
+  padding: 15px 0 2px !important;
+  border-top: 1px solid #f0f0f2 !important;
+  border-radius: 0 !important;
+  text-align: center;
+  font-size: 13px;
+  color: #71717a;
+}
+
+/* Mention discrète sous la carte */
+.login-pf-page::after {
+  content: 'LINSOFT Learning Center · Formations & certifications IT';
+  position: relative;
+  z-index: 1;
+  margin-top: 22px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 12px;
+  letter-spacing: 0.3px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}

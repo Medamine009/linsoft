@@ -1,0 +1,114 @@
+/* ──────────────────────────────────────────────
+   SPLASH — LINSOFT · rouge & blanc · corporate
+   ────────────────────────────────────────────── */
+
+:host {
+  display: block;
+  --red: #e30613;
+  --red-deep: #bd0410;
+  --ink: #1a1a1a;
+  --ink-soft: #6b6b6e;
+  --line: #e9e9ec;
+  --bg: #ffffff;
+  font-family: 'Inter', -apple-system, system-ui, sans-serif;
+}
+
+.splash {
+  position: fixed; inset: 0; z-index: 99999;
+  background: var(--bg);
+  color: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; overflow: hidden;
+  padding: 40px 24px;
+  animation: fade-in 0.6s ease both;
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+.splash.exit { opacity: 0; transform: scale(1.01); pointer-events: none; }
+
+/* Filet rouge fin en haut (accent corporate) */
+.topbar {
+  position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  background: var(--red);
+  transform: scaleX(0); transform-origin: left;
+  animation: grow-x 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+}
+@keyframes grow-x { to { transform: scaleX(1); } }
+
+/* Contenu centré */
+.content {
+  position: relative; z-index: 2;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center;
+  max-width: 560px;
+}
+
+.eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.32em; text-indent: 0.32em;
+  text-transform: uppercase; color: var(--red);
+  opacity: 0; transform: translateY(8px);
+  animation: rise 0.7s cubic-bezier(0.16,1,0.3,1) 0.35s forwards;
+}
+
+/* Logo LINSOFT réel (image) — pièce maîtresse du splash */
+.splash-logo {
+  margin: 22px 0 0;
+  width: auto; height: clamp(70px, 13vw, 120px);
+  max-width: 340px; object-fit: contain;
+  opacity: 0; transform: translateY(14px);
+  animation: rise 0.8s cubic-bezier(0.16,1,0.3,1) 0.5s forwards;
+}
+
+.rule {
+  width: 0; height: 3px; border-radius: 3px; background: var(--red);
+  margin-top: 22px;
+  animation: grow-rule 0.8s cubic-bezier(0.16,1,0.3,1) 1s forwards;
+}
+@keyframes grow-rule { to { width: 64px; } }
+
+.subtitle {
+  margin: 16px 0 0;
+  font-size: 14px; letter-spacing: 0.12em; font-weight: 500;
+  color: var(--ink-soft);
+  opacity: 0;
+  animation: fade 0.7s ease 1.15s forwards;
+}
+
+/* ─── Présentation (phase 2) ─── */
+.reveal-block {
+  display: flex; flex-direction: column; align-items: center; gap: 26px;
+  max-height: 0; opacity: 0; overflow: hidden; margin-top: 0;
+  transition: max-height 0.7s cubic-bezier(0.16,1,0.3,1),
+              opacity 0.55s ease 0.15s,
+              margin-top 0.7s cubic-bezier(0.16,1,0.3,1);
+}
+.splash.reveal .reveal-block { max-height: 220px; opacity: 1; margin-top: 34px; }
+
+/* Crédit */
+.credit { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.c-by { font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--ink-soft); }
+.c-name { font-size: 17px; font-weight: 700; color: var(--ink); letter-spacing: 0.2px; }
+
+/* Bouton */
+.enter {
+  display: inline-flex; align-items: center; gap: 12px;
+  padding: 13px 28px;
+  background: var(--red); color: #fff; border: none; border-radius: 8px;
+  font-family: inherit; font-size: 13px; font-weight: 600; letter-spacing: 0.4px;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 6px 18px rgba(227, 6, 19,0.22);
+}
+.enter:hover { background: var(--red-deep); transform: translateY(-1px); box-shadow: 0 10px 24px rgba(227, 6, 19,0.3); }
+.enter svg { width: 22px; height: 8px; color: #fff; transition: transform 0.25s ease; }
+.enter:hover svg { transform: translateX(4px); }
+
+@keyframes rise { to { opacity: 1; transform: translateY(0); } }
+@keyframes fade { to { opacity: 1; } }
+
+@media (max-width: 600px) {
+  .c-name { font-size: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .splash, .splash * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

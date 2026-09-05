@@ -1,0 +1,53 @@
+# ============================================================
+# Configuration COMMUNE à TOUS les microservices
+# (servie par le Config Server — plus de duplication)
+# ============================================================
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8085/realms/pfe-events
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+# ============================================================
+# Supervision (Actuator + Micrometer/Prometheus)
+# ============================================================
+# Exposition volontairement restreinte : seuls les endpoints réellement
+# utilisés par les sondes Kubernetes/OpenShift et par le scraping Prometheus
+# sont publiés. Tout le reste (env, beans, mappings, heapdump…) reste fermé,
+# ce qui borne ce que les règles `permitAll("/actuator/**")` peuvent atteindre.
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      # Détail visible pour le diagnostic local ; `probes` active les sondes
+      # /actuator/health/liveness et /actuator/health/readiness.
+      show-details: when_authorized
+      probes:
+        enabled: true
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+  metrics:
+    tags:
+      # Chaque métrique porte le nom du service : indispensable pour distinguer
+      # les séries dans Prometheus/Grafana une fois les 10 services scrapés.
+      application: ${spring.application.name:unknown}
+
+# Journalisation : format lisible incluant le service, pour que les logs
+# agrégés des 10 conteneurs restent exploitables.
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [${spring.application.name:-}] [%thread] %logger{36} - %msg%n"

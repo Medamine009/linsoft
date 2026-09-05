@@ -1,0 +1,299 @@
+# docker-compose.full.yml — Stack LINSOFT Learning Center ENTIÈREMENT conteneurisée
+#
+# Lancer :  docker compose -f docker-compose.full.yml up -d --build
+# Arrêter : docker compose -f docker-compose.full.yml down
+#
+# Prérequis :
+#   1) Builder les JARs :  cd backend && mvn clean package -DskipTests
+#   2) Docker Desktop démarré
+#
+# Ordre géré automatiquement (depends_on + healthchecks) :
+#   infra → config-service → discovery → microservices → gateway → frontend
+
+services:
+
+  # ════════════════════ INFRA ════════════════════
+  postgresdb:
+    image: postgres:15
+    container_name: eventify-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: user_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data 
+    ports: ["5432:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      retries: 5
+
+  mongodb:
+    image: mongo:6.0
+    container_name: eventify-mongo
+    volumes:
+      - mongodb_data:/data/db
+    ports: ["27017:27017"]
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh --quiet
+      interval: 10s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: eventify-rabbitmq
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    ports: ["5672:5672", "15672:15672"]
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      retries: 5
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0.0
+    container_name: eventify-keycloak
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      # Force l'issuer des tokens à localhost:8085 (cohérent navigateur ↔ backend).
+      KC_HOSTNAME_URL: http://localhost:8085
+      KC_HOSTNAME_STRICT: "false"
+      KC_HTTP_ENABLED: "true"
+      KC_PROXY: edge
+    # --import-realm : importe automatiquement le realm pfe-events (avec users + thème)
+    command: start-dev --import-realm
+    volumes:
+      - ./keycloak/themes:/opt/keycloak/themes          # thème de login LINSOFT
+      - ./keycloak/realm:/opt/keycloak/data/import      # realm pfe-events (auto-import)
+    ports: ["8085:8080"]
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: eventify-mailhog
+    ports: ["1025:1025", "8025:8025"]
+
+  # ════════════════════ CONFIG SERVER (démarre en 1er) ════════════════════
+  config-service:
+    build: ./backend/config-service
+    image: eventify/config-service:latest
+    container_name: eventify-config
+    ports: ["8888:8888"]
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8888/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 8
+      start_period: 30s
+
+  # ════════════════════ EUREKA ════════════════════
+  discovery-service:
+    build: ./backend/discovery-service
+    image: eventify/discovery-service:latest
+    container_name: eventify-eureka
+    ports: ["8761:8761"]
+    healthcheck:
+      # Actuator est desormais present sur tous les services
+      test: ["CMD", "curl", "-fsS", "http://localhost:8761/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 8
+      start_period: 45s
+
+  # ════════════════════ MICROSERVICES (clients du Config Server) ════════════════════
+  user-service:
+    build: ./backend/user-service
+    image: eventify/user-service:latest
+    container_name: eventify-user
+    depends_on:
+      postgresdb:        { condition: service_healthy }
+      config-service:    { condition: service_healthy }
+      discovery-service: { condition: service_healthy }
+      keycloak:          { condition: service_started }
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-service:8888
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgresdb:5432/user_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWKSETURI: http://keycloak:8080/realms/pfe-events/protocol/openid-connect/certs
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8081/actuator/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    ports: ["8081:8081"]
+
+  event-service:
+    build: ./backend/event-service
+    image: eventify/event-service:latest
+    container_name: eventify-event
+    depends_on:
+      mongodb:           { condition: service_healthy }
+      rabbitmq:          { condition: service_healthy }
+      config-service:    { condition: service_healthy }
+      discovery-service: { condition: service_healthy }
+      keycloak:          { condition: service_started }
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-service:8888
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
+      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/event_db
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWKSETURI: http://keycloak:8080/realms/pfe-events/protocol/openid-connect/certs
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8082/actuator/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    ports: ["8082:8082"]
+
+  registration-service:
+    build: ./backend/registration-service
+    image: eventify/registration-service:latest
+    container_name: eventify-registration
+    depends_on:
+      mongodb:           { condition: service_healthy }
+      rabbitmq:          { condition: service_healthy }
+      config-service:    { condition: service_healthy }
+      discovery-service: { condition: service_healthy }
+      keycloak:          { condition: service_started }
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-service:8888
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
+      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/registration_db
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWKSETURI: http://keycloak:8080/realms/pfe-events/protocol/openid-connect/certs
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8083/actuator/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    ports: ["8083:8083"]
+
+  notification-service:
+    build: ./backend/notification-service
+    image: eventify/notification-service:latest
+    container_name: eventify-notification
+    depends_on:
+      rabbitmq:          { condition: service_healthy }
+      mongodb:           { condition: service_healthy }
+      config-service:    { condition: service_healthy }
+      discovery-service: { condition: service_healthy }
+      keycloak:          { condition: service_started }
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-service:8888
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/notification_db
+      SPRING_MAIL_HOST: mailhog
+      SPRING_MAIL_PORT: 1025
+      APP_MAIL_FROM: noreply@linsoft.local
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWKSETURI: http://keycloak:8080/realms/pfe-events/protocol/openid-connect/certs
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8084/actuator/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    ports: ["8084:8084"]
+
+  ticket-service:
+    build: ./backend/ticket-service
+    image: eventify/ticket-service:latest
+    container_name: eventify-ticket
+    depends_on:
+      mongodb:           { condition: service_healthy }
+      config-service:    { condition: service_healthy }
+      discovery-service: { condition: service_healthy }
+      keycloak:          { condition: service_started }
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-service:8888
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
+      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/ticket_db
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWKSETURI: http://keycloak:8080/realms/pfe-events/protocol/openid-connect/certs
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8087/actuator/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    ports: ["8087:8087"]
+
+  feedback-service:
+    build: ./backend/feedback-service
+    image: eventify/feedback-service:latest
+    container_name: eventify-feedback
+    depends_on:
+      mongodb:           { condition: service_healthy }
+      config-service:    { condition: service_healthy }
+      discovery-service: { condition: service_healthy }
+      keycloak:          { condition: service_started }
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-service:8888
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
+      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/feedback_db
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWKSETURI: http://keycloak:8080/realms/pfe-events/protocol/openid-connect/certs
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8086/actuator/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    ports: ["8086:8086"]
+
+  ai-service:
+    build: ./backend/ai-service
+    image: eventify/ai-service:latest
+    container_name: eventify-ai
+    depends_on:
+      config-service:    { condition: service_healthy }
+      discovery-service: { condition: service_healthy }
+      keycloak:          { condition: service_started }
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-service:8888
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWKSETURI: http://keycloak:8080/realms/pfe-events/protocol/openid-connect/certs
+      # Clé Gemini gratuite (https://aistudio.google.com/apikey) — définie dans ton environnement ou un fichier .env
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
+      APP_CATALOG_URL: http://event-service:8082
+      APP_FEEDBACK_URL: http://feedback-service:8086
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8088/actuator/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    ports: ["8088:8088"]
+
+  # ════════════════════ GATEWAY ════════════════════
+  api-gateway:
+    build: ./backend/api-gateway
+    image: eventify/api-gateway:latest
+    container_name: eventify-gateway
+    depends_on:
+      config-service:    { condition: service_healthy }
+      discovery-service: { condition: service_healthy }
+      keycloak:          { condition: service_started }
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-service:8888
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWKSETURI: http://keycloak:8080/realms/pfe-events/protocol/openid-connect/certs
+    ports: ["8080:8080"]
+
+  # ════════════════════ FRONTEND ════════════════════
+  frontend:
+    build: ./frontend
+    image: eventify/frontend:latest
+    container_name: eventify-frontend
+    depends_on:
+      - api-gateway
+    ports: ["4200:8080"]
+
+volumes:
+  postgres_data:
+  mongodb_data:
+  rabbitmq_data:

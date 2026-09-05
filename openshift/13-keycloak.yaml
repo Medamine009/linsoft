@@ -1,0 +1,68 @@
+# 13-keycloak.yaml — Authentification (Keycloak en mode dev)
+# La Route expose Keycloak publiquement → utiliser son URL comme issuer.
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  labels: { app: keycloak }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: keycloak } }
+  template:
+    metadata:
+      labels: { app: keycloak }
+    spec:
+      containers:
+      - name: keycloak
+        image: image-registry.openshift-image-registry.svc:5000/akh901736-dev/keycloak-linsoft:latest
+        args: ["start-dev", "--import-realm"]
+        ports: [{ containerPort: 8080 }]
+        envFrom:
+        - secretRef: { name: keycloak-secret }
+        env:
+        - { name: KC_HTTP_ENABLED, value: "true" }
+        - { name: KC_PROXY,        value: "edge" }
+        - { name: KC_HOSTNAME_STRICT, value: "false" }
+        # KC_HOSTNAME_URL est patché après création de la Route, voir le guide.
+        volumeMounts:
+        - name: realm-import
+          mountPath: /opt/keycloak/data/import
+          readOnly: true
+        resources:
+          requests: { cpu: "100m", memory: "512Mi" }
+          limits:   { cpu: "1",    memory: "1Gi" }
+        readinessProbe:
+          httpGet: { path: /, port: 8080 }
+          initialDelaySeconds: 45
+          periodSeconds: 10
+        livenessProbe:
+          httpGet: { path: /, port: 8080 }
+          initialDelaySeconds: 90
+          periodSeconds: 30
+      volumes:
+      # Le realm pfe-events est fourni par un ConfigMap créé à la main :
+      #   oc create configmap keycloak-realm \
+      #     --from-file=pfe-events-realm.json=keycloak/realm/pfe-events-realm.json
+      - name: realm-import
+        configMap: { name: keycloak-realm }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+spec:
+  selector: { app: keycloak }
+  ports:
+  - { port: 8080, targetPort: 8080 }
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: keycloak
+spec:
+  to: { kind: Service, name: keycloak }
+  port: { targetPort: 8080 }
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect

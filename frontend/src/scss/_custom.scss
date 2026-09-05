@@ -1,0 +1,333 @@
+// Here you can add other styles
+
+// custom .chartjs-tooltip-body-item padding
+@use "charts";
+
+// custom tweaks for scrollbar styling (wip)
+@use "scrollbar";
+
+ // custom calendar today cell color
+.calendar-cell.today {
+  --cui-calendar-cell-today-color: var(--cui-info) !important;
+}
+
+// PREMIUM DESIGN SYSTEM v3 — modern, ambient, rich
+:root {
+  // Surfaces
+  --surface-canvas: #fafafa;
+  --surface-base: #ffffff;
+  --surface-subtle: #f7f7f8;
+  --surface-muted: #f3f3f5;
+  --surface-elevated: #ffffff;
+
+  // Borders
+  --border-subtle: #ececef;
+  --border-default: #e5e5e8;
+  --border-strong: #d4d4d8;
+
+  // Text
+  --text-primary: #0a0a0a;
+  --text-secondary: #525252;
+  --text-tertiary: #8e8e93;
+  --text-quaternary: #b4b4b8;
+
+  // Accents — ROUGE LINSOFT (identité corporate) — rouge franc, sans dérive orangée
+  --accent-primary: #e30613;
+  --accent-primary-soft: #fdeaec;
+  --accent-primary-hover: #bd0410;
+  --accent-violet: #e30613;
+  --accent-pink: #ec4899;
+  --accent-orange: #f97316;
+  --accent-amber: #f59e0b;
+  --accent-emerald: #10b981;
+  --accent-teal: #14b8a6;
+  --accent-cyan: #06b6d4;
+  --accent-blue: #3b82f6;
+  --accent-rose: #f43f5e;
+
+  --accent-success: #0a8043;
+  --accent-success-soft: #ecfdf5;
+  --accent-warning: #b45309;
+  --accent-warning-soft: #fef3c7;
+  --accent-danger: #dc2626;
+  --accent-danger-soft: #fef2f2;
+
+  // Gradients (modern)
+  --grad-violet: linear-gradient(135deg, #e30613 0%, #e30613 100%);
+  --grad-sunset: linear-gradient(135deg, #f97316 0%, #ec4899 100%);
+  --grad-ocean: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+  --grad-forest: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
+  --grad-gold: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+  --grad-aurora: linear-gradient(135deg, #a855f7 0%, #e30613 50%, #06b6d4 100%);
+
+  // Ambient mesh background — sobre & corporate : rouge LINSOFT très discret sur fond neutre
+  --mesh-canvas: radial-gradient(at 12% 0%, rgba(227,6,19,0.035) 0px, transparent 45%),
+                 radial-gradient(at 100% 100%, rgba(227,6,19,0.022) 0px, transparent 45%);
+
+  // Shadows multi-layer (refined)
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
+  --shadow-md: 0 4px 14px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 12px 36px rgba(0,0,0,0.06), 0 4px 10px rgba(0,0,0,0.04);
+  --shadow-xl: 0 24px 60px rgba(0,0,0,0.08), 0 8px 20px rgba(0,0,0,0.05);
+  --shadow-glow-primary: 0 0 0 1px rgba(227, 6, 19,0.08), 0 8px 24px rgba(227, 6, 19,0.12);
+  --shadow-glow-success: 0 0 0 1px rgba(16,185,129,0.08), 0 8px 24px rgba(16,185,129,0.12);
+
+  // Glass
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.6);
+
+  // Legacy — aligné sur le rouge corporate LINSOFT (au lieu de l'orange)
+  --premium-gradient: linear-gradient(135deg, #e30613 0%, #bd0410 100%);
+  --soft-shadow: var(--shadow-md);
+  --elite-shadow: var(--shadow-lg);
+}
+
+// Global page background
+html, body {
+  background: var(--surface-canvas);
+  background-image: var(--mesh-canvas);
+  background-attachment: fixed;
+}
+
+[data-theme="dark"] {
+  --surface-canvas: #0a0a0b;
+  --surface-base: #111113;
+  --surface-subtle: #161618;
+  --surface-muted: #1c1c1f;
+  --surface-elevated: #18181b;
+  --border-subtle: #1f1f22;
+  --border-default: #27272a;
+  --border-strong: #3f3f46;
+  --text-primary: #fafafa;
+  --text-secondary: #a3a3a8;
+  --text-tertiary: #737378;
+  --text-quaternary: #52525a;
+  /* ── Mode sombre : accent rouge LINSOFT (un rouge franc, un peu plus clair sur fond noir) ── */
+  --accent-primary: #ff3341;
+  --accent-primary-soft: rgba(255,51,65,0.16);
+  --accent-primary-hover: #ff5563;
+  --mesh-canvas: radial-gradient(at 12% 0%, rgba(255,51,65,0.07) 0px, transparent 45%),
+                 radial-gradient(at 100% 100%, rgba(227,6,19,0.05) 0px, transparent 45%);
+  --glass-bg: rgba(20, 20, 22, 0.72);
+  --glass-border: rgba(255,255,255,0.08);
+}
+
+.premium-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 20px;
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--soft-shadow);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  
+  &:hover {
+    transform: translateY(-8px) scale(1.01);
+    box-shadow: var(--elite-shadow);
+  }
+}
+
+.premium-btn {
+  background: var(--premium-gradient);
+  background-size: 200% auto;
+  border: none;
+  color: white;
+  padding: 14px 28px;
+  border-radius: 14px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.5);
+  transition: all 0.4s ease;
+
+  &:hover {
+    background-position: right center;
+    box-shadow: 0 15px 30px -5px rgba(79, 70, 229, 0.7);
+    transform: translateY(-2px);
+  }
+}
+
+.hero-section {
+  padding: 80px 50px;
+  background: var(--premium-gradient);
+  background-size: 200% 200%;
+  animation: gradientFlow 15s ease infinite;
+  color: white;
+  border-radius: 30px;
+  margin-bottom: 40px;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  }
+
+  h1 { font-weight: 900; font-size: 3.5rem; margin-bottom: 15px; letter-spacing: -1.5px; }
+  p { font-size: 1.3rem; opacity: 0.85; max-width: 600px; line-height: 1.6; }
+}
+
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.ticket-design {
+  background: white;
+  border-radius: 16px;
+  display: flex;
+  overflow: hidden;
+  box-shadow: var(--soft-shadow);
+  position: relative;
+  
+  // Laser cut holes effect
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    left: calc(75% - 15px);
+    width: 30px; height: 30px;
+    background: #f8f9fa; // Match background
+    border-radius: 50%;
+    z-index: 2;
+  }
+  &::before { top: -15px; }
+  &::after { bottom: -15px; }
+
+  .ticket-main { padding: 24px; flex-grow: 1; border-right: 2px dashed #e9ecef; }
+  .ticket-stub { padding: 24px; min-width: 150px; background: #fafbff; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+}
+
+/* ELITE FLOATING LAYOUT ARCHITECTURE */
+.elite-layout-container {
+  display: flex;
+  background: #f0f2f5;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.08) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(219, 39, 119, 0.08) 0px, transparent 50%);
+  padding: 20px;
+  gap: 20px;
+  min-height: 100vh;
+}
+
+.sidebar-floating {
+  position: static !important; // Unlock from fixed
+  height: calc(100vh - 40px) !important;
+  border-radius: 24px !important;
+  background: rgba(15, 23, 42, 0.95) !important;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  width: 280px !important;
+  flex-shrink: 0;
+  
+  .sidebar-nav .nav-link {
+    margin: 8px 15px;
+    border-radius: 15px;
+    padding: 14px 18px;
+    font-weight: 500;
+    
+    &.active {
+      background: var(--premium-gradient) !important;
+      box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+    }
+  }
+}
+
+.wrapper-elite {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.header-elite {
+  background: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(15px);
+  border-radius: 20px !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  padding: 15px 30px !important;
+  margin-bottom: 0 !important;
+  position: static !important;
+}
+
+.body-elite {
+  background: transparent;
+}
+
+.content-layer {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  padding: 40px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+  min-height: calc(100vh - 200px);
+}
+
+.text-gradient {
+  background: var(--premium-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* SMART SEARCH ELITE */
+.search-box-elite {
+  position: relative;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  padding: 6px 14px;
+  width: 320px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+
+  &:focus-within {
+    background: white;
+    box-shadow: 0 4px 20px rgba(79, 70, 229, 0.1);
+    width: 380px;
+    border-color: #4f46e5;
+  }
+
+  .search-icon { color: #888; font-size: 0.9rem; margin-right: 10px; }
+  .search-input { border: none; background: transparent; font-size: 0.85rem; width: 100%; outline: none; }
+  .search-kbd {
+    font-size: 0.7rem;
+    background: #eee;
+    padding: 2px 5px;
+    border-radius: 4px;
+    color: #999;
+  }
+}
+
+/* QUICK ACTION FLOATING BUTTON */
+.quick-action-fab {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 65px;
+  height: 65px;
+  background: var(--premium-gradient);
+  border-radius: 50%;
+  box-shadow: 0 15px 35px rgba(79, 70, 229, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  z-index: 2000;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  &:hover {
+    transform: rotate(90deg) scale(1.1);
+    box-shadow: 0 20px 45px rgba(79, 70, 229, 0.6);
+  }
+
+  svg { font-size: 1.6rem; }
+}
+

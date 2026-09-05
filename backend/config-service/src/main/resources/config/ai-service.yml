@@ -1,0 +1,17 @@
+server:
+  port: 8088
+
+# Moteur IA : Google Gemini (palier gratuit).
+# La clé se met dans la variable d'environnement GEMINI_API_KEY
+# (clé gratuite : https://aistudio.google.com/apikey)
+gemini:
+  api-key: ${GEMINI_API_KEY:}
+  model: ${GEMINI_MODEL:gemini-2.0-flash}
+  base-url: https://generativelanguage.googleapis.com/v1beta
+
+# Sources temps réel : catalogue (event-service) + avis (feedback-service).
+app:
+  catalog:
+    url: ${APP_CATALOG_URL:http://localhost:8082}
+  feedback:
+    url: ${APP_FEEDBACK_URL:http://localhost:8086}

@@ -1,0 +1,71 @@
+<div class="bg-light min-vh-100 d-flex flex-row align-items-center">
+  <c-container>
+    <c-row class="justify-content-center">
+      <c-col md="10" lg="8">
+        <div class="onboarding-card premium-card p-5 bg-white">
+          <div class="text-center mb-5">
+            <div class="mb-4 d-inline-block p-3 rounded-circle bg-light shadow-sm">
+              <svg cIcon name="cilUser" size="xl" class="text-primary"></svg>
+            </div>
+            <h1 class="h2 fw-bold text-dark mb-2">Bienvenue sur votre Espace</h1>
+            <p class="text-muted">Finalisez votre profil pour commencer à gérer ou participer à des événements.</p>
+          </div>
+
+          <form [formGroup]="onboardingForm" (ngSubmit)="onSubmit()">
+            <c-row>
+              <!-- Section Photo -->
+              <c-col md="4" class="text-center border-end pe-md-5 mb-4 mb-md-0">
+                <div class="position-relative d-inline-block mb-3">
+                  <div class="avatar-container shadow-lg border rounded-circle overflow-hidden mb-3 mx-auto" style="width: 150px; height: 150px; background: #eee;">
+                    <img *ngIf="previewUrl" [src]="previewUrl" class="w-100 h-100 object-fit-cover shadow-lg">
+                    <img *ngIf="!previewUrl" src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff&size=150" class="w-100 h-100 shadow-lg">
+                  </div>
+                  <label for="fileInput" class="position-absolute bottom-0 end-0 btn btn-primary btn-sm rounded-circle p-2 shadow cursor-pointer">
+                    <svg cIcon name="cilCamera" size="sm"></svg>
+                  </label>
+                  <input id="fileInput" type="file" class="d-none" (change)="onFileSelected($event)" accept="image/*">
+                </div>
+                <h5 class="fw-bold mb-1">Votre Photo</h5>
+                <p class="small text-muted">Format PNG ou JPG recommandé</p>
+              </c-col>
+
+              <!-- Section Champs -->
+              <c-col md="8" class="ps-md-5">
+                <c-row>
+                  <c-col sm="6" class="mb-3">
+                    <label cLabel>Prénom</label>
+                    <input cFormControl formControlName="firstName" placeholder="Jean">
+                  </c-col>
+                  <c-col sm="6" class="mb-3">
+                    <label cLabel>Nom</label>
+                    <input cFormControl formControlName="lastName" placeholder="Dupont">
+                  </c-col>
+                </c-row>
+
+                <div class="mb-3">
+                  <label cLabel>Téléphone</label>
+                  <c-input-group>
+                    <span cInputGroupText><svg cIcon name="cilPhone"></svg></span>
+                    <input cFormControl formControlName="phoneNumber" placeholder="+212 600000000">
+                  </c-input-group>
+                </div>
+
+                <div class="mb-4">
+                  <label cLabel>Votre Biographie / Description</label>
+                  <textarea cFormControl formControlName="bio" rows="4" placeholder="Dites-nous en plus sur vous..."></textarea>
+                </div>
+
+                <div class="d-grid gap-2">
+                  <button type="submit" [disabled]="onboardingForm.invalid || loading" class="premium-btn">
+                    <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                    Terminer la configuration
+                  </button>
+                </div>
+              </c-col>
+            </c-row>
+          </form>
+        </div>
+      </c-col>
+    </c-row>
+  </c-container>
+</div>

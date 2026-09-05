@@ -1,0 +1,38 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Etats - Session" id="etatsess">
+    <mxGraphModel dx="900" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="620" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Etat initial -->
+        <mxCell id="init" value="" style="ellipse;fillColor=#000000;strokeColor=#000000;html=1;" vertex="1" parent="1"><mxGeometry x="418" y="30" width="24" height="24" as="geometry"/></mxCell>
+
+        <!-- Etats -->
+        <mxCell id="PENDING" value="PENDING&#10;(en attente de modération)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1"><mxGeometry x="340" y="140" width="180" height="56" as="geometry"/></mxCell>
+        <mxCell id="APPROVED" value="APPROVED&#10;(publiée au catalogue)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1"><mxGeometry x="120" y="300" width="180" height="56" as="geometry"/></mxCell>
+        <mxCell id="REJECTED" value="REJECTED&#10;(refusée)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1"><mxGeometry x="580" y="300" width="180" height="56" as="geometry"/></mxCell>
+        <mxCell id="CANCELLED" value="CANCELLED&#10;(annulée, inscrits prévenus)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1"><mxGeometry x="120" y="440" width="180" height="56" as="geometry"/></mxCell>
+
+        <!-- Etat final -->
+        <mxCell id="finOut" value="" style="ellipse;fillColor=none;strokeColor=#000000;strokeWidth=2;html=1;" vertex="1" parent="1"><mxGeometry x="416" y="540" width="28" height="28" as="geometry"/></mxCell>
+        <mxCell id="finIn" value="" style="ellipse;fillColor=#000000;strokeColor=none;html=1;" vertex="1" parent="1"><mxGeometry x="422" y="546" width="16" height="16" as="geometry"/></mxCell>
+
+        <!-- Transitions -->
+        <mxCell id="s0" value="création (organisateur)" style="endArrow=block;html=1;fontSize=11;" edge="1" parent="1" source="init" target="PENDING"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="s0b" value="création (administrateur)" style="endArrow=block;html=1;fontSize=11;edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1" source="init" target="APPROVED"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="210" y="42"/></Array></mxGeometry></mxCell>
+        <mxCell id="s1" value="approuver (admin)" style="endArrow=block;html=1;fontSize=11;" edge="1" parent="1" source="PENDING" target="APPROVED"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="s2" value="refuser (admin)" style="endArrow=block;html=1;fontSize=11;" edge="1" parent="1" source="PENDING" target="REJECTED"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="s5" value="modification approuvée (admin)" style="endArrow=block;html=1;fontSize=11;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=0;exitY=0.25;entryX=0;entryY=0.75;" edge="1" parent="1" source="APPROVED" target="APPROVED"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="40" y="314"/><mxPoint x="40" y="342"/></Array></mxGeometry></mxCell>
+        <mxCell id="s6" value="annulation approuvée (admin)" style="endArrow=block;html=1;fontSize=11;" edge="1" parent="1" source="APPROVED" target="CANCELLED"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="s3" value="session terminée" style="endArrow=block;html=1;fontSize=11;edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1" source="APPROVED" target="finOut"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="330" y="328"/><mxPoint x="330" y="554"/></Array></mxGeometry></mxCell>
+        <mxCell id="s7" value="" style="endArrow=block;html=1;fontSize=11;edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1" source="CANCELLED" target="finOut"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="s4" value="" style="endArrow=block;html=1;fontSize=11;edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1" source="REJECTED" target="finOut"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- Note -->
+        <mxCell id="note" value="Une session créée par un administrateur est publiée d'emblée :&#10;il est lui-même l'autorité de modération. Après publication, la&#10;session ne bouge plus que par décision de l'administrateur, sur&#10;demande du formateur (modification ou annulation motivée)." style="shape=note;whiteSpace=wrap;html=1;size=14;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;fillColor=#ffffff;strokeColor=#999999;fontSize=11;" vertex="1" parent="1"><mxGeometry x="560" y="420" width="300" height="90" as="geometry"/></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

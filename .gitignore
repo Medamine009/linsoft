@@ -1,0 +1,49 @@
+# ─────────────── Secrets et configuration locale ───────────────
+# Ne JAMAIS versionner : ce fichier porte la clé API Gemini et, à terme,
+# les identifiants de base. Le modèle à versionner est .env.example.
+.env
+.env.local
+.env.*.local
+*.local.yaml
+openshift/**/*secret*.local.yaml
+
+# ─────────────── Java / Maven ───────────────
+target/
+*.jar
+*.war
+*.class
+.mvn/wrapper/maven-wrapper.jar
+dependency-reduced-pom.xml
+
+# Rapports d'analyse et de couverture (régénérés par le build)
+**/site/
+**/jacoco.exec
+**/spotbugsXml.xml
+**/checkstyle-result.xml
+
+# ─────────────── Node / Angular ───────────────
+node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/coverage/
+frontend/test-results/
+frontend/playwright-report/
+frontend/blob-report/
+npm-debug.log*
+yarn-error.log*
+
+# ─────────────── Logs et artefacts d'exécution ───────────────
+logs/
+*.log
+frontend_build.log
+
+# ─────────────── IDE / OS ───────────────
+.idea/
+*.iml
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
+
+# Preferences locales Claude Code (specifiques au poste)
+.claude/settings.local.json

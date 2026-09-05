@@ -1,0 +1,238 @@
+{
+  "_comment": "Jeu de donnees de test LINSOFT Learning Center. Toutes les dates sont RELATIVES au moment de l'execution (startOffsetDays), pour que le scenario reste valide quel que soit le jour du test. Consomme par scripts/seed-test-data.ps1.",
+
+  "defaultPassword": "Linsoft2026!",
+
+  "users": [
+    { "key": "ADM1", "username": "admin-user",        "email": "admin@pfe.com",           "firstName": "Admin",        "lastName": "User",       "role": "ADMIN",        "department": "Direction",              "phone": "+216 71 000 001", "bio": "Compte administrateur de demonstration.",                                  "keepPassword": true },
+    { "key": "ADM2", "username": "s.benamor",         "email": "s.benamor@linsoft.tn",    "firstName": "Sonia",        "lastName": "Ben Amor",   "role": "ADMIN",        "department": "Direction Formation",    "phone": "+216 71 204 118", "bio": "Responsable du centre de formation. Valide les sessions et delivre les certificats." },
+    { "key": "ORG1", "username": "organisateur-user", "email": "organisateur@pfe.com",    "firstName": "Organisateur", "lastName": "User",       "role": "ORGANISATEUR", "department": "Formation",              "phone": "+216 71 000 002", "bio": "Compte formateur de demonstration.",                                        "keepPassword": true },
+    { "key": "ORG2", "username": "k.haddad",          "email": "k.haddad@linsoft.tn",     "firstName": "Karim",        "lastName": "Haddad",     "role": "ORGANISATEUR", "department": "Cloud & Infrastructure", "phone": "+216 98 412 776", "bio": "Formateur certifie Red Hat et AWS. Anime les parcours Cloud et automatisation." },
+    { "key": "ORG3", "username": "n.trabelsi",        "email": "n.trabelsi@linsoft.tn",   "firstName": "Nadia",        "lastName": "Trabelsi",   "role": "ORGANISATEUR", "department": "Cybersecurite",          "phone": "+216 22 356 904", "bio": "Formatrice cybersecurite, specialisee securite applicative et conteneurs." },
+    { "key": "ORG4", "username": "hama",              "email": "amine@gmail.com",         "firstName": "Hama",         "lastName": "Khadhraoui", "role": "ORGANISATEUR", "department": "Formation",              "phone": "+216 55 118 240", "bio": "Formateur interne LINSOFT.",                                                "keepPassword": true },
+
+    { "key": "PAR1", "username": "participant-user",  "email": "participant@pfe.com",     "firstName": "Participant",  "lastName": "User",       "role": "PARTICIPANT",  "department": "Developpement",          "phone": "+216 71 000 003", "bio": "Compte participant de demonstration : couvre tous les cas de test.",        "keepPassword": true },
+    { "key": "PAR2", "username": "aminee",            "email": "akh901736@gmail.com",     "firstName": "Amine",        "lastName": "Khadhraoui", "role": "PARTICIPANT",  "department": "Developpement",          "phone": "+216 90 173 622", "bio": "Ingenieur logiciel, parcours Cloud et Kubernetes.",                         "keepPassword": true },
+    { "key": "PAR3", "username": "y.gharbi",          "email": "y.gharbi@linsoft.tn",     "firstName": "Yassine",      "lastName": "Gharbi",     "role": "PARTICIPANT",  "department": "Developpement",          "phone": "+216 94 220 815", "bio": "Developpeur back-end Java, en cours de certification AWS." },
+    { "key": "PAR4", "username": "i.mansour",         "email": "i.mansour@linsoft.tn",    "firstName": "Ines",         "lastName": "Mansour",    "role": "PARTICIPANT",  "department": "Data & IA",              "phone": "+216 27 640 133", "bio": "Data engineer, interessee par l'orchestration de conteneurs." },
+    { "key": "PAR5", "username": "m.chaabane",        "email": "m.chaabane@linsoft.tn",   "firstName": "Mehdi",        "lastName": "Chaabane",   "role": "PARTICIPANT",  "department": "Infrastructure",         "phone": "+216 52 908 471", "bio": "Administrateur systeme Linux, parcours RHCSA." },
+    { "key": "PAR6", "username": "r.bouzid",          "email": "r.bouzid@linsoft.tn",     "firstName": "Rania",        "lastName": "Bouzid",     "role": "PARTICIPANT",  "department": "Cybersecurite",          "phone": "+216 21 447 592", "bio": "Analyste securite, specialisee durcissement et conformite." },
+    { "key": "PAR7", "username": "w.jaziri",          "email": "w.jaziri@linsoft.tn",     "firstName": "Walid",        "lastName": "Jaziri",     "role": "PARTICIPANT",  "department": "Developpement",          "phone": "+216 96 331 208", "bio": "Developpeur full-stack, orientation DevOps." },
+    { "key": "PAR8", "username": "s.khelifi",         "email": "s.khelifi@linsoft.tn",    "firstName": "Salma",        "lastName": "Khelifi",    "role": "PARTICIPANT",  "department": "Support & Exploitation", "phone": "+216 24 715 063", "bio": "Ingenieure d'exploitation, astreinte et supervision." },
+    { "key": "PAR9", "username": "h.ferchichi",       "email": "h.ferchichi@linsoft.tn",  "firstName": "Hatem",        "lastName": "Ferchichi",  "role": "PARTICIPANT",  "department": "Reseaux",                "phone": "+216 50 862 397", "bio": "Ingenieur reseaux, parcours Linux Foundation." }
+  ],
+
+  "_orphanComment": "Fiches presentes en base sans compte Keycloak correspondant : supprimees.",
+  "orphanEmails": ["aaaaa@gmail.com", "rapport-capture@linsoft.local"],
+
+  "events": [
+    {
+      "key": "E1",
+      "title": "Red Hat System Administration I (RH124)",
+      "description": "Premier module du parcours RHCSA. Prise en main de la ligne de commande, gestion des utilisateurs et des permissions, administration des services systemd et configuration reseau de base sur Red Hat Enterprise Linux 9. Travaux pratiques sur machines dediees.",
+      "category": "Red Hat", "type": "FORMATION", "level": "Débutant",
+      "duration": "3 jours", "durationHours": 72,
+      "mode": "PRESENTIEL", "location": "LINSOFT Academy — Tunis, Les Berges du Lac 2",
+      "latitude": 36.842, "longitude": 10.273, "visioLink": null,
+      "speaker": null, "certification": "RHCSA (EX200)",
+      "prerequisites": "Connaissances generales en systeme d'exploitation. Aucune experience Linux requise.",
+      "organizer": "ORG2", "totalSeats": 16, "price": 0,
+      "status": "APPROVED", "startOffsetDays": 18, "startHour": 9,
+      "_scenario": "Cas 1 — session a venir : inscription active, certificat non disponible."
+    },
+    {
+      "key": "E8",
+      "title": "Linux Foundation Certified IT Associate (LFCA)",
+      "description": "Parcours d'entree en administration Linux et cloud : notions de systeme, reseau, securite et outils DevOps. Prepare a la certification LFCA de la Linux Foundation.",
+      "category": "Linux Foundation", "type": "FORMATION", "level": "Débutant",
+      "duration": "2 jours", "durationHours": 48,
+      "mode": "PRESENTIEL", "location": "LINSOFT Academy — Tunis, Les Berges du Lac 2",
+      "latitude": 36.842, "longitude": 10.273, "visioLink": null,
+      "speaker": null, "certification": "LFCA",
+      "prerequisites": "Aucun prerequis technique.",
+      "organizer": "ORG2", "totalSeats": 18, "price": 0,
+      "status": "APPROVED", "startOffsetDays": 1, "startHour": 9,
+      "_scenario": "Session imminente (demain) : rappel automatique deja parti."
+    },
+    {
+      "key": "E2",
+      "title": "AWS Solutions Architect Associate — Préparation SAA-C03",
+      "description": "Conception d'architectures resilientes et economiques sur AWS : VPC, EC2, S3, RDS, IAM, haute disponibilite et estimation des couts. Ateliers guides sur comptes de formation et examens blancs.",
+      "category": "AWS", "type": "FORMATION", "level": "Intermédiaire",
+      "duration": "5 jours", "durationHours": 120,
+      "mode": "HYBRIDE", "location": "LINSOFT Academy — Tunis, Les Berges du Lac 2",
+      "latitude": 36.842, "longitude": 10.273,
+      "visioLink": "https://meet.linsoft.tn/aws-saa-c03",
+      "speaker": null, "certification": "AWS Certified Solutions Architect — Associate",
+      "prerequisites": "Bases en reseau IP et en virtualisation. Une premiere experience cloud est un plus.",
+      "organizer": "ORG2", "totalSeats": 20, "price": 0,
+      "status": "APPROVED", "startOffsetDays": -2, "startHour": 9,
+      "_scenario": "Cas 2 — session en cours : progression 50% (sans emargement) ou 75% (presence validee)."
+    },
+    {
+      "key": "E5",
+      "title": "Ansible Automation Platform — Administration",
+      "description": "Automatisation du parc serveur avec Ansible : inventaires, playbooks, roles, gestion des secrets avec Vault et industrialisation via Automation Controller. Prepare a l'examen EX294.",
+      "category": "Red Hat", "type": "FORMATION", "level": "Intermédiaire",
+      "duration": "2 jours", "durationHours": 48,
+      "mode": "PRESENTIEL", "location": "LINSOFT Academy — Tunis, Les Berges du Lac 2",
+      "latitude": 36.842, "longitude": 10.273, "visioLink": null,
+      "speaker": null, "certification": "Red Hat Certified Engineer (EX294)",
+      "prerequisites": "Administration Linux courante (niveau RHCSA).",
+      "organizer": "ORG2", "totalSeats": 15, "price": 0,
+      "status": "APPROVED", "startOffsetDays": -4, "startHour": 9,
+      "_scenario": "Cas 3 — session terminee il y a 2 jours : tous les certificats sont En preparation (tache admin fraiche)."
+    },
+    {
+      "key": "E3",
+      "title": "Kubernetes Administrator (CKA) — Parcours certifiant",
+      "description": "Administration d'un cluster Kubernetes en production : architecture du plan de controle, planification des pods, reseau et services, stockage persistant, RBAC, sauvegarde etcd et diagnostic de pannes. Preparation intensive a l'examen CKA.",
+      "category": "Kubernetes", "type": "FORMATION", "level": "Avancé",
+      "duration": "4 jours", "durationHours": 96,
+      "mode": "PRESENTIEL", "location": "LINSOFT Academy — Tunis, Les Berges du Lac 2",
+      "latitude": 36.842, "longitude": 10.273, "visioLink": null,
+      "speaker": null, "certification": "Certified Kubernetes Administrator (CKA)",
+      "prerequisites": "Maitrise des conteneurs (Docker/Podman) et de l'administration Linux.",
+      "organizer": "ORG2", "totalSeats": 14, "price": 0,
+      "status": "APPROVED", "startOffsetDays": -18, "startHour": 9,
+      "_scenario": "Cas 4, 5 et 6 — session terminee portant tout l'eventail : certificats En preparation, En attente de validation et Envoyes, plus une demande jamais validee et une inscription annulee."
+    },
+    {
+      "key": "E4",
+      "title": "Sécurité des conteneurs — Durcissement et conformité",
+      "description": "Atelier pratique sur la securite de la chaine conteneur : images minimales, analyse de vulnerabilites, signature, politiques d'admission et conformite CIS. Mise en situation sur un cluster de test.",
+      "category": "Cybersécurité", "type": "WORKSHOP", "level": "Intermédiaire",
+      "duration": "1 jour", "durationHours": 24,
+      "mode": "PRESENTIEL", "location": "LINSOFT — Agence de Sfax",
+      "latitude": 34.7406, "longitude": 10.7603, "visioLink": null,
+      "speaker": null, "certification": null,
+      "prerequisites": "Pratique de Docker et notions de Kubernetes.",
+      "organizer": "ORG3", "totalSeats": 12, "price": 0,
+      "status": "APPROVED", "startOffsetDays": -51, "startHour": 9,
+      "_scenario": "Cas 5 — session cloturee de longue date : tous les certificats ont ete delivres."
+    },
+    {
+      "key": "E6",
+      "title": "DevSecOps Day 2026 — Sécuriser la chaîne CI/CD",
+      "description": "Conference annuelle LINSOFT : integration de la securite dans les pipelines, gestion des secrets, SBOM et supply chain, retours d'experience de nos equipes et d'intervenants partenaires.",
+      "category": "DevOps", "type": "CONFERENCE", "level": null,
+      "duration": "4 heures", "durationHours": 4,
+      "mode": "EN_LIGNE", "location": null,
+      "latitude": null, "longitude": null,
+      "visioLink": "https://meet.linsoft.tn/devsecops-day-2026",
+      "speaker": "Nadia Trabelsi, Karim Haddad et invités partenaires",
+      "certification": null,
+      "prerequisites": null,
+      "organizer": "ORG3", "totalSeats": 120, "price": 0,
+      "status": "APPROVED", "startOffsetDays": 34, "startHour": 14,
+      "_scenario": "Session a venir en ligne : porte des demandes d'inscription en attente de validation admin."
+    },
+    {
+      "key": "E7",
+      "title": "Terraform sur Azure — Infrastructure as Code",
+      "description": "Provisionnement declaratif d'infrastructures Azure avec Terraform : etat distant, modules reutilisables, environnements multiples et integration dans un pipeline CI/CD.",
+      "category": "Microsoft Azure", "type": "FORMATION", "level": "Intermédiaire",
+      "duration": "2 jours", "durationHours": 48,
+      "mode": "PRESENTIEL", "location": "LINSOFT Academy — Tunis, Les Berges du Lac 2",
+      "latitude": 36.842, "longitude": 10.273, "visioLink": null,
+      "speaker": null, "certification": null,
+      "prerequisites": "Notions de cloud public et de scripting.",
+      "organizer": "ORG3", "totalSeats": 12, "price": 0,
+      "status": "PENDING", "startOffsetDays": 46, "startHour": 9,
+      "_scenario": "File de moderation admin : session proposee par la formatrice, pas encore publiee (donc sans inscription)."
+    }
+  ],
+
+  "_registrationComment": "certificate = null tant que la session n'est pas terminee. daysBefore = nombre de jours avant le debut de session ou la demande a ete deposee.",
+  "registrations": [
+    { "event": "E1", "user": "PAR1", "status": "CONFIRMED", "checkedIn": false, "certificate": null, "daysBefore": 25 },
+    { "event": "E1", "user": "PAR2", "status": "CONFIRMED", "checkedIn": false, "certificate": null, "daysBefore": 24 },
+    { "event": "E1", "user": "PAR3", "status": "CONFIRMED", "checkedIn": false, "certificate": null, "daysBefore": 22 },
+    { "event": "E1", "user": "PAR4", "status": "CONFIRMED", "checkedIn": false, "certificate": null, "daysBefore": 21 },
+    { "event": "E1", "user": "PAR5", "status": "PENDING",   "checkedIn": false, "certificate": null, "daysBefore": 19 },
+
+    { "event": "E8", "user": "PAR1", "status": "CONFIRMED", "checkedIn": false, "certificate": null, "daysBefore": 12, "reminderSent": true },
+    { "event": "E8", "user": "PAR3", "status": "CONFIRMED", "checkedIn": false, "certificate": null, "daysBefore": 11, "reminderSent": true },
+    { "event": "E8", "user": "PAR9", "status": "CONFIRMED", "checkedIn": false, "certificate": null, "daysBefore": 9,  "reminderSent": true },
+
+    { "event": "E2", "user": "PAR1", "status": "CONFIRMED", "checkedIn": true,  "certificate": null, "daysBefore": 16, "reminderSent": true },
+    { "event": "E2", "user": "PAR2", "status": "CONFIRMED", "checkedIn": false, "certificate": null, "daysBefore": 15, "reminderSent": true },
+    { "event": "E2", "user": "PAR3", "status": "CONFIRMED", "checkedIn": true,  "certificate": null, "daysBefore": 14, "reminderSent": true },
+    { "event": "E2", "user": "PAR8", "status": "CONFIRMED", "checkedIn": true,  "certificate": null, "daysBefore": 12, "reminderSent": true },
+    { "event": "E2", "user": "PAR9", "status": "PENDING",   "checkedIn": false, "certificate": null, "daysBefore": 3 },
+
+    { "event": "E5", "user": "PAR1", "status": "CONFIRMED", "checkedIn": true,  "certificate": "IN_PREPARATION",   "daysBefore": 20, "reminderSent": true },
+    { "event": "E5", "user": "PAR2", "status": "CONFIRMED", "checkedIn": true,  "certificate": "IN_PREPARATION",   "daysBefore": 18, "reminderSent": true },
+    { "event": "E5", "user": "PAR3", "status": "CONFIRMED", "checkedIn": true,  "certificate": "IN_PREPARATION",   "daysBefore": 18, "reminderSent": true },
+    { "event": "E5", "user": "PAR4", "status": "CONFIRMED", "checkedIn": true,  "certificate": "IN_PREPARATION",   "daysBefore": 17, "reminderSent": true },
+    { "event": "E5", "user": "PAR7", "status": "CONFIRMED", "checkedIn": true,  "certificate": "IN_PREPARATION",   "daysBefore": 15, "reminderSent": true },
+    { "event": "E5", "user": "PAR8", "status": "CONFIRMED", "checkedIn": false, "certificate": "IN_PREPARATION",   "daysBefore": 13, "reminderSent": true },
+
+    { "event": "E3", "user": "PAR1", "status": "CONFIRMED", "checkedIn": true,  "certificate": "PENDING_APPROVAL", "daysBefore": 30, "reminderSent": true, "handledBy": "ADM2" },
+    { "event": "E3", "user": "PAR2", "status": "CONFIRMED", "checkedIn": true,  "certificate": "SENT",             "daysBefore": 29, "reminderSent": true, "handledBy": "ADM2", "sentDaysAfterEnd": 3 },
+    { "event": "E3", "user": "PAR3", "status": "CONFIRMED", "checkedIn": true,  "certificate": "PENDING_APPROVAL", "daysBefore": 27, "reminderSent": true, "handledBy": "ADM2" },
+    { "event": "E3", "user": "PAR4", "status": "CONFIRMED", "checkedIn": true,  "certificate": "IN_PREPARATION",   "daysBefore": 26, "reminderSent": true },
+    { "event": "E3", "user": "PAR5", "status": "CONFIRMED", "checkedIn": false, "certificate": "IN_PREPARATION",   "daysBefore": 24, "reminderSent": true },
+    { "event": "E3", "user": "PAR6", "status": "PENDING",   "checkedIn": false, "certificate": null,               "daysBefore": 21 },
+    { "event": "E3", "user": "PAR7", "status": "CANCELLED", "checkedIn": false, "certificate": null,               "daysBefore": 28 },
+
+    { "event": "E4", "user": "PAR1", "status": "CONFIRMED", "checkedIn": true,  "certificate": "SENT",             "daysBefore": 20, "reminderSent": true, "handledBy": "ADM2", "sentDaysAfterEnd": 2 },
+    { "event": "E4", "user": "PAR6", "status": "CONFIRMED", "checkedIn": true,  "certificate": "SENT",             "daysBefore": 18, "reminderSent": true, "handledBy": "ADM2", "sentDaysAfterEnd": 2 },
+    { "event": "E4", "user": "PAR9", "status": "CONFIRMED", "checkedIn": true,  "certificate": "SENT",             "daysBefore": 15, "reminderSent": true, "handledBy": "ADM2", "sentDaysAfterEnd": 2 },
+    { "event": "E4", "user": "PAR3", "status": "CONFIRMED", "checkedIn": true,  "certificate": "SENT",             "daysBefore": 14, "reminderSent": true, "handledBy": "ADM2", "sentDaysAfterEnd": 2 },
+    { "event": "E4", "user": "PAR2", "status": "CANCELLED", "checkedIn": false, "certificate": null,               "daysBefore": 19 },
+
+    { "event": "E6", "user": "PAR8", "status": "CONFIRMED", "checkedIn": false, "certificate": null, "daysBefore": 40 },
+    { "event": "E6", "user": "PAR6", "status": "CONFIRMED", "checkedIn": false, "certificate": null, "daysBefore": 39 },
+    { "event": "E6", "user": "PAR1", "status": "PENDING",   "checkedIn": false, "certificate": null, "daysBefore": 37 },
+    { "event": "E6", "user": "PAR7", "status": "PENDING",   "checkedIn": false, "certificate": null, "daysBefore": 36 }
+  ],
+
+  "feedbacks": [
+    { "event": "E3", "user": "PAR2", "rating": 5, "comment": "Parcours tres complet, les ateliers sur le diagnostic de pannes valent a eux seuls la formation.", "daysAfterEnd": 4 },
+    { "event": "E3", "user": "PAR3", "rating": 4, "comment": "Bon rythme et formateur disponible. J'aurais aime un peu plus de temps sur la partie stockage.", "daysAfterEnd": 5 },
+    { "event": "E3", "user": "PAR4", "rating": 5, "comment": "Tres bonne preparation a l'examen, les examens blancs sont proches du vrai CKA.", "daysAfterEnd": 6 },
+    { "event": "E4", "user": "PAR6", "rating": 4, "comment": "Atelier concret et directement applicable sur nos images de production.", "daysAfterEnd": 3 },
+    { "event": "E4", "user": "PAR9", "rating": 5, "comment": "Format court mais dense. La partie politiques d'admission etait particulierement utile.", "daysAfterEnd": 4 }
+  ],
+
+  "_notificationComment": "Modeles de notifications in-app. {event} est remplace par l'intitule de la session. Chaque message est ecrit dans la boite du seul destinataire concerne (recipientEmail).",
+  "notificationTemplates": {
+    "REGISTRATION_REQUESTED": {
+      "subject": "Demande reçue — {event}",
+      "message": "Votre demande d'inscription à « {event} » a été enregistrée. Elle est en attente de validation par un administrateur."
+    },
+    "REGISTRATION_CONFIRMED": {
+      "subject": "Inscription confirmée — {event}",
+      "message": "Votre inscription à « {event} » est confirmée. Votre billet est disponible dans « Mes inscriptions »."
+    },
+    "REGISTRATION_CANCELLED": {
+      "subject": "Inscription annulée — {event}",
+      "message": "Votre inscription à « {event} » a été annulée. Vous pouvez vous réinscrire si des places restent disponibles."
+    },
+    "EVENT_REMINDER": {
+      "subject": "Rappel — {event}",
+      "message": "Rappel : « {event} » débute très prochainement. Pensez à préparer votre code de présence."
+    },
+    "EVENT_IN_PROGRESS": {
+      "subject": "Session en cours — {event}",
+      "message": "La session « {event} » est en cours. Votre progression est mise à jour dans « Mes inscriptions »."
+    },
+    "EVENT_COMPLETED": {
+      "subject": "Session terminée — {event}",
+      "message": "La session « {event} » est terminée. Merci de votre participation. Votre certificat de participation est en cours de préparation."
+    },
+    "CERTIFICATE_PENDING": {
+      "subject": "Certificat en attente de validation — {event}",
+      "message": "Votre certificat pour « {event} » attend la validation de l'administrateur. Vous serez prévenu(e) dès sa mise à disposition."
+    },
+    "CERTIFICATE_SENT": {
+      "subject": "Votre certificat est disponible — {event}",
+      "message": "Votre certificat de participation à « {event} » a été validé et vous est délivré. Retrouvez-le en PDF dans « Mes inscriptions »."
+    },
+    "ADMIN_CERTIFICATE_TASK": {
+      "subject": "Certificats à traiter",
+      "message": "{count} certificat(s) de participation attendent votre décision sur {sessions} session(s) terminée(s). Ouvrez « Gestion des certificats » pour les délivrer ou les différer."
+    }
+  }
+}

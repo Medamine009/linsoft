@@ -1,0 +1,97 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------< com.pfe.events:discovery-service >------------------
+[INFO] Building discovery-service 1.0.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.2.4:run (default-cli) > test-compile @ discovery-service >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ discovery-service ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ discovery-service ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ discovery-service ---
+[INFO] skip non existing resourceDirectory C:\Users\DELL\.gemini\antigravity\scratch\pfe_event_management\backend\discovery-service\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ discovery-service ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] <<< spring-boot:3.2.4:run (default-cli) < test-compile @ discovery-service <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.2.4:run (default-cli) @ discovery-service ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.4)
+
+2026-04-07T04:31:55.559+01:00  INFO 19548 --- [discovery-service] [           main] c.p.e.d.DiscoveryServiceApplication      : Starting DiscoveryServiceApplication using Java 17.0.18 with PID 19548 (C:\Users\DELL\.gemini\antigravity\scratch\pfe_event_management\backend\discovery-service\target\classes started by DELL in C:\Users\DELL\.gemini\antigravity\scratch\pfe_event_management\backend\discovery-service)
+2026-04-07T04:31:55.562+01:00  INFO 19548 --- [discovery-service] [           main] c.p.e.d.DiscoveryServiceApplication      : No active profile set, falling back to 1 default profile: "default"
+2026-04-07T04:31:56.552+01:00  INFO 19548 --- [discovery-service] [           main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=bc4569a6-a5d7-3231-a785-5d486ea2943d
+2026-04-07T04:31:56.607+01:00  WARN 19548 --- [discovery-service] [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$DeferringLoadBalancerInterceptorConfig' of type [org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$DeferringLoadBalancerInterceptorConfig] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). The currently created BeanPostProcessor [lbRestClientPostProcessor] is declared through a non-static factory method on that class; consider declaring it as static instead.
+2026-04-07T04:31:56.607+01:00  WARN 19548 --- [discovery-service] [           main] trationDelegate$BeanPostProcessorChecker : Bean 'deferringLoadBalancerInterceptor' of type [org.springframework.cloud.client.loadbalancer.DeferringLoadBalancerInterceptor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-04-07T04:31:56.921+01:00  INFO 19548 --- [discovery-service] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8761 (http)
+2026-04-07T04:31:56.923+01:00  INFO 19548 --- [discovery-service] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-04-07T04:31:56.923+01:00  INFO 19548 --- [discovery-service] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.19]
+2026-04-07T04:31:57.004+01:00  INFO 19548 --- [discovery-service] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-04-07T04:31:57.004+01:00  INFO 19548 --- [discovery-service] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1404 ms
+2026-04-07T04:31:58.268+01:00  INFO 19548 --- [discovery-service] [           main] c.n.d.provider.DiscoveryJerseyProvider   : Using JSON encoding codec LegacyJacksonJson
+2026-04-07T04:31:58.270+01:00  INFO 19548 --- [discovery-service] [           main] c.n.d.provider.DiscoveryJerseyProvider   : Using JSON decoding codec LegacyJacksonJson
+2026-04-07T04:31:58.658+01:00  INFO 19548 --- [discovery-service] [           main] c.n.d.provider.DiscoveryJerseyProvider   : Using XML encoding codec XStreamXml
+2026-04-07T04:31:58.661+01:00  INFO 19548 --- [discovery-service] [           main] c.n.d.provider.DiscoveryJerseyProvider   : Using XML decoding codec XStreamXml
+2026-04-07T04:32:00.772+01:00  WARN 19548 --- [discovery-service] [           main] iguration$LoadBalancerCaffeineWarnLogger : Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-04-07T04:32:00.825+01:00  INFO 19548 --- [discovery-service] [           main] o.s.c.n.eureka.InstanceInfoFactory       : Setting initial instance status as: STARTING
+2026-04-07T04:32:00.884+01:00  INFO 19548 --- [discovery-service] [           main] com.netflix.discovery.DiscoveryClient    : Initializing Eureka in region us-east-1
+2026-04-07T04:32:00.884+01:00  INFO 19548 --- [discovery-service] [           main] com.netflix.discovery.DiscoveryClient    : Client configured to neither register nor query for data.
+2026-04-07T04:32:00.900+01:00  INFO 19548 --- [discovery-service] [           main] com.netflix.discovery.DiscoveryClient    : Discovery Client initialized at timestamp 1775532720899 with initial instances count: 0
+2026-04-07T04:32:00.976+01:00  INFO 19548 --- [discovery-service] [           main] c.n.eureka.DefaultEurekaServerContext    : Initializing ...
+2026-04-07T04:32:00.976+01:00  WARN 19548 --- [discovery-service] [           main] c.n.eureka.cluster.PeerEurekaNodes       : The replica size seems to be empty. Check the route 53 DNS Registry
+2026-04-07T04:32:01.098+01:00  INFO 19548 --- [discovery-service] [           main] c.n.e.registry.AbstractInstanceRegistry  : Finished initializing remote region registries. All known remote regions: []
+2026-04-07T04:32:01.100+01:00  INFO 19548 --- [discovery-service] [           main] c.n.eureka.DefaultEurekaServerContext    : Initialized
+2026-04-07T04:32:01.122+01:00  INFO 19548 --- [discovery-service] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint(s) beneath base path '/actuator'
+2026-04-07T04:32:01.230+01:00  INFO 19548 --- [discovery-service] [           main] o.s.c.n.e.s.EurekaServiceRegistry        : Registering application DISCOVERY-SERVICE with eureka with status UP
+2026-04-07T04:32:01.251+01:00  INFO 19548 --- [discovery-service] [       Thread-9] o.s.c.n.e.server.EurekaServerBootstrap   : isAws returned false
+2026-04-07T04:32:01.252+01:00  INFO 19548 --- [discovery-service] [       Thread-9] o.s.c.n.e.server.EurekaServerBootstrap   : Initialized server context
+2026-04-07T04:32:01.252+01:00  INFO 19548 --- [discovery-service] [       Thread-9] c.n.e.r.PeerAwareInstanceRegistryImpl    : Got 1 instances from neighboring DS node
+2026-04-07T04:32:01.252+01:00  INFO 19548 --- [discovery-service] [       Thread-9] c.n.e.r.PeerAwareInstanceRegistryImpl    : Renew threshold is: 1
+2026-04-07T04:32:01.252+01:00  INFO 19548 --- [discovery-service] [       Thread-9] c.n.e.r.PeerAwareInstanceRegistryImpl    : Changing status to UP
+2026-04-07T04:32:01.270+01:00  INFO 19548 --- [discovery-service] [       Thread-9] e.s.EurekaServerInitializerConfiguration : Started Eureka Server
+2026-04-07T04:32:01.293+01:00  INFO 19548 --- [discovery-service] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8761 (http) with context path ''
+2026-04-07T04:32:01.296+01:00  INFO 19548 --- [discovery-service] [           main] .s.c.n.e.s.EurekaAutoServiceRegistration : Updating port to 8761
+2026-04-07T04:32:01.611+01:00  INFO 19548 --- [discovery-service] [           main] c.p.e.d.DiscoveryServiceApplication      : Started DiscoveryServiceApplication in 6.638 seconds (process running for 7.051)
+2026-04-07T04:32:12.539+01:00  INFO 19548 --- [discovery-service] [nio-8761-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-04-07T04:32:12.539+01:00  INFO 19548 --- [discovery-service] [nio-8761-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-04-07T04:32:12.543+01:00  INFO 19548 --- [discovery-service] [nio-8761-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 4 ms
+2026-04-07T04:32:12.690+01:00  WARN 19548 --- [discovery-service] [nio-8761-exec-1] c.n.e.registry.AbstractInstanceRegistry  : DS: Registry: lease doesn't exist, registering resource: USER-SERVICE - DESKTOP-4OU6EQ8:user-service:8081
+2026-04-07T04:32:12.690+01:00  WARN 19548 --- [discovery-service] [nio-8761-exec-1] c.n.eureka.resources.InstanceResource    : Not Found (Renew): USER-SERVICE - DESKTOP-4OU6EQ8:user-service:8081
+2026-04-07T04:32:12.852+01:00  INFO 19548 --- [discovery-service] [nio-8761-exec-4] c.n.e.registry.AbstractInstanceRegistry  : Registered instance USER-SERVICE/DESKTOP-4OU6EQ8:user-service:8081 with status UP (replication=false)
+2026-04-07T04:32:12.852+01:00  INFO 19548 --- [discovery-service] [nio-8761-exec-2] c.n.e.registry.AbstractInstanceRegistry  : Registered instance USER-SERVICE/DESKTOP-4OU6EQ8:user-service:8081 with status UP (replication=false)
+2026-04-07T04:33:01.267+01:00  INFO 19548 --- [discovery-service] [a-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2026-04-07T04:34:01.271+01:00  INFO 19548 --- [discovery-service] [a-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 4ms
+2026-04-07T04:35:01.272+01:00  INFO 19548 --- [discovery-service] [a-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 1ms
+2026-04-07T04:35:28.392+01:00  INFO 19548 --- [discovery-service] [io-8761-exec-10] c.n.e.registry.AbstractInstanceRegistry  : Registered instance USER-SERVICE/DESKTOP-4OU6EQ8:user-service:8081 with status DOWN (replication=false)
+2026-04-07T04:35:29.757+01:00  INFO 19548 --- [discovery-service] [ionShutdownHook] o.s.c.n.e.s.EurekaServiceRegistry        : Unregistering application DISCOVERY-SERVICE with eureka with status DOWN
+2026-04-07T04:35:29.786+01:00  INFO 19548 --- [discovery-service] [ionShutdownHook] o.s.c.n.e.server.EurekaServerBootstrap   : Shutting down Eureka Server..
+2026-04-07T04:35:29.793+01:00  INFO 19548 --- [discovery-service] [ionShutdownHook] c.n.eureka.DefaultEurekaServerContext    : Shutting down ...
+2026-04-07T04:35:29.805+01:00  INFO 19548 --- [discovery-service] [ionShutdownHook] c.n.eureka.DefaultEurekaServerContext    : Shut down
+2026-04-07T04:35:29.805+01:00  INFO 19548 --- [discovery-service] [ionShutdownHook] o.s.c.n.e.server.EurekaServerBootstrap   : Eureka Service is now shutdown...
+2026-04-07T04:35:29.805+01:00  INFO 19548 --- [discovery-service] [ionShutdownHook] c.n.eureka.DefaultEurekaServerContext    : Shutting down ...
+2026-04-07T04:35:29.809+01:00  INFO 19548 --- [discovery-service] [ionShutdownHook] c.n.eureka.DefaultEurekaServerContext    : Shut down
+2026-04-07T04:35:29.816+01:00  INFO 19548 --- [discovery-service] [ionShutdownHook] com.netflix.discovery.DiscoveryClient    : Shutting down DiscoveryClient ...
+2026-04-07T04:35:29.818+01:00  INFO 19548 --- [discovery-service] [ionShutdownHook] com.netflix.discovery.DiscoveryClient    : Completed shut down of DiscoveryClient
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  03:40 min
+[INFO] Finished at: 2026-04-07T04:35:29+01:00
+[INFO] ------------------------------------------------------------------------
+Terminer le programme de commandes (O/N)ÿ? 

@@ -1,0 +1,33 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Sequence - Valider une inscription" id="seqval">
+    <mxGraphModel dx="1200" dy="800" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1300" pageHeight="700" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Lignes de vie -->
+        <mxCell id="L1" value="Administrateur" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1"><mxGeometry x="20" y="40" width="140" height="580" as="geometry"/></mxCell>
+        <mxCell id="L2" value="Interface (Angular)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="220" y="40" width="140" height="580" as="geometry"/></mxCell>
+        <mxCell id="L3" value="API Gateway" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1"><mxGeometry x="420" y="40" width="140" height="580" as="geometry"/></mxCell>
+        <mxCell id="L4" value="Service Inscription" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1"><mxGeometry x="640" y="40" width="140" height="580" as="geometry"/></mxCell>
+        <mxCell id="L5" value="RabbitMQ" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1"><mxGeometry x="860" y="40" width="140" height="580" as="geometry"/></mxCell>
+        <mxCell id="L6" value="Service Notification" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1"><mxGeometry x="1060" y="40" width="140" height="580" as="geometry"/></mxCell>
+
+        <!-- Messages -->
+        <mxCell id="v1" value="1 : consulte les inscriptions en attente" style="html=1;endArrow=block;fontSize=11;verticalAlign=bottom;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="90" y="110" as="sourcePoint"/><mxPoint x="290" y="110" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="v2" value="2 : GET /api/registrations/pending" style="html=1;endArrow=block;fontSize=11;verticalAlign=bottom;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="290" y="150" as="sourcePoint"/><mxPoint x="490" y="150" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="v3" value="3 : getPending()" style="html=1;endArrow=block;fontSize=11;verticalAlign=bottom;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="490" y="190" as="sourcePoint"/><mxPoint x="710" y="190" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="v4" value="4 : liste des demandes en attente" style="html=1;endArrow=open;dashed=1;fontSize=11;verticalAlign=bottom;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="710" y="230" as="sourcePoint"/><mxPoint x="290" y="230" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="v5" value="5 : clique « Valider »" style="html=1;endArrow=block;fontSize=11;verticalAlign=bottom;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="90" y="270" as="sourcePoint"/><mxPoint x="290" y="270" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="v6" value="6 : PUT /registrations/{id}/approve" style="html=1;endArrow=block;fontSize=11;verticalAlign=bottom;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="290" y="310" as="sourcePoint"/><mxPoint x="490" y="310" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="v7" value="7 : vérifie le rôle ADMIN" style="html=1;endArrow=block;fontSize=11;edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="490" y="340" as="sourcePoint"/><mxPoint x="490" y="360" as="targetPoint"/><Array as="points"><mxPoint x="560" y="340"/><mxPoint x="560" y="360"/></Array></mxGeometry></mxCell>
+        <mxCell id="v8" value="8 : approuver(id)" style="html=1;endArrow=block;fontSize=11;verticalAlign=bottom;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="490" y="390" as="sourcePoint"/><mxPoint x="710" y="390" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="v9" value="9 : statut = CONFIRMED, décrémente les places" style="html=1;endArrow=block;fontSize=11;edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="710" y="420" as="sourcePoint"/><mxPoint x="710" y="440" as="targetPoint"/><Array as="points"><mxPoint x="780" y="420"/><mxPoint x="780" y="440"/></Array></mxGeometry></mxCell>
+        <mxCell id="v10" value="10 : publie (REGISTRATION_CONFIRMED)" style="html=1;endArrow=open;fontSize=11;verticalAlign=bottom;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="710" y="470" as="sourcePoint"/><mxPoint x="930" y="470" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="v11" value="11 : 200 OK" style="html=1;endArrow=open;dashed=1;fontSize=11;verticalAlign=bottom;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="710" y="510" as="sourcePoint"/><mxPoint x="290" y="510" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="v12" value="12 : consomme le message" style="html=1;endArrow=open;fontSize=11;verticalAlign=bottom;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="930" y="550" as="sourcePoint"/><mxPoint x="1130" y="550" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="v13" value="13 : courriel + notif au participant" style="html=1;endArrow=block;fontSize=11;edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1130" y="580" as="sourcePoint"/><mxPoint x="1130" y="600" as="targetPoint"/><Array as="points"><mxPoint x="1180" y="580"/><mxPoint x="1180" y="600"/></Array></mxGeometry></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

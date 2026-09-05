@@ -1,0 +1,33 @@
+﻿[1mInitial chunk files[22m  [2m | [22m[1mNames[22m              [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mstyles-E3M2U46P.css[39m  [2m | [22m[2mstyles[22m             [2m | [22m[36m310.35 kB[39m[2m | [22m               [36m30.59 kB[39m
+[32mmain-TO6CXZWZ.js[39m     [2m | [22m[2mmain[22m               [2m | [22m[36m239.43 kB[39m[2m | [22m               [36m47.28 kB[39m
+[32mchunk-ET4X2G6B.js[39m    [2m | [22m[2m-[22m                  [2m | [22m[36m202.95 kB[39m[2m | [22m               [36m49.02 kB[39m
+[32mchunk-RYMVNJQ7.js[39m    [2m | [22m[2m-[22m                  [2m | [22m[36m178.74 kB[39m[2m | [22m               [36m52.41 kB[39m
+[32mpolyfills-BFOUXO2Y.js[39m[2m | [22m[2mpolyfills[22m          [2m | [22m [36m70.52 kB[39m[2m | [22m               [36m19.75 kB[39m
+[32mchunk-ZPPAPAUP.js[39m    [2m | [22m[2m-[22m                  [2m | [22m [36m45.26 kB[39m[2m | [22m               [36m12.77 kB[39m
+[32mchunk-74CI3WD6.js[39m    [2m | [22m[2m-[22m                  [2m | [22m [36m31.68 kB[39m[2m | [22m                [36m8.37 kB[39m
+[32mchunk-U363NYTV.js[39m    [2m | [22m[2m-[22m                  [2m | [22m  [36m4.28 kB[39m[2m | [22m                [36m1.09 kB[39m
+[32mchunk-4CLCTAJ7.js[39m    [2m | [22m[2m-[22m                  [2m | [22m[36m830 bytes[39m[2m | [22m              [36m830 bytes[39m
+
+[1m [22m                    [2m | [22m[1mInitial total[22m      [2m | [22m  [1m1.08 MB[22m[2m | [22m              [1m222.10 kB[22m
+
+[1mLazy chunk files[22m     [2m | [22m[1mNames[22m              [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mchunk-MB4AEBLV.js[39m    [2m | [22m[2mdashboard-component[22m[2m | [22m[36m251.09 kB[39m[2m | [22m               [36m73.56 kB[39m
+[32mchunk-D7I6FKCX.js[39m    [2m | [22m[2mindex[22m              [2m | [22m [36m64.56 kB[39m[2m | [22m               [36m12.05 kB[39m
+[32mchunk-TRZ5AOID.js[39m    [2m | [22m[2mbrowser[22m            [2m | [22m [36m64.25 kB[39m[2m | [22m               [36m17.18 kB[39m
+[32mchunk-Y3EGIPVS.js[39m    [2m | [22m[2m-[22m                  [2m | [22m [36m42.36 kB[39m[2m | [22m                [36m8.73 kB[39m
+[32mchunk-7H6RPTQA.js[39m    [2m | [22m[2mroutes[22m             [2m | [22m [36m14.63 kB[39m[2m | [22m                [36m3.98 kB[39m
+[32mchunk-3VQVA3DO.js[39m    [2m | [22m[2mroutes[22m             [2m | [22m [36m13.99 kB[39m[2m | [22m                [36m3.77 kB[39m
+[32mchunk-M7VPHPHU.js[39m    [2m | [22m[2mroutes[22m             [2m | [22m [36m10.18 kB[39m[2m | [22m                [36m2.88 kB[39m
+[32mchunk-BKNOPKK6.js[39m    [2m | [22m[2mroutes[22m             [2m | [22m  [36m7.26 kB[39m[2m | [22m                [36m2.10 kB[39m
+[32mchunk-SXTS7IMG.js[39m    [2m | [22m[2mroutes[22m             [2m | [22m  [36m6.63 kB[39m[2m | [22m                [36m2.08 kB[39m
+[32mchunk-TOVTCTRO.js[39m    [2m | [22m[2mroutes[22m             [2m | [22m  [36m5.67 kB[39m[2m | [22m                [36m1.85 kB[39m
+[32mchunk-QS26CWGE.js[39m    [2m | [22m[2mlogin-component[22m    [2m | [22m  [36m2.79 kB[39m[2m | [22m                [36m1.18 kB[39m
+[32mchunk-NG64A4FC.js[39m    [2m | [22m[2mregister-component[22m [2m | [22m  [36m1.82 kB[39m[2m | [22m              [36m744 bytes[39m
+[32mchunk-IFGVV4FM.js[39m    [2m | [22m[2m-[22m                  [2m | [22m  [36m1.70 kB[39m[2m | [22m              [36m429 bytes[39m
+[32mchunk-3OMAN7M2.js[39m    [2m | [22m[2mpage500-component[22m  [2m | [22m  [36m1.30 kB[39m[2m | [22m              [36m693 bytes[39m
+[32mchunk-X57H65RK.js[39m    [2m | [22m[2mpage404-component[22m  [2m | [22m  [36m1.28 kB[39m[2m | [22m              [36m661 bytes[39m
+[2m...and 2 more lazy chunks files. Use "--verbose" to show all the files.[22m
+
+Application bundle generation failed. [9.908 seconds] - 2026-04-30T08:39:58.009Z
+

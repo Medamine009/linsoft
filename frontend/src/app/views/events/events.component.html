@@ -1,0 +1,313 @@
+<div class="ev">
+
+  <!-- En-tête -->
+  <header class="ev-head">
+    <div>
+      <h1 class="ev-h1">{{ inCreation ? 'Nouvel événement' : 'Gestion des événements' }}</h1>
+      <p class="ev-sub">
+        {{ inCreation
+            ? 'Renseignez la session à ajouter au catalogue.'
+            : 'Créez, suivez et modérez les sessions de la plateforme, par type.' }}
+      </p>
+    </div>
+    <div class="ev-head-r">
+      <button class="ev-btn-ghost" *ngIf="!inCreation" (click)="loadEvents()" [class.spin]="loading">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M14 8a6 6 0 1 1-2-4.5M14 2v3h-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Actualiser
+      </button>
+      <button class="ev-btn-primary" (click)="toggleForm()">
+        <svg *ngIf="!(showForm || typePicker)" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        <svg *ngIf="showForm || typePicker" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        {{ (showForm || typePicker) ? 'Annuler' : 'Nouvel événement' }}
+      </button>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       Consultation du catalogue. Tout ce bloc s'efface pendant la
+       création : la page se consacre alors au seul parcours de saisie.
+       ═══════════════════════════════════════════════════════════════ -->
+  <ng-container *ngIf="!inCreation">
+
+  <!-- ═══ Navigation par type de session ═══ -->
+  <nav class="ev-types" aria-label="Type de session">
+    <button type="button" class="ev-type-card" *ngFor="let t of eventTypes"
+            [class.active]="activeType === t.key"
+            [attr.aria-current]="activeType === t.key ? 'page' : null"
+            (click)="selectType(t.key)">
+      <span class="ev-type-ico">
+        <!-- Formation : diplôme / apprentissage -->
+        <svg *ngIf="t.key === 'FORMATION'" viewBox="0 0 20 20" fill="none">
+          <path d="M10 2.8L1.6 6.7 10 10.6l8.4-3.9L10 2.8z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+          <path d="M5.2 8.6v4c0 1.3 2.1 2.4 4.8 2.4s4.8-1.1 4.8-2.4v-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M18.4 6.7v4.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <!-- Workshop : atelier pratique / outils -->
+        <svg *ngIf="t.key === 'WORKSHOP'" viewBox="0 0 20 20" fill="none">
+          <path d="M13.1 2.6c-2.3 0-4.1 1.9-4.1 4.2 0 .5.1 1 .2 1.4l-6 6a1.6 1.6 0 0 0 2.2 2.3l6-6c.5.2 1 .3 1.6.3 2.3 0 4.1-1.9 4.1-4.2 0-.5-.1-1-.2-1.4l-2.6 2.6-2.2-.6-.6-2.2 2.6-2.6c-.3-.1-.7-.2-1-.2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+          <path d="M4.6 15.4h.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <!-- Conférence : présentation face à un public -->
+        <svg *ngIf="t.key === 'CONFERENCE'" viewBox="0 0 20 20" fill="none">
+          <rect x="2.4" y="2.8" width="15.2" height="9.6" rx="1.6" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M6.2 9.4l2.4-2.5 1.9 1.9 3.3-3.3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M10 12.4v2.6M7.2 17.4L10 15l2.8 2.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <span class="ev-type-txt">
+        <span class="ev-type-label">{{ t.label }}</span>
+        <span class="ev-type-desc">{{ t.desc }}</span>
+      </span>
+      <span class="ev-type-count">{{ typeCount(t.key) }}</span>
+    </button>
+  </nav>
+
+  <!-- Sessions héritées sans type : accessibles tant qu'il en reste à reclasser -->
+  <button type="button" class="ev-unclassified" *ngIf="unclassifiedCount > 0"
+          [class.active]="activeType === unclassifiedKey" (click)="selectType(unclassifiedKey)">
+    <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.2" stroke="currentColor" stroke-width="1.4"/><path d="M6.4 6.2A1.7 1.7 0 0 1 9.6 7c0 1.1-1.6 1.3-1.6 2.3M8 11.4h.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+    Non classées <span class="ev-unclassified-n">{{ unclassifiedCount }}</span>
+  </button>
+
+  <!-- KPIs du type consulté -->
+  <div class="ev-kpis">
+    <div class="ev-kpi"><div class="ev-kpi-v">{{ typeTotal }}</div><div class="ev-kpi-l">{{ activeTypeLabel }}</div></div>
+    <div class="ev-kpi"><div class="ev-kpi-v">{{ publishedCount }}</div><div class="ev-kpi-l">Publiés</div></div>
+    <div class="ev-kpi" [class.alert]="pendingCount > 0"><div class="ev-kpi-v">{{ pendingCount }}</div><div class="ev-kpi-l">En attente</div></div>
+    <div class="ev-kpi"><div class="ev-kpi-v">{{ rejectedCount }}</div><div class="ev-kpi-l">Refusés</div></div>
+  </div>
+
+  </ng-container>
+  <!-- ═══ fin du bloc consultation ═══ -->
+
+  <!-- ═══ Choix du type de session (bande d'accueil de la création) ═══ -->
+  <section class="ev-picker" *ngIf="typePicker" aria-label="Choisir un type d'événement">
+    <div class="ev-picker-head">
+      <div>
+        <h2 class="ev-picker-t">Quel type d'événement voulez-vous créer&nbsp;?</h2>
+        <p class="ev-picker-d">Choisissez un format : le formulaire s'ouvre ensuite, déjà pré-rempli.</p>
+      </div>
+      <button type="button" class="ev-picker-x" (click)="resetForm()" aria-label="Fermer">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <div class="ev-picker-grid">
+      <button type="button" class="ev-pick-card" *ngFor="let t of eventTypes; let i = index"
+              [style.animation-delay.ms]="90 + i * 90" (click)="chooseType(t.key)">
+        <span class="ev-pick-ico">
+          <!-- Formation : diplôme / apprentissage -->
+          <svg *ngIf="t.key === 'FORMATION'" viewBox="0 0 20 20" fill="none">
+            <path d="M10 2.8L1.6 6.7 10 10.6l8.4-3.9L10 2.8z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M5.2 8.6v4c0 1.3 2.1 2.4 4.8 2.4s4.8-1.1 4.8-2.4v-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M18.4 6.7v4.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <!-- Workshop : atelier pratique / outils -->
+          <svg *ngIf="t.key === 'WORKSHOP'" viewBox="0 0 20 20" fill="none">
+            <path d="M13.1 2.6c-2.3 0-4.1 1.9-4.1 4.2 0 .5.1 1 .2 1.4l-6 6a1.6 1.6 0 0 0 2.2 2.3l6-6c.5.2 1 .3 1.6.3 2.3 0 4.1-1.9 4.1-4.2 0-.5-.1-1-.2-1.4l-2.6 2.6-2.2-.6-.6-2.2 2.6-2.6c-.3-.1-.7-.2-1-.2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+            <path d="M4.6 15.4h.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+          <!-- Conférence : présentation face à un public -->
+          <svg *ngIf="t.key === 'CONFERENCE'" viewBox="0 0 20 20" fill="none">
+            <rect x="2.4" y="2.8" width="15.2" height="9.6" rx="1.6" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M6.2 9.4l2.4-2.5 1.9 1.9 3.3-3.3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M10 12.4v2.6M7.2 17.4L10 15l2.8 2.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span class="ev-pick-label">{{ t.create }}</span>
+        <span class="ev-pick-desc">{{ t.pitch }}</span>
+        <span class="ev-pick-go">
+          Continuer
+          <svg viewBox="0 0 16 16" fill="none"><path d="M3 8h9M8.5 4.5L12 8l-3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Formulaire de création -->
+  <div *ngIf="showForm" class="ev-form">
+    <div class="ev-form-grid">
+      <div class="fld fld-2"><label>Titre <span class="req">*</span></label><input [(ngModel)]="formData.title" placeholder="Ex : Déploiement sur OpenShift"></div>
+      <div class="fld"><label>Type</label>
+        <select [(ngModel)]="formData.type"><option value="FORMATION">Formation</option><option value="WORKSHOP">Workshop</option><option value="CONFERENCE">Conférence</option></select>
+      </div>
+      <div class="fld"><label>Catégorie</label>
+        <select [(ngModel)]="formData.category">
+          <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+        </select>
+      </div>
+      <div class="fld"><label>Format</label>
+        <select [(ngModel)]="formData.mode"><option value="PRESENTIEL">Présentiel</option><option value="EN_LIGNE">En ligne</option><option value="HYBRIDE">Hybride</option></select>
+      </div>
+      <div class="fld"><label>Date &amp; heure <span class="req">*</span></label><input type="datetime-local" [(ngModel)]="formData.eventDate"></div>
+      <div class="fld fld-2" *ngIf="formData.mode !== 'PRESENTIEL'"><label>Lien visio</label><input [(ngModel)]="formData.visioLink" placeholder="https://meet… / zoom…"></div>
+      <div class="fld fld-2"><label>Lieu</label><input [(ngModel)]="formData.location" placeholder="Ex : Tunis, LINSOFT"></div>
+      <div class="fld"><label>Places</label><input type="number" min="1" [(ngModel)]="formData.totalSeats"></div>
+      <div class="fld"><label>Formateur / Organisateur</label>
+        <select [(ngModel)]="formData.organizerId">
+          <option value="">— À assigner —</option>
+          <option *ngFor="let f of formateurs" [value]="f.keycloakId || f.id">{{ formateurName(f.keycloakId || f.id) }}</option>
+        </select>
+      </div>
+      <div class="fld fld-full"><label>Description</label><textarea rows="3" [(ngModel)]="formData.description" placeholder="Objectifs, programme, prérequis…"></textarea></div>
+    </div>
+    <div class="ev-form-actions">
+      <button class="ev-btn-ghost" (click)="resetForm()">Annuler</button>
+      <button class="ev-btn-primary" (click)="createEvent()" [disabled]="creating">{{ creating ? 'Création…' : 'Créer' }}</button>
+    </div>
+  </div>
+
+  <ng-container *ngIf="!inCreation">
+
+  <!-- Barre d'outils -->
+  <div class="ev-toolbar">
+    <div class="ev-search">
+      <svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <input [(ngModel)]="search" placeholder="Rechercher un titre, un lieu…">
+    </div>
+    <div class="ev-segmented">
+      <button [class.active]="statusFilter === ''" (click)="statusFilter = ''">Tous</button>
+      <button [class.active]="statusFilter === 'approved'" (click)="statusFilter = 'approved'">Publiés</button>
+      <button [class.active]="statusFilter === 'pending'" (click)="statusFilter = 'pending'">En attente</button>
+      <button [class.active]="statusFilter === 'rejected'" (click)="statusFilter = 'rejected'">Refusés</button>
+    </div>
+    <select class="ev-cat-select" [(ngModel)]="activeFilter">
+      <option value="">Toutes catégories</option>
+      <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+    </select>
+  </div>
+
+  <!-- États -->
+  <div *ngIf="loading" class="ev-state">Chargement des événements…</div>
+  <div *ngIf="!loading && filteredEvents.length === 0" class="ev-state">
+    {{ typeEvents.length === 0
+        ? 'Aucune session dans « ' + activeTypeLabel + ' ». Créez-en une avec le bouton ci-dessus.'
+        : 'Aucun résultat pour ces filtres.' }}
+  </div>
+
+  <!-- Tableau -->
+  <div class="ev-panel" *ngIf="!loading && filteredEvents.length > 0">
+    <table class="ev-table">
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>Catégorie</th>
+          <th>Format</th>
+          <th>Statut</th>
+          <th>Date</th>
+          <th>Lieu</th>
+          <th>Places</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let ev of filteredEvents">
+          <td>
+            <div class="ev-cell">
+              <span class="ev-dot" [style.background]="catGradient(ev.category)"></span>
+              <div>
+                <div class="ev-title">{{ ev.title }}</div>
+                <div class="ev-type">{{ typeLabel(ev) }}</div>
+              </div>
+            </div>
+          </td>
+          <td><span class="ev-tag">{{ ev.category || '—' }}</span></td>
+          <td class="ev-mute">{{ modeLabel(ev) }}</td>
+          <td><span class="ev-pill ev-pill-{{ statusKey(ev) }}">{{ statusLabel(ev) }}</span></td>
+          <td class="ev-mute">{{ ev.eventDate | date:'dd MMM yyyy' }}</td>
+          <td class="ev-mute">{{ ev.location || '—' }}</td>
+          <td>
+            <div class="ev-seats">
+              <div class="ev-seats-bar"><span [style.width.%]="getSeatsPct(ev)"></span></div>
+              <span class="ev-seats-txt">{{ (ev.totalSeats - (ev.availableSeats ?? ev.totalSeats)) }}/{{ ev.totalSeats || 0 }}</span>
+            </div>
+          </td>
+          <td class="ev-actions">
+            <!-- Modération : seulement pour les événements en attente -->
+            <div *ngIf="statusKey(ev) === 'pending'" class="ev-mod">
+              <button class="ev-approve" [disabled]="moderateBusy === ev.id" (click)="moderate(ev, 'APPROVED')" title="Approuver et publier">
+                <svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Approuver
+              </button>
+              <button class="ev-reject" [disabled]="moderateBusy === ev.id" (click)="moderate(ev, 'REJECTED')" title="Refuser">
+                <svg viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              </button>
+            </div>
+            <button *ngIf="deleteConfirm !== ev.id" class="ev-edit" (click)="openEdit(ev)" title="Modifier la session">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M11 2.2L3.4 9.8 2.6 13.4l3.6-.8 7.6-7.6-2.8-2.8z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            </button>
+            <button *ngIf="deleteConfirm !== ev.id" class="ev-del" (click)="deleteConfirm = ev.id" title="Supprimer">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M3 4h10M6 4V3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v1M5 4l1 9a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1l1-9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </button>
+            <div *ngIf="deleteConfirm === ev.id" class="ev-confirm">
+              <button class="cf-yes" (click)="deleteEvent(ev.id)">Supprimer</button>
+              <button class="cf-no" (click)="deleteConfirm = null">Annuler</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  </ng-container>
+  <!-- ═══ fin du bloc consultation ═══ -->
+
+  <!-- ─── Édition d'une session ─── -->
+  <div class="ev-modal-ov" *ngIf="editEvent" (click)="closeEdit()"></div>
+  <div class="ev-modal" *ngIf="editEvent">
+    <div class="ev-modal-head">
+      <div>
+        <h3>Modifier la session</h3>
+        <span class="ev-modal-sub">{{ editEvent.title }}</span>
+      </div>
+      <button class="ev-modal-x" (click)="closeEdit()">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <div class="ev-modal-body">
+      <div class="fld fld-2"><label>Titre <span class="req">*</span></label><input [(ngModel)]="editEvent.title"></div>
+      <div class="fld"><label>Type</label>
+        <select [(ngModel)]="editEvent.type">
+          <option *ngFor="let t of eventTypes" [value]="t.key">{{ t.label }}</option>
+        </select>
+      </div>
+      <div class="fld"><label>Catégorie</label>
+        <select [(ngModel)]="editEvent.category"><option *ngFor="let c of categories" [value]="c">{{ c }}</option></select>
+      </div>
+      <div class="fld"><label>Format</label>
+        <select [(ngModel)]="editEvent.mode"><option value="PRESENTIEL">Présentiel</option><option value="EN_LIGNE">En ligne</option><option value="HYBRIDE">Hybride</option></select>
+      </div>
+      <div class="fld"><label>Date &amp; heure <span class="req">*</span></label><input type="datetime-local" [(ngModel)]="editEvent.eventDate"></div>
+      <div class="fld fld-2" *ngIf="editEvent.mode !== 'PRESENTIEL'"><label>Lien visio</label><input [(ngModel)]="editEvent.visioLink" placeholder="https://meet… / zoom…"></div>
+      <div class="fld fld-2"><label>Lieu</label><input [(ngModel)]="editEvent.location" placeholder="Ex : Tunis, LINSOFT"></div>
+      <div class="fld"><label>Places</label><input type="number" min="1" [(ngModel)]="editEvent.totalSeats"></div>
+      <div class="fld"><label>Statut</label>
+        <select [(ngModel)]="editEvent.status">
+          <option value="PENDING">En attente</option>
+          <option value="APPROVED">Publié</option>
+          <option value="REJECTED">Refusé</option>
+        </select>
+      </div>
+      <div class="fld fld-2"><label>Formateur / Organisateur</label>
+        <select [(ngModel)]="editEvent.organizerId">
+          <option value="">— À assigner —</option>
+          <option *ngFor="let f of formateurs" [value]="f.keycloakId || f.id">{{ formateurName(f.keycloakId || f.id) }}</option>
+        </select>
+      </div>
+      <div class="fld fld-2"><label>Prix (DT)</label><input type="number" min="0" [(ngModel)]="editEvent.price" placeholder="0 = gratuit"></div>
+      <div class="fld fld-full"><label>Description</label><textarea rows="4" [(ngModel)]="editEvent.description" placeholder="Objectifs, programme, prérequis…"></textarea></div>
+    </div>
+
+    <div class="ev-modal-foot">
+      <button class="ev-btn-ghost" (click)="closeEdit()">Annuler</button>
+      <button class="ev-btn-primary" (click)="saveEdit()" [disabled]="savingEdit">{{ savingEdit ? 'Enregistrement…' : 'Enregistrer' }}</button>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div *ngIf="toast" class="ev-toast" [class.t-success]="toast.type === 'success'" [class.t-error]="toast.type === 'error'">
+    {{ toast.message }}
+  </div>
+
+</div>

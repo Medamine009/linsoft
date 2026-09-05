@@ -1,0 +1,56 @@
+# 21-api-gateway.yaml — Spring Cloud Gateway (point d'entrée API)
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+  labels: { app: api-gateway }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: api-gateway } }
+  template:
+    metadata:
+      labels: { app: api-gateway }
+    spec:
+      containers:
+      - name: app
+        image: quay.io/akh901736/api-gateway:latest
+        imagePullPolicy: Always
+        ports: [{ containerPort: 8080 }]
+        env:
+        - { name: JAVA_OPTS, value: "-Xms128m -Xmx256m" }
+        # Le gateway récupère ses ROUTES depuis le config-service (indispensable)
+        - { name: SPRING_CONFIG_IMPORT, valueFrom: { configMapKeyRef: { name: eventify-config, key: CONFIG_IMPORT } } }
+        - { name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE, valueFrom: { configMapKeyRef: { name: eventify-config, key: EUREKA_URL } } }
+        - { name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI, valueFrom: { configMapKeyRef: { name: eventify-config, key: KEYCLOAK_ISSUER_URI } } }
+        resources:
+          requests: { cpu: "100m", memory: "256Mi" }
+          limits:   { cpu: "500m", memory: "512Mi" }
+        readinessProbe:
+          httpGet: { path: /actuator/health, port: 8080 }
+          initialDelaySeconds: 60
+          periodSeconds: 10
+        livenessProbe:
+          httpGet: { path: /actuator/health, port: 8080 }
+          initialDelaySeconds: 100
+          periodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-gateway
+spec:
+  selector: { app: api-gateway }
+  ports:
+  - { port: 8080, targetPort: 8080 }
+---
+# Route publique (optionnelle — l'accès au gateway peut passer par nginx du frontend)
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: api-gateway
+spec:
+  to: { kind: Service, name: api-gateway }
+  port: { targetPort: 8080 }
+  tls:
+    termination: edge

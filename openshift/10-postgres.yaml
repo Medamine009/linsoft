@@ -1,0 +1,58 @@
+# 10-postgres.yaml — PostgreSQL pour user-service
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgresdb
+  labels: { app: postgresdb }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: postgresdb } }
+  template:
+    metadata:
+      labels: { app: postgresdb }
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:15
+        ports: [{ containerPort: 5432 }]
+        env:
+        # Le PVC est monté à la racine des données et contient lost+found →
+        # on initialise la base dans un sous-dossier (obligatoire sur OpenShift).
+        - { name: PGDATA, value: /var/lib/postgresql/data/pgdata }
+        envFrom:
+        - secretRef: { name: postgres-secret }
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/postgresql/data
+        readinessProbe:
+          exec: { command: ["pg_isready", "-U", "postgres"] }
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        livenessProbe:
+          exec: { command: ["pg_isready", "-U", "postgres"] }
+          initialDelaySeconds: 30
+          periodSeconds: 30
+      volumes:
+      - name: data
+        persistentVolumeClaim: { claimName: postgres-pvc }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresdb
+spec:
+  selector: { app: postgresdb }
+  ports:
+  - port: 5432
+    targetPort: 5432

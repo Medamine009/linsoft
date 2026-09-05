@@ -1,0 +1,188 @@
+<div class="regs">
+
+  <!-- Head -->
+  <div class="regs-head">
+    <div>
+      <h1 class="regs-h1">Inscriptions</h1>
+      <p class="regs-sub">Suivez et gérez toutes les inscriptions de la plateforme.</p>
+    </div>
+    <div class="regs-head-r">
+      <button class="btn-ghost" (click)="exportCsv()" [disabled]="registrations.length === 0">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M8 2v8M5 7l3 3 3-3M3 13h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Export CSV
+      </button>
+      <button class="btn-ghost" (click)="loadAll()" [class.spinning]="loading">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M14 8a6 6 0 1 1-2-4.5M14 2v3h-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Actualiser
+      </button>
+    </div>
+  </div>
+
+  <!-- Stat cards -->
+  <div class="stat-cards">
+    <div class="stat-card stat-total">
+      <div class="stat-icon">
+        <svg viewBox="0 0 20 20" fill="none"><rect x="4" y="3" width="12" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M7 8l1.5 1.5L12 6M7 13l1.5 1.5L12 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="stat-content">
+        <div class="stat-v">{{ registrations.length }}</div>
+        <div class="stat-l">Total inscriptions</div>
+      </div>
+    </div>
+    <div class="stat-card stat-confirmed">
+      <div class="stat-icon">
+        <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.6"/><path d="M6 10l3 3 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="stat-content">
+        <div class="stat-v">{{ getStatusCount('CONFIRMED') }}</div>
+        <div class="stat-l">Confirmées</div>
+      </div>
+    </div>
+    <div class="stat-card stat-confirmed">
+      <div class="stat-icon">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M10 2l2 4 4 .5-3 3 .8 4.5L10 16l-3.8 2 .8-4.5-3-3 4-.5 2-4z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="stat-content">
+        <div class="stat-v">{{ presentCount }}</div>
+        <div class="stat-l">Présents (check-in)</div>
+      </div>
+    </div>
+    <div class="stat-card stat-rate">
+      <div class="stat-icon">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M3 17L7 11L11 13L17 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 5h4v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="stat-content">
+        <div class="stat-v">{{ presenceRate }}%</div>
+        <div class="stat-l">Taux de présence</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="search-box">
+      <svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <input [(ngModel)]="search" placeholder="Rechercher par événement, participant, email…">
+    </div>
+    <div class="segmented">
+      <button [class.active]="statusFilter === 'all'" (click)="statusFilter = 'all'">
+        Tous <span class="chip-n">{{ registrations.length }}</span>
+      </button>
+      <button [class.active]="statusFilter === 'CONFIRMED'" (click)="statusFilter = 'CONFIRMED'">
+        Confirmées <span class="chip-n">{{ getStatusCount('CONFIRMED') }}</span>
+      </button>
+      <button [class.active]="statusFilter === 'CANCELLED'" (click)="statusFilter = 'CANCELLED'">
+        Annulées <span class="chip-n">{{ getStatusCount('CANCELLED') }}</span>
+      </button>
+      <button [class.active]="statusFilter === 'PENDING'" (click)="statusFilter = 'PENDING'">
+        En attente <span class="chip-n">{{ getStatusCount('PENDING') }}</span>
+      </button>
+    </div>
+    <div class="segmented">
+      <button [class.active]="presenceFilter === 'all'" (click)="presenceFilter = 'all'">Présence</button>
+      <button [class.active]="presenceFilter === 'present'" (click)="presenceFilter = 'present'">Présents</button>
+      <button [class.active]="presenceFilter === 'absent'" (click)="presenceFilter = 'absent'">Absents</button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="state-loading">
+    <div class="skel-row" *ngFor="let _ of [1,2,3,4,5]"></div>
+  </div>
+
+  <!-- Empty -->
+  <div *ngIf="!loading && filteredRegistrations.length === 0" class="state-empty">
+    <div class="empty-glyph">
+      <svg viewBox="0 0 48 48" fill="none"><rect x="10" y="8" width="28" height="32" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M16 18h16M16 24h16M16 30h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </div>
+    <div class="empty-t">{{ search || statusFilter !== 'all' ? 'Aucun résultat' : 'Aucune inscription' }}</div>
+    <div class="empty-d">{{ search || statusFilter !== 'all' ? 'Modifiez vos filtres.' : 'Les inscriptions apparaîtront ici dès qu\'un participant s\'inscrira à une session.' }}</div>
+  </div>
+
+  <!-- Table -->
+  <div *ngIf="!loading && filteredRegistrations.length > 0" class="table-card">
+    <table class="reg-table">
+      <thead>
+        <tr>
+          
+          <th>Événement</th>
+          <th>Participant</th>
+          <th>Date d'inscription</th>
+          <th>Statut</th>
+          <th>Présence</th>
+          <th class="th-actions"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of filteredRegistrations">
+         
+          <td>
+            <div class="td-event">
+              <div class="td-event-dot" [style.background]="catColor(r.eventCategory || 'Autre')"></div>
+              <div>
+                <div class="td-event-title">{{ r.eventTitle }}</div>
+                <div class="td-event-meta" *ngIf="r.eventDate">
+                  {{ r.eventCategory || '—' }} · {{ r.eventDate | date:'dd MMM yyyy' }}
+                </div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="td-attendee">
+              <div class="td-ava" [style.background]="getAvatarBg(r)">{{ getAttendeeInitials(r) }}</div>
+              <div>
+                <div class="td-name">{{ r.attendeeName }}</div>
+                <div class="td-email">{{ r.attendeeEmail || '—' }}</div>
+              </div>
+            </div>
+          </td>
+          <td class="td-mute">{{ r.registrationDate | date:'dd MMM yyyy, HH:mm' }}</td>
+          <td>
+            <span class="status-badge"
+                  [class.s-confirmed]="r.status === 'CONFIRMED'"
+                  [class.s-cancelled]="r.status === 'CANCELLED' || r.status === 'REJECTED'"
+                  [class.s-pending]="r.status === 'PENDING'">
+              <span class="status-dot"></span>
+              {{ statusLabel(r.status) }}
+            </span>
+          </td>
+          <td>
+            <span class="presence" [class.is-present]="r.checkedIn">
+              {{ r.checkedIn ? 'Présent' : 'En attente' }}
+              <small *ngIf="r.checkedIn && r.checkedInAt">· {{ r.checkedInAt | date:'HH:mm' }}</small>
+            </span>
+          </td>
+          <td class="td-actions">
+            <ng-container *ngIf="r.status === 'CONFIRMED'">
+              <button class="icon-btn" (click)="downloadCertificate(r)" title="Certificat de participation (PDF)">
+                <svg viewBox="0 0 16 16" fill="none"><path d="M4 2h5l3 3v9H4V2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M9 2v3h3M6.5 9.5h3M6.5 11.5h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+              </button>
+              <button *ngIf="cancelConfirm !== r.id" class="icon-btn icon-danger" (click)="cancelConfirm = r.id" title="Annuler">
+                <svg viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              </button>
+              <div *ngIf="cancelConfirm === r.id" class="row-confirm">
+                <button class="cf-yes" (click)="cancelRegistration(r.id)">Annuler</button>
+                <button class="cf-no" (click)="cancelConfirm = null">Garder</button>
+              </div>
+            </ng-container>
+            <div *ngIf="r.status === 'PENDING'" class="row-confirm">
+              <button class="cf-yes" (click)="approve(r)">Approuver</button>
+              <button class="cf-no" (click)="reject(r)">Refuser</button>
+            </div>
+            <span *ngIf="r.status !== 'CONFIRMED' && r.status !== 'PENDING'" class="td-mute">—</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="table-foot">
+      <span class="foot-info">{{ filteredRegistrations.length }} sur {{ registrations.length }} inscriptions</span>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div *ngIf="toast" class="toast" [class.t-success]="toast.type==='success'" [class.t-error]="toast.type==='error'">
+    <svg *ngIf="toast.type==='success'" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <svg *ngIf="toast.type==='error'" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M8 4v5M8 11v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    <span>{{ toast.message }}</span>
+  </div>
+</div>

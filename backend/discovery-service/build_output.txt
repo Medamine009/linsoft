@@ -1,0 +1,8 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------< com.pfe.events:discovery-service >------------------
+[INFO] Building discovery-service 1.0.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+Terminer le programme de commandes (O/N)ÿ? Terminer le programme de commandes (O/N)ÿ? 
+^CLa syntaxe de la commande n'est pas correcte.

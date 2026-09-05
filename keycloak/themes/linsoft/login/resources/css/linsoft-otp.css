@@ -1,0 +1,220 @@
+/* ==================================================================
+   LINSOFT Learning Center — pages de double authentification
+   Même carte blanche, même fond, même bouton rouge que la connexion.
+   Chargé APRÈS linsoft-v5.css → n'ajoute que le spécifique OTP.
+   ================================================================== */
+
+/* ---- Bandeau d'introduction (icône + phrase) ---- */
+.lin-otp {
+  text-align: center;
+  margin: 0 0 20px;
+}
+.lin-otp-badge {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(226, 35, 26, 0.10);
+  color: var(--linsoft-red, #e2231a);
+}
+.lin-otp-badge svg { width: 24px; height: 24px; }
+
+.lin-otp-intro {
+  font-size: 13.5px !important;
+  line-height: 1.55;
+  color: #52525b !important;
+  margin: 0 0 20px !important;
+  text-align: center;
+}
+
+/* ---- Champ du code : chiffres espacés, centrés ---- */
+input.lin-otp-code {
+  text-align: center !important;
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  letter-spacing: 8px !important;
+  padding: 12px 13px !important;
+  font-variant-numeric: tabular-nums;
+}
+input.lin-otp-code::placeholder {
+  color: #d4d4d8 !important;
+  font-weight: 600;
+  letter-spacing: 8px;
+}
+
+/* ---- Choix de l'appareil (plusieurs authentificateurs) ---- */
+.lin-otp-devices { margin-bottom: 6px; }
+.lin-otp-devices label {
+  display: block;
+  border: 1px solid #e4e4e7;
+  border-radius: 10px;
+  padding: 10px 13px !important;
+  margin-bottom: 8px;
+  cursor: pointer;
+  font-weight: 600 !important;
+  transition: border-color .15s ease, background .15s ease;
+}
+.lin-otp-devices input[type="radio"] { display: none; }
+.lin-otp-devices input[type="radio"]:checked + label {
+  border-color: var(--linsoft-red, #e2231a);
+  background: rgba(226, 35, 26, 0.06);
+}
+
+/* ---- Aide en pied de carte ---- */
+.lin-otp-help {
+  margin: 18px 0 0 !important;
+  padding-top: 16px;
+  border-top: 1px solid #ececef;
+  font-size: 12.5px;
+  color: #71717a;
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* ==================================================================
+   Configuration de la double authentification (QR code)
+   ================================================================== */
+
+ol.lin-steps {
+  list-style: none;
+  counter-reset: lin-step;
+  margin: 0 0 22px;
+  padding: 0;
+}
+ol.lin-steps > li {
+  counter-increment: lin-step;
+  position: relative;
+  padding: 0 0 16px 34px;
+  margin: 0;
+}
+ol.lin-steps > li::before {
+  content: counter(lin-step);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 23px;
+  height: 23px;
+  border-radius: 50%;
+  background: var(--linsoft-red, #e2231a);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* Filet vertical reliant les étapes */
+ol.lin-steps > li:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 27px;
+  bottom: 4px;
+  width: 1px;
+  background: #ececef;
+}
+
+.lin-step-t {
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  color: #27272a !important;
+  margin: 2px 0 6px !important;
+  line-height: 1.45;
+}
+.lin-step-d {
+  font-size: 12.5px !important;
+  color: #71717a !important;
+  margin: 0 !important;
+  line-height: 1.5;
+}
+
+/* Applications compatibles */
+ul.lin-apps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+ul.lin-apps li {
+  font-size: 12px;
+  font-weight: 600;
+  color: #52525b;
+  background: #f4f4f5;
+  border: 1px solid #e4e4e7;
+  border-radius: 20px;
+  padding: 3px 11px;
+}
+
+/* QR code */
+.lin-qr {
+  display: flex;
+  justify-content: center;
+  margin: 4px 0 10px;
+}
+.lin-qr img#kc-totp-secret-qr-code {
+  width: 176px;
+  height: 176px;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid #e4e4e7;
+  border-radius: 12px;
+}
+
+/* Clé manuelle */
+.lin-secret {
+  display: inline-block;
+  font-family: 'SF Mono', Menlo, Monaco, Consolas, monospace;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  word-break: break-all;
+  color: #27272a;
+  background: #f4f4f5;
+  border: 1px solid #e4e4e7;
+  border-radius: 8px;
+  padding: 9px 12px;
+}
+
+/* Paramètres du générateur (mode manuel) */
+ul.lin-policy {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 12.5px;
+  color: #52525b;
+}
+ul.lin-policy li { padding: 3px 0; }
+
+/* Case « Déconnecter les autres sessions » */
+#kc-totp-settings-form input[type="checkbox"] { accent-color: var(--linsoft-red, #e2231a); }
+#kc-totp-settings-form label[for="logout-sessions"] {
+  font-weight: 500 !important;
+  font-size: 12.5px !important;
+  color: #52525b !important;
+}
+
+/* Bouton secondaire « Annuler » : contour, sous le bouton rouge */
+button.lin-cancel {
+  width: 100% !important;
+  margin-top: 10px !important;
+  background: #fff !important;
+  color: #3f3f46 !important;
+  border: 1px solid #e4e4e7 !important;
+  border-radius: 11px !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  padding: 11px 16px !important;
+  box-shadow: none !important;
+}
+button.lin-cancel:hover {
+  background: #fafafa !important;
+  border-color: #d4d4d8 !important;
+}
+
+/* Astérisque des champs requis */
+#kc-totp-settings-form .required { color: var(--linsoft-red, #e2231a); font-weight: 700; }

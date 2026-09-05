@@ -1,0 +1,352 @@
+name: CI
+
+# Pipeline d'intégration continue — LINSOFT Learning Center
+#
+# Enchaînement : qualité + tests (back et front en parallèle) -> construction
+# des images -> analyse de vulnérabilités -> publication sur GHCR.
+#
+# Les tests d'intégration Testcontainers s'exécutent réellement ici : le runner
+# Ubuntu expose un socket Docker standard, contrairement à certains postes
+# Windows où Docker Desktop refuse l'accès au client Java.
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+env:
+  JAVA_VERSION: '17'
+  NODE_VERSION: '20'
+  REGISTRY: ghcr.io
+
+# Une seule exécution par branche : une nouvelle poussée annule la précédente.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  # ══════════════════════════════════════════════════════════
+  # 1. Tests backend — unitaires, API/sécurité, intégration
+  # ══════════════════════════════════════════════════════════
+  backend-tests:
+    name: Backend — tests et couverture
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Récupération du code
+        uses: actions/checkout@v4
+
+      - name: JDK ${{ env.JAVA_VERSION }} + cache Maven
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: maven
+
+      # Testcontainers a besoin d'un démon joignable. On le vérifie explicitement :
+      # sans cela les tests d'intégration seraient silencieusement ignorés et le
+      # pipeline donnerait une fausse assurance.
+      - name: Vérification de la disponibilité de Docker
+        run: |
+          docker info > /dev/null
+          echo "Démon Docker joignable : les tests Testcontainers s'exécuteront."
+
+      - name: Compilation, tests unitaires et tests d'intégration
+        working-directory: backend
+        run: mvn -B --no-transfer-progress clean verify
+
+      # Garantit qu'aucun test d'intégration n'a été ignoré faute de Docker.
+      - name: Contrôle — aucun test d'intégration ignoré
+        working-directory: backend
+        run: |
+          skipped=$(grep -ho 'skipped="[0-9]*"' */target/failsafe-reports/*.xml 2>/dev/null \
+                    | grep -o '[0-9]*' | awk '{s+=$1} END {print s+0}')
+          echo "Tests d'intégration ignorés : $skipped"
+          if [ "$skipped" -gt 0 ]; then
+            echo "::error::Des tests d'intégration ont été ignorés alors que Docker est disponible."
+            exit 1
+          fi
+
+      - name: Rapport de tests
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Tests backend
+          path: 'backend/*/target/*-reports/TEST-*.xml'
+          reporter: java-junit
+          fail-on-error: false
+
+      - name: Publication des rapports de couverture JaCoCo
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: jacoco-reports
+          path: backend/*/target/site/jacoco/
+          retention-days: 14
+
+      - name: Conservation des JAR pour la construction des images
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-jars
+          path: backend/*/target/*.jar
+          retention-days: 1
+
+  # ══════════════════════════════════════════════════════════
+  # 2. Analyse statique — Checkstyle + SpotBugs
+  # ══════════════════════════════════════════════════════════
+  backend-quality:
+    name: Backend — analyse statique
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: maven
+
+      # Profil `quality` : Checkstyle et SpotBugs. Volontairement informatifs
+      # (failOnViolation=false) le temps de résorber la dette existante ; la
+      # bascule en bloquant se fait en passant -Dcheckstyle.failOnViolation=true.
+      - name: Checkstyle et SpotBugs
+        working-directory: backend
+        run: mvn -B --no-transfer-progress -Pquality verify -DskipTests
+
+      - name: Publication des rapports qualité
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: quality-reports
+          path: |
+            backend/*/target/checkstyle-result.xml
+            backend/*/target/spotbugsXml.xml
+          retention-days: 14
+
+  # ══════════════════════════════════════════════════════════
+  # 3. Frontend — tests unitaires et build de production
+  # ══════════════════════════════════════════════════════════
+  frontend-tests:
+    name: Frontend — tests et build
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Node ${{ env.NODE_VERSION }} + cache npm
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      # --legacy-peer-deps : requis par les pairs CoreUI, comme dans le Dockerfile.
+      - name: Installation des dépendances
+        working-directory: frontend
+        run: npm ci --legacy-peer-deps --no-audit --no-fund
+
+      # Les tests tournent dans un vrai Chromium (Vitest browser mode).
+      - name: Installation du navigateur Playwright
+        working-directory: frontend
+        run: npx playwright install --with-deps chromium
+
+      - name: Tests unitaires
+        working-directory: frontend
+        run: npm run test-ci
+
+      - name: Build de production
+        working-directory: frontend
+        run: npm run build
+
+      - name: Conservation du bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist/
+          retention-days: 1
+
+  # ══════════════════════════════════════════════════════════
+  # 4. Images Docker + analyse de vulnérabilités (Trivy)
+  # ══════════════════════════════════════════════════════════
+  docker-build:
+    name: Images Docker et scan de sécurité
+    runs-on: ubuntu-latest
+    needs: [backend-tests, frontend-tests]
+    timeout-minutes: 40
+    permissions:
+      contents: read
+      packages: write
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        service:
+          - config-service
+          - discovery-service
+          - api-gateway
+          - user-service
+          - event-service
+          - registration-service
+          - notification-service
+          - ticket-service
+          - feedback-service
+          - ai-service
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Les Dockerfile backend copient un JAR déjà construit : on réutilise
+      # l'artefact du job de test plutôt que de recompiler dans chaque image.
+      # Un seul build Maven pour dix images, et l'image publiée est exactement
+      # celle qui a passé les tests.
+      - name: Récupération des JAR testés
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-jars
+          path: backend/
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Construction de l'image ${{ matrix.service }}
+        uses: docker/build-push-action@v5
+        with:
+          context: backend/${{ matrix.service }}
+          push: false
+          load: true
+          tags: linsoft/${{ matrix.service }}:${{ github.sha }}
+          cache-from: type=gha,scope=${{ matrix.service }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.service }}
+
+      - name: Analyse de vulnérabilités (Trivy)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: linsoft/${{ matrix.service }}:${{ github.sha }}
+          format: sarif
+          output: trivy-${{ matrix.service }}.sarif
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+
+      - name: Remontée des vulnérabilités dans l'onglet Security
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: trivy-${{ matrix.service }}.sarif
+          category: trivy-${{ matrix.service }}
+
+      # ─── Publication sur GHCR (branche principale uniquement) ───
+      # Aucun identifiant en dur : GITHUB_TOKEN est fourni par la plateforme.
+      - name: Connexion au registre GHCR
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publication de l'image
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        uses: docker/build-push-action@v5
+        with:
+          context: backend/${{ matrix.service }}
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ github.repository }}/${{ matrix.service }}:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ github.repository }}/${{ matrix.service }}:latest
+          cache-from: type=gha,scope=${{ matrix.service }}
+
+  # ══════════════════════════════════════════════════════════
+  # 5. Image frontend (build multi-stage, contexte différent)
+  # ══════════════════════════════════════════════════════════
+  docker-frontend:
+    name: Image Docker frontend
+    runs-on: ubuntu-latest
+    needs: [frontend-tests]
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+      security-events: write
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+
+      # Le Dockerfile frontend est déjà multi-stage (build Node puis nginx
+      # non-root) : il se construit depuis les sources, sans artefact préalable.
+      - name: Construction de l'image frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: frontend
+          push: false
+          load: true
+          tags: linsoft/frontend:${{ github.sha }}
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,mode=max,scope=frontend
+
+      - name: Analyse de vulnérabilités (Trivy)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: linsoft/frontend:${{ github.sha }}
+          format: sarif
+          output: trivy-frontend.sarif
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+
+      - name: Remontée des vulnérabilités
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: trivy-frontend.sarif
+          category: trivy-frontend
+
+      - name: Connexion au registre GHCR
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publication de l'image
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        uses: docker/build-push-action@v5
+        with:
+          context: frontend
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ github.repository }}/frontend:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ github.repository }}/frontend:latest
+          cache-from: type=gha,scope=frontend
+
+  # ══════════════════════════════════════════════════════════
+  # 6. Synthèse — porte de qualité
+  # ══════════════════════════════════════════════════════════
+  ci-summary:
+    name: Synthèse du pipeline
+    runs-on: ubuntu-latest
+    needs: [backend-tests, backend-quality, frontend-tests, docker-build, docker-frontend]
+    if: always()
+    steps:
+      - name: Verdict
+        run: |
+          echo "Tests backend  : ${{ needs.backend-tests.result }}"
+          echo "Qualité        : ${{ needs.backend-quality.result }}"
+          echo "Tests frontend : ${{ needs.frontend-tests.result }}"
+          echo "Images backend : ${{ needs.docker-build.result }}"
+          echo "Image frontend : ${{ needs.docker-frontend.result }}"
+          if [ "${{ needs.backend-tests.result }}" != "success" ] \
+          || [ "${{ needs.frontend-tests.result }}" != "success" ] \
+          || [ "${{ needs.docker-build.result }}" != "success" ] \
+          || [ "${{ needs.docker-frontend.result }}" != "success" ]; then
+            echo "::error::Le pipeline a échoué sur au moins une étape bloquante."
+            exit 1
+          fi
+          echo "Pipeline vert."

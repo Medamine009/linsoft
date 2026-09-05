@@ -1,0 +1,41 @@
+# 14-mailhog.yaml — Serveur SMTP de dev (capture les emails sans les envoyer)
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mailhog
+  labels: { app: mailhog }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: mailhog } }
+  template:
+    metadata:
+      labels: { app: mailhog }
+    spec:
+      containers:
+      - name: mailhog
+        image: mailhog/mailhog:latest
+        ports:
+        - { containerPort: 1025, name: smtp }
+        - { containerPort: 8025, name: web }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mailhog
+spec:
+  selector: { app: mailhog }
+  ports:
+  - { name: smtp, port: 1025, targetPort: 1025 }
+  - { name: web,  port: 8025, targetPort: 8025 }
+---
+# Optionnel : Route pour consulter les emails capturés depuis un navigateur
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: mailhog
+spec:
+  to: { kind: Service, name: mailhog }
+  port: { targetPort: 8025 }
+  tls:
+    termination: edge

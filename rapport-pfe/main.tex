@@ -1,0 +1,1779 @@
+%============================================================================
+%  RAPPORT DE PROJET DE FIN D'ÉTUDES
+%  Conception et développement de la plateforme « LINSOFT Learning Center »
+%  Réalisé par : Med Amine Khadhraoui — TEK-UP / LINSOFT — 2025-2026
+%
+%  COMPILATION : pdfLaTeX, 2 à 3 fois (table des matières + « Plan » + listes)
+%============================================================================
+\documentclass[12pt,a4paper,oneside]{report}
+
+%================ Encodage & langue ================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{lmodern}
+
+%================ Mise en page ================
+\usepackage[a4paper,left=2.5cm,right=2.5cm,top=2.7cm,bottom=2.7cm]{geometry}
+\usepackage{setspace}\onehalfspacing
+\usepackage{graphicx}
+\usepackage[table]{xcolor}   % [table] indispensable pour \rowcolor
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{fancyhdr}
+\usepackage{listings}
+
+%========= Plan (mini-sommaire par chapitre) =========
+\usepackage{minitoc}
+\setcounter{minitocdepth}{2}
+\renewcommand{\mtctitle}{Plan}
+
+%================ Liens (chargé après minitoc) ================
+\usepackage[hidelinks]{hyperref}
+
+%================ Couleurs ================
+\definecolor{bleu}{RGB}{31,64,104}
+\definecolor{rouge}{RGB}{226,35,26}
+\definecolor{gris}{RGB}{90,90,90}
+\definecolor{codebg}{RGB}{248,248,250}
+\definecolor{codekw}{RGB}{170,20,80}
+\definecolor{codecmt}{RGB}{90,120,95}
+\definecolor{codestr}{RGB}{40,110,60}
+
+%================ En-têtes / pieds ================
+\setlength{\headheight}{15pt}
+\pagestyle{fancy}\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancyhead[L]{\small\nouppercase{\leftmark}}
+\fancyfoot[C]{\thepage}
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[C]{\thepage}\renewcommand{\headrulewidth}{0pt}}
+
+%================ Listings (code source) ================
+\lstset{
+  basicstyle=\ttfamily\footnotesize,
+  backgroundcolor=\color{codebg},
+  keywordstyle=\color{codekw}\bfseries,
+  commentstyle=\color{codecmt}\itshape,
+  stringstyle=\color{codestr},
+  numbers=left, numberstyle=\tiny\color{gray}, numbersep=8pt,
+  frame=single, rulecolor=\color{gray!40},
+  breaklines=true, showstringspaces=false, extendedchars=true,
+  tabsize=2, captionpos=b, xleftmargin=14pt,
+  literate=%
+    {é}{{\'e}}1 {è}{{\`e}}1 {à}{{\`a}}1 {â}{{\^a}}1 {ê}{{\^e}}1
+    {î}{{\^i}}1 {ï}{{\"i}}1 {ô}{{\^o}}1 {û}{{\^u}}1 {ù}{{\`u}}1
+    {ç}{{\c c}}1 {É}{{\'E}}1 {È}{{\`E}}1 {À}{{\`A}}1
+    {«}{{\guillemotleft}}1 {»}{{\guillemotright}}1 {œ}{{\oe}}1
+}
+
+%================ Commande cadre de remplacement d'image ================
+% À retirer quand vous aurez les vraies images (\includegraphics).
+\newcommand{\ph}[2][0.6\textwidth]{%
+  \fbox{\parbox[c][2.6cm][c]{#1}{\centering\itshape\color{gris} #2}}}
+
+\begin{document}
+
+%============================================================================
+%  PAGE DE GARDE
+%============================================================================
+\begin{titlepage}
+\begin{center}
+
+\begin{minipage}{0.24\textwidth}\centering
+  % \includegraphics[width=\linewidth]{images/tekup.png}
+  \ph[\linewidth]{[ Logo TEK-UP ]}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}\centering
+  {\bfseries République Tunisienne}\\
+  Ministère de l'Enseignement Supérieur\\ et de la Recherche Scientifique\\[6pt]
+  École Supérieure Privée d'Ingénierie\\ et de Technologie\\
+  {\bfseries TEK-UP}
+\end{minipage}\hfill
+\begin{minipage}{0.24\textwidth}\centering
+  % \includegraphics[width=\linewidth]{images/linsoft.png}
+  \ph[\linewidth]{[ Logo LINSOFT ]}
+\end{minipage}
+
+\vspace{1.4cm}
+{\Large\scshape Rapport de Projet de Fin d'Études}\\[0.8cm]
+Présenté en vue de l'obtention du\\[0.3cm]
+{\large\bfseries Diplôme National d'Ingénieur en Sciences Appliquées et Technologiques}\\[0.2cm]
+Spécialité : Génie Logiciel et Systèmes d'Information\\[1cm]
+
+Réalisé par\\[0.3cm]
+{\Large\bfseries Med Amine Khadhraoui}\\[1cm]
+
+\rule{\textwidth}{1.2pt}\par\vspace{6pt}
+{\LARGE\bfseries Conception et développement d'une plateforme de gestion
+des formations et des événements\\[4pt] « LINSOFT Learning Center »\par}
+\vspace{6pt}\rule{\textwidth}{1.2pt}
+
+\vspace{1.2cm}
+{\large Réalisé au sein de\par}
+{\Large\bfseries LINSOFT}\par
+\vspace{1.2cm}
+
+\begin{tabular}{rl}
+\textbf{Encadrant professionnel} : & [Nom Encadrant LINSOFT] \\[6pt]
+\textbf{Encadrant académique}\hspace{0.3cm} : & [Nom Encadrant TEK-UP] \\
+\end{tabular}
+
+\vfill
+{\large\bfseries Année Universitaire 2025 -- 2026}
+\end{center}
+\end{titlepage}
+
+\pagenumbering{roman}
+
+%============================================================================
+%  AUTORISATION DE DÉPÔT
+%============================================================================
+\thispagestyle{empty}
+\vspace*{1.5cm}
+\begin{center}{\Large\bfseries Autorisation de dépôt}\end{center}
+\vspace{1cm}
+\noindent\fbox{\parbox[c][5cm][c]{0.92\textwidth}{\centering
+Je soussigné(e), \textbf{[Nom de l'encadrant professionnel]}, encadrant professionnel au
+sein de la société \textbf{LINSOFT}, autorise l'étudiant \textbf{Med Amine Khadhraoui} à
+déposer son rapport de projet de fin d'études en vue de sa soutenance.\\[1.2cm]
+\hfill Signature et cachet\hspace{1.5cm}}}
+\vspace{1.5cm}
+\noindent\fbox{\parbox[c][5cm][c]{0.92\textwidth}{\centering
+Je soussigné(e), \textbf{[Nom de l'encadrant académique]}, encadrant académique à
+\textbf{TEK-UP}, autorise l'étudiant \textbf{Med Amine Khadhraoui} à déposer son rapport de
+projet de fin d'études en vue de sa soutenance.\\[1.2cm]
+\hfill Signature\hspace{1.5cm}}}
+\clearpage
+
+%============================================================================
+%  DÉDICACE
+%============================================================================
+\chapter*{Dédicace}
+\thispagestyle{empty}
+\begin{center}\itshape\large
+\vspace{1cm}
+Je dédie ce modeste travail\\[0.6cm]
+À mes chers parents,\\
+pour leur amour inconditionnel, leur soutien constant et les sacrifices\\
+qu'ils n'ont cessé de consentir pour ma réussite.\\[0.8cm]
+À mes frères et sœurs,\\
+pour leurs encouragements et leur présence à mes côtés.\\[0.8cm]
+À tous mes amis et proches,\\
+pour les moments de partage et de motivation.\\[0.8cm]
+À tous ceux qui, de près ou de loin,\\
+ont contribué à l'aboutissement de ce projet.\\[1cm]
+\upshape\normalsize
+\textbf{Med Amine Khadhraoui}
+\end{center}
+\clearpage
+
+%============================================================================
+%  REMERCIEMENTS
+%============================================================================
+\chapter*{Remerciements}
+\thispagestyle{empty}
+\itshape
+\noindent Au terme de ce projet de fin d'études, je tiens à exprimer ma profonde gratitude
+à toutes les personnes qui ont contribué, de près ou de loin, à sa réalisation.
+\\[0.4cm]
+Je tiens tout d'abord à remercier chaleureusement mon encadrant professionnel
+\textbf{[Nom]} au sein de la société \textbf{LINSOFT}, pour la confiance qu'il m'a accordée,
+sa disponibilité, ainsi que pour les précieux conseils qui ont guidé mon travail tout au
+long de ce stage.
+\\[0.4cm]
+Mes remerciements les plus sincères s'adressent également à mon encadrant académique
+\textbf{[Nom]}, enseignant à \textbf{TEK-UP}, pour son suivi rigoureux, sa patience et ses
+orientations judicieuses qui m'ont permis de mener ce projet à bien.
+\\[0.4cm]
+Je remercie l'ensemble du corps enseignant et administratif de \textbf{TEK-UP} pour la
+qualité de la formation dispensée durant ces années d'études, ainsi que toute l'équipe de
+\textbf{LINSOFT} pour son accueil et sa bienveillance.
+\\[0.4cm]
+Enfin, j'exprime ma reconnaissance aux membres du jury pour l'honneur qu'ils me font en
+acceptant d'évaluer ce travail.
+\\[0.6cm]
+\upshape
+\clearpage
+
+%============================================================================
+%  TABLES
+%============================================================================
+\dominitoc
+\renewcommand{\contentsname}{Table des matières}
+\tableofcontents
+\clearpage
+\listoffigures
+\clearpage
+\listoftables
+\clearpage
+
+%============================================================================
+%  LISTE DES ABRÉVIATIONS
+%============================================================================
+\chapter*{Liste des abréviations}
+\addcontentsline{toc}{chapter}{Liste des abréviations}
+\markboth{Liste des abréviations}{}
+\begin{description}[leftmargin=3.4cm,font=\bfseries,itemsep=3pt]
+  \item[API] Application Programming Interface
+  \item[AWS] Amazon Web Services
+  \item[CI/CD] Continuous Integration / Continuous Delivery
+  \item[CORS] Cross-Origin Resource Sharing
+  \item[CRUD] Create, Read, Update, Delete
+  \item[CSS] Cascading Style Sheets
+  \item[DTO] Data Transfer Object
+  \item[GLSI] Génie Logiciel et Systèmes d'Information
+  \item[HTML] Hypertext Markup Language
+  \item[HTTP] Hypertext Transfer Protocol
+  \item[IA] Intelligence Artificielle
+  \item[IDE] Integrated Development Environment
+  \item[JSON] JavaScript Object Notation
+  \item[JWT] JSON Web Token
+  \item[LMS] Learning Management System
+  \item[MEA] Middle East \& Africa
+  \item[MVC] Model - View - Controller
+  \item[OIDC] OpenID Connect
+  \item[PDF] Portable Document Format
+  \item[PFE] Projet de Fin d'Études
+  \item[QR] Quick Response (code)
+  \item[REST] Representational State Transfer
+  \item[SSO] Single Sign-On
+  \item[UML] Unified Modeling Language
+  \item[URL] Uniform Resource Locator
+  \item[UX/UI] User Experience / User Interface
+\end{description}
+\clearpage
+
+\pagenumbering{arabic}
+
+%============================================================================
+%  INTRODUCTION GÉNÉRALE
+%============================================================================
+\chapter*{Introduction générale}
+\addcontentsline{toc}{chapter}{Introduction générale}
+\markboth{Introduction générale}{}
+
+La transformation numérique s'est imposée, au cours de la dernière décennie, comme un levier
+stratégique incontournable pour les organisations de toutes tailles. Les entreprises qui
+souhaitent rester compétitives sont amenées à repenser leurs processus internes, à
+dématérialiser leurs activités et à s'appuyer sur des systèmes d'information modernes,
+sécurisés et évolutifs. Ce mouvement de fond concerne aussi bien les activités cœur de métier
+que les fonctions support telles que la formation et la gestion des compétences.
+
+Dans le secteur des technologies de l'information, la formation continue occupe une place
+centrale. Les technologies évoluant à un rythme soutenu, les professionnels doivent
+constamment mettre à jour leurs compétences à travers des formations certifiantes, des
+ateliers pratiques et des séminaires techniques. Les organismes de formation, quant à eux,
+doivent gérer un volume important de sessions, coordonner formateurs et apprenants, suivre les
+inscriptions et délivrer des attestations, tout en offrant une expérience fluide et
+professionnelle à leurs participants.
+
+C'est dans ce contexte que s'inscrit le présent projet de fin d'études, réalisé au sein de la
+société \textbf{LINSOFT}, intégrateur de solutions informatiques et organisme de formation de
+référence dans la région. LINSOFT dispose de son propre centre de formation, le
+\textbf{LinSoft Learning Center}, à travers lequel elle conçoit et dispense une offre riche de
+formations certifiantes et d'événements techniques. La gestion de ces sessions reposait
+jusqu'ici sur des outils hétérogènes et non intégrés, engendrant redondances, pertes
+d'information et absence de vision consolidée.
+
+L'objectif de ce projet est de concevoir et de développer une plateforme web complète et
+centralisée, baptisée \textbf{« LINSOFT Learning Center »}, dédiée à la gestion de
+l'intégralité du cycle de vie des formations et des événements : de la publication au
+catalogue jusqu'à la délivrance des certificats, en passant par un processus d'inscription
+maîtrisé, une communication automatisée et un pilotage par le biais de tableaux de bord. La
+solution s'appuie sur une architecture moderne en \textbf{microservices}, une authentification
+centralisée et une expérience utilisateur adaptée à chaque rôle.
+
+Ce rapport retrace l'ensemble de la démarche suivie pour mener à bien ce projet. Il est
+organisé en cinq chapitres :
+
+\begin{itemize}[leftmargin=1.2cm]
+  \item Le \textbf{premier chapitre}, « Cadre général du projet », présente l'organisme
+  d'accueil, le contexte et la problématique, l'étude des solutions existantes ainsi que la
+  méthodologie de travail adoptée.
+  \item Le \textbf{deuxième chapitre}, « Analyse et spécification des besoins », identifie les
+  acteurs, formalise les besoins fonctionnels et non fonctionnels, présente les diagrammes de
+  cas d'utilisation et établit le backlog du produit.
+  \item Le \textbf{troisième chapitre}, « Conception », décrit l'architecture globale de la
+  solution, la conception détaillée (diagrammes de classes, de séquence et d'états) ainsi que
+  la conception de la base de données.
+  \item Le \textbf{quatrième chapitre}, « Réalisation de la première release », présente
+  l'environnement de travail et la mise en œuvre des trois premiers sprints.
+  \item Le \textbf{cinquième chapitre}, « Réalisation de la seconde release », détaille les
+  sprints restants, les tests réalisés et le déploiement de la solution.
+\end{itemize}
+
+Le rapport se termine par une conclusion générale dressant le bilan du travail accompli et
+ouvrant sur les perspectives d'évolution de la plateforme.
+\clearpage
+
+%############################################################################
+%  CHAPITRE 1
+%############################################################################
+\chapter{Cadre général du projet}
+\minitoc
+\vspace{0.6cm}
+
+\section*{Introduction}
+Ce premier chapitre a pour objectif de situer le projet dans son cadre général. Nous
+commençons par présenter l'organisme d'accueil au sein duquel s'est déroulé le stage, à savoir
+la société LINSOFT. Nous exposons ensuite le contexte du projet, sa problématique et ses
+objectifs. Puis, nous menons une étude critique des solutions existantes afin d'en dégager les
+forces et les faiblesses et de justifier la pertinence de notre solution. Enfin, nous
+présentons la méthodologie de gestion de projet ainsi que la démarche de conception retenues.
+
+\section{Présentation de l'organisme d'accueil}
+
+\subsection{Présentation générale de LINSOFT}
+LINSOFT est un intégrateur de solutions informatiques et un organisme de formation
+professionnel spécialisé dans les domaines de l'\textbf{open source}, du \textbf{DevOps} et du
+\textbf{cloud computing}. Fort de plus d'une décennie d'expérience, LINSOFT s'est imposé comme
+un acteur de référence dans l'intégration de systèmes et la formation professionnelle
+certifiante au sein de la région MEA (\textit{Middle East \& Africa}). Sa signature,
+« \textit{Your success, our passion} », traduit sa vocation : accompagner les entreprises et
+les professionnels dans leur montée en compétences et leur transformation numérique.
+
+\begin{figure}[H]\centering
+  % \includegraphics[width=0.35\textwidth]{images/linsoft.png}
+  \ph[0.35\textwidth]{[ Logo de LINSOFT ]}
+  \caption{Logo de la société LINSOFT}\label{fig:logo-linsoft}
+\end{figure}
+
+L'entreprise se distingue par un positionnement à la croisée de deux mondes complémentaires :
+d'une part l'\textbf{ingénierie et le conseil} en systèmes d'information, et d'autre part la
+\textbf{formation et la certification} des professionnels de l'informatique. Cette double
+compétence lui permet de proposer une offre cohérente, alliant expertise technique de terrain
+et transmission des savoirs.
+
+\subsection{Partenariats et certifications}
+LINSOFT est \textbf{partenaire officiel et centre de formation agréé} de plusieurs éditeurs et
+fondations technologiques de premier plan. Parmi ses principaux partenaires figurent :
+
+\begin{itemize}[leftmargin=1.2cm]
+  \item \textbf{Red Hat} — solutions open source d'entreprise (Linux, OpenShift, Ansible) ;
+  \item \textbf{Amazon Web Services (AWS)} — services de cloud computing ;
+  \item \textbf{The Linux Foundation} — technologies open source et Kubernetes ;
+  \item \textbf{CompTIA} — certifications fondamentales en informatique et cybersécurité ;
+  \item ainsi que d'autres éditeurs tels que Trend Micro, Zimbra, MariaDB et Zabbix.
+\end{itemize}
+
+Ces partenariats attestent du niveau d'exigence de LINSOFT et lui permettent de délivrer des
+formations reconnues internationalement, préparant directement aux examens de certification.
+
+\subsection{Implantation géographique}
+LINSOFT dispose d'une présence régionale à travers plusieurs filiales :
+
+\begin{table}[H]\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|l|l|}
+\hline
+\rowcolor{gray!15}\textbf{Pays} & \textbf{Ville / Implantation} \\ \hline
+Tunisie (siège social) & Tunis (La Goulette -- Lac 3) \\ \hline
+Maroc & Casablanca \\ \hline
+Algérie & Alger \\ \hline
+Libye & Tripoli \\ \hline
+\end{tabular}
+\caption{Implantation géographique de LINSOFT}\label{tab:implantation}
+\end{table}
+
+\subsection{Domaines d'activité}
+L'activité de LINSOFT s'articule autour de trois axes complémentaires :
+
+\begin{itemize}[leftmargin=1.2cm]
+  \item \textbf{Intégration et conseil} : LINSOFT accompagne les organisations dans le
+  déploiement de solutions open source, l'automatisation DevOps et la migration vers le cloud,
+  en apportant une expertise sur l'architecture, l'infrastructure et la sécurité des systèmes.
+  \item \textbf{Formation et certification} : à travers son centre \textbf{LinSoft Learning
+  Center}, l'entreprise dispense des formations certifiantes en présentiel et à distance, et
+  prépare les apprenants aux examens officiels de ses partenaires.
+  \item \textbf{Événementiel technique} : LINSOFT organise des workshops pratiques, des
+  conférences et des séminaires favorisant le partage de connaissances, la veille
+  technologique et l'animation de la communauté IT.
+\end{itemize}
+
+\subsection{Le LinSoft Learning Center}
+Le \textbf{LinSoft Learning Center} constitue le cadre direct de notre projet. Il s'agit du
+centre de formation de LINSOFT, où sont conçues, planifiées et animées l'ensemble des
+sessions : formations certifiantes, ateliers, conférences et séminaires. Le centre gère un
+catalogue diversifié couvrant les grandes familles technologiques du marché (Red Hat, AWS,
+Kubernetes, Linux, DevOps, cybersécurité), ainsi qu'un ensemble de formateurs et
+d'apprenants. C'est la gestion de ce centre que notre plateforme se propose de digitaliser.
+
+\section{Contexte et problématique}
+
+\subsection{Contexte du projet}
+Dans le cadre de son activité de formation, le LinSoft Learning Center planifie et anime un
+volume important et régulier de sessions. La gestion de ces sessions couvre un cycle complet
+qui comprend notamment :
+
+\begin{itemize}[leftmargin=1.2cm]
+  \item la \textbf{planification} des sessions (dates, lieux, formateurs, capacités) ;
+  \item la \textbf{publication} du catalogue à destination des apprenants ;
+  \item l'\textbf{ouverture et le suivi des inscriptions} ;
+  \item la \textbf{gestion des présences} le jour de la session ;
+  \item la \textbf{délivrance des certificats} de participation ;
+  \item la \textbf{communication} avec les participants (confirmations, rappels, annonces).
+\end{itemize}
+
+Jusqu'à présent, cette gestion reposait sur un ensemble d'outils hétérogènes et non
+intégrés : tableurs pour le suivi des inscriptions, échanges par courrier électronique pour la
+communication, agendas séparés pour la planification, et traitement manuel pour l'édition des
+attestations. Cette approche montre rapidement ses limites lorsque le volume de sessions et
+de participants augmente.
+
+\subsection{Problématique}
+Le mode de gestion actuel, fondé sur des outils dispersés, engendre plusieurs difficultés qui
+nuisent à l'efficacité opérationnelle du centre et à l'expérience de ses utilisateurs :
+
+\begin{itemize}[leftmargin=1.2cm]
+  \item \textbf{Dispersion et redondance de l'information} : les données relatives aux
+  sessions, aux inscriptions et aux participants sont réparties entre plusieurs supports, ce
+  qui multiplie les saisies, favorise les erreurs et prive l'équipe d'une vision d'ensemble
+  fiable et à jour.
+  \item \textbf{Absence d'un processus d'inscription maîtrisé} : il n'existe pas de mécanisme
+  formalisé permettant de \textbf{valider} les demandes de participation, de contrôler en
+  temps réel les places disponibles et de tracer précisément le statut de chaque inscription.
+  \item \textbf{Communication et certification non automatisées} : l'envoi des confirmations,
+  des rappels et l'édition des certificats sont réalisés manuellement, ce qui est chronophage,
+  peu réactif et source d'incohérences.
+  \item \textbf{Manque de séparation des rôles} : les responsabilités d'administration,
+  d'animation des sessions et de participation ne sont pas clairement cloisonnées au sein d'un
+  outil unique et sécurisé.
+  \item \textbf{Absence de pilotage} : il n'existe pas de tableau de bord offrant une vision
+  consolidée de l'activité (taux de remplissage, présences, inscriptions en attente), ce qui
+  complique la prise de décision.
+\end{itemize}
+
+Ces constats nous conduisent à formuler la question centrale suivante :
+
+\begin{quote}\itshape
+Comment concevoir et mettre en œuvre une plateforme web centralisée, sécurisée et évolutive,
+capable de gérer l'intégralité du cycle de vie des formations et des événements du LinSoft
+Learning Center, tout en garantissant un processus d'inscription maîtrisé, une communication
+automatisée et une expérience adaptée à chaque rôle ?
+\end{quote}
+
+\subsection{Objectifs du projet}
+Afin de répondre à cette problématique, le projet vise à concevoir et développer une
+application web complète permettant de :
+
+\begin{itemize}[leftmargin=1.2cm]
+  \item gérer le \textbf{catalogue} des sessions (formations, workshops, conférences,
+  séminaires) et leur cycle de vie complet (création, modération, publication) ;
+  \item offrir aux \textbf{participants} un espace pour explorer le catalogue, demander leur
+  inscription et récupérer leurs \textbf{certificats} de participation ;
+  \item mettre en place un \textbf{workflow de validation} des inscriptions, assorti de
+  \textbf{notifications} automatiques (courriel et in-app) ;
+  \item fournir aux \textbf{administrateurs} des outils de pilotage : modération du catalogue,
+  gestion des collaborateurs et des rôles, communication de masse et tableaux de bord ;
+  \item intégrer un \textbf{assistant intelligent} (chatbot) pour guider les utilisateurs, le
+  tout reposant sur une architecture \textbf{microservices} sécurisée et industrialisable.
+\end{itemize}
+
+\section{Étude de l'existant}
+L'étude de l'existant constitue une étape indispensable de tout projet. Elle consiste à
+analyser les solutions déjà présentes sur le marché afin d'en extraire les points forts à
+capitaliser et les points faibles à éviter. Cette démarche permet d'orienter la conception de
+notre solution et d'en justifier la valeur ajoutée. Nous avons retenu trois plateformes
+représentatives : \textbf{Eventbrite}, \textbf{Meetup} et \textbf{Moodle}.
+
+\subsection{Eventbrite}
+\subsubsection{Description}
+Eventbrite est une plateforme en ligne de création et de gestion d'événements, largement
+utilisée à l'échelle internationale pour la publication d'événements, la billetterie et la
+gestion des inscriptions. Elle permet aux organisateurs de créer une page d'événement,
+d'ouvrir les inscriptions, de vendre des billets et de suivre les participants. Elle est
+toutefois fortement orientée « marketplace » grand public et billetterie payante, ce qui
+l'éloigne d'un usage interne à une entreprise de formation.
+
+\subsubsection{Étude fonctionnelle}
+\begin{itemize}[leftmargin=1.2cm]
+  \item \textbf{Organisateur} : créer un événement, gérer la billetterie, suivre les
+  inscriptions, consulter des statistiques de participation.
+  \item \textbf{Participant} : rechercher un événement, réserver une place, recevoir une
+  confirmation par courriel.
+\end{itemize}
+
+\subsubsection{Points forts et points faibles}
+\begin{table}[H]\centering\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|p{0.45\textwidth}|p{0.45\textwidth}|}\hline
+\rowcolor{gray!15}\textbf{Points forts} & \textbf{Points faibles} \\ \hline
+\begin{itemize}[leftmargin=*,topsep=4pt,itemsep=2pt]
+  \item Création et publication d'événements rapides.
+  \item Gestion des inscriptions et confirmations par courriel.
+  \item Tableaux de bord et statistiques de participation.
+  \item Large diffusion et visibilité des événements.
+\end{itemize}
+&
+\begin{itemize}[leftmargin=*,topsep=4pt,itemsep=2pt]
+  \item Orientation grand public et billetterie payante.
+  \item Absence de certificats de participation.
+  \item Pas de workflow de validation interne des inscriptions.
+  \item Gouvernance des rôles limitée, non adaptée à un centre de formation.
+\end{itemize} \\ \hline
+\end{tabular}
+\caption{Points forts et points faibles d'Eventbrite}\label{tab:eventbrite}
+\end{table}
+
+\subsection{Meetup}
+\subsubsection{Description}
+Meetup est une plateforme dédiée à l'organisation d'événements communautaires et
+professionnels. Elle facilite la création de groupes d'intérêt, la planification de rencontres
+et l'inscription des membres. Son point fort réside dans l'animation de communautés, mais elle
+reste centrée sur des événements publics et ne couvre ni la dimension « formation
+certifiante » ni le suivi pédagogique.
+
+\subsubsection{Étude fonctionnelle}
+\begin{itemize}[leftmargin=1.2cm]
+  \item \textbf{Organisateur} : créer un groupe, planifier des événements, gérer les membres.
+  \item \textbf{Participant} : rejoindre un groupe, s'inscrire à un événement, échanger avec la
+  communauté.
+\end{itemize}
+
+\subsubsection{Points forts et points faibles}
+\begin{table}[H]\centering\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|p{0.45\textwidth}|p{0.45\textwidth}|}\hline
+\rowcolor{gray!15}\textbf{Points forts} & \textbf{Points faibles} \\ \hline
+\begin{itemize}[leftmargin=*,topsep=4pt,itemsep=2pt]
+  \item Animation de communautés et planification aisée.
+  \item Inscriptions et rappels aux participants.
+  \item Interface conviviale et sociale.
+  \item Notifications et agenda intégrés.
+\end{itemize}
+&
+\begin{itemize}[leftmargin=*,topsep=4pt,itemsep=2pt]
+  \item Orientation communautaire et publique.
+  \item Absence de certificats et de suivi de présence.
+  \item Pas de rôles administratifs fins.
+  \item Peu adaptée aux formations d'entreprise.
+\end{itemize} \\ \hline
+\end{tabular}
+\caption{Points forts et points faibles de Meetup}\label{tab:meetup}
+\end{table}
+
+\subsection{Moodle}
+\subsubsection{Description}
+Moodle est une plateforme d'apprentissage en ligne (\textit{Learning Management System}, LMS)
+open source, très répandue dans les établissements de formation et d'enseignement. Elle permet
+la création de cours, la gestion des inscriptions, le suivi des apprenants et la délivrance de
+certificats. Cependant, Moodle est fortement centrée sur le \textbf{contenu pédagogique en
+ligne} (cours, quiz, ressources) plutôt que sur la \textbf{gestion événementielle} de sessions
+présentielles planifiées.
+
+\subsubsection{Étude fonctionnelle}
+\begin{itemize}[leftmargin=1.2cm]
+  \item \textbf{Administrateur} : configurer la plateforme, gérer les comptes et les rôles.
+  \item \textbf{Formateur} : créer des cours, suivre les apprenants, délivrer des certificats.
+  \item \textbf{Apprenant} : s'inscrire à un cours, suivre le contenu, obtenir un certificat.
+\end{itemize}
+
+\subsubsection{Points forts et points faibles}
+\begin{table}[H]\centering\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|p{0.45\textwidth}|p{0.45\textwidth}|}\hline
+\rowcolor{gray!15}\textbf{Points forts} & \textbf{Points faibles} \\ \hline
+\begin{itemize}[leftmargin=*,topsep=4pt,itemsep=2pt]
+  \item Gestion complète de la formation et des certificats.
+  \item Système de rôles et de permissions robuste.
+  \item Suivi des apprenants ; solution open source.
+  \item Écosystème riche de plugins.
+\end{itemize}
+&
+\begin{itemize}[leftmargin=*,topsep=4pt,itemsep=2pt]
+  \item Complexité de prise en main et d'administration.
+  \item Orientation e-learning plutôt qu'événementielle.
+  \item Ergonomie datée, faible dimension « agenda ».
+  \item Absence d'assistant intelligent intégré.
+\end{itemize} \\ \hline
+\end{tabular}
+\caption{Points forts et points faibles de Moodle}\label{tab:moodle}
+\end{table}
+
+\subsection{Tableau comparatif}
+Le tableau suivant synthétise la comparaison des trois solutions au regard des critères clés
+du LinSoft Learning Center.
+
+\begin{table}[H]\centering\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{4.2cm}|c|c|c|c|}\hline
+\rowcolor{gray!15}\textbf{Critère} & \textbf{Eventbrite} & \textbf{Meetup} & \textbf{Moodle} & \textbf{Solution proposée} \\ \hline
+Gestion d'événements       & Oui & Oui & Partiel & Oui \\ \hline
+Formations \& certificats  & Non & Non & Oui & Oui \\ \hline
+Validation des inscriptions& Non & Non & Partiel & Oui \\ \hline
+Rôles séparés (Admin/Org/Part.) & Partiel & Partiel & Oui & Oui \\ \hline
+Communication automatisée  & Oui & Oui & Partiel & Oui \\ \hline
+Usage interne entreprise   & Non & Non & Oui & Oui \\ \hline
+Assistant intelligent (IA) & Non & Non & Non & Oui \\ \hline
+\end{tabular}
+\caption{Tableau comparatif des solutions existantes}\label{tab:comparatif}
+\end{table}
+
+\section{Solution proposée}
+À l'issue de l'étude de l'existant, il apparaît qu'aucune des solutions analysées ne couvre
+pleinement le besoin de LINSOFT, à savoir \textbf{réunir la gestion événementielle et la
+dimension formation} au sein d'un outil \textbf{interne}, sécurisé et pilotable. Nous
+proposons donc de développer la plateforme « LINSOFT Learning Center », qui devra répondre aux
+exigences suivantes :
+
+\begin{itemize}[leftmargin=1.2cm]
+  \item \textbf{Unification événement + formation} : gérer indifféremment formations,
+  workshops, conférences et séminaires dans un catalogue unique.
+  \item \textbf{Workflow d'inscription maîtrisé} : chaque demande d'inscription est soumise à
+  la validation d'un administrateur, avec notifications à chaque étape.
+  \item \textbf{Délivrance automatique des certificats} de participation au format PDF.
+  \item \textbf{Rôles bien définis et séparés} : administrateur, organisateur (formateur) et
+  participant, chacun disposant d'une vue et de permissions strictement adaptées.
+  \item \textbf{Communication centralisée} : notifications automatiques (courriel et in-app)
+  et messagerie de diffusion vers les participants.
+  \item \textbf{Assistant intelligent} pour guider les utilisateurs dans leur navigation.
+  \item \textbf{Architecture moderne, sécurisée et scalable} reposant sur des microservices,
+  une authentification centralisée et une conteneurisation.
+\end{itemize}
+
+\section{Méthodologie et démarche de conception}
+
+\subsection{Choix de la méthodologie agile SCRUM}
+Afin de mener le projet de manière efficace et itérative, nous avons opté pour une méthode
+agile : \textbf{SCRUM}. Contrairement aux approches séquentielles classiques (cycle en V,
+cascade), SCRUM privilégie des cycles de développement courts, appelés \textbf{sprints}, à
+l'issue desquels un incrément fonctionnel du produit est livré. Le travail est organisé à
+partir d'une liste priorisée d'exigences, le \textbf{Product Backlog}.
+
+\begin{figure}[H]\centering
+  % \includegraphics[width=0.8\textwidth]{images/scrum.png}
+  \ph[0.8\textwidth]{[ Cycle de vie de la méthodologie SCRUM ]}
+  \caption{Cycle de vie de la méthodologie SCRUM}\label{fig:scrum}
+\end{figure}
+
+Nous avons retenu SCRUM pour plusieurs raisons :
+\begin{itemize}[leftmargin=1.2cm]
+  \item la \textbf{transparence} et la visibilité continue sur l'avancement du projet ;
+  \item la \textbf{tolérance au changement}, les besoins pouvant évoluer au fil du projet ;
+  \item la \textbf{livraison incrémentale} de valeur à chaque sprint ;
+  \item la \textbf{détection et la résolution rapides} des obstacles grâce aux points de suivi
+  réguliers.
+\end{itemize}
+
+\subsection{Les rôles dans SCRUM}
+La méthodologie SCRUM définit trois rôles principaux :
+\begin{itemize}[leftmargin=1.2cm]
+  \item \textbf{Product Owner} : \textit{[Encadrant professionnel LINSOFT]}. Représentant de
+  l'entreprise et des utilisateurs, il définit et priorise les fonctionnalités du produit et
+  valide les incréments livrés.
+  \item \textbf{Scrum Master} : \textit{[Encadrant]}. Garant de la bonne application de la
+  méthodologie, il veille à lever les obstacles et à protéger l'équipe des perturbations.
+  \item \textbf{Équipe de développement} : \textit{Med Amine Khadhraoui}. Elle réalise
+  l'analyse, la conception et le développement de l'application tout au long des sprints.
+\end{itemize}
+
+\subsection{Les artefacts de SCRUM}
+\begin{itemize}[leftmargin=1.2cm]
+  \item Le \textbf{Product Backlog} : liste ordonnée et évolutive de toutes les exigences du
+  produit, exprimées sous forme de user stories.
+  \item Le \textbf{Sprint Backlog} : sous-ensemble du Product Backlog sélectionné pour un
+  sprint donné, accompagné du plan de réalisation.
+  \item L'\textbf{Incrément} : la version potentiellement livrable du produit à la fin de
+  chaque sprint.
+\end{itemize}
+
+\subsection{Démarche de conception : le langage UML}
+Pour la modélisation du système, nous avons choisi le langage \textbf{UML} (\textit{Unified
+Modeling Language}), standard de fait de la modélisation orientée objet. UML offre une large
+palette de diagrammes (cas d'utilisation, classes, séquence, états) qui permettent de
+représenter à la fois les vues statiques et dynamiques du système, de façon claire et
+compréhensible par l'ensemble des parties prenantes.
+
+\section*{Conclusion}
+Dans ce chapitre, nous avons présenté l'organisme d'accueil, situé le projet dans son contexte
+et défini ses objectifs. L'étude de l'existant nous a permis de justifier la pertinence de la
+solution « LINSOFT Learning Center », et nous avons présenté la méthodologie SCRUM ainsi que la
+démarche de conception UML retenues. Le chapitre suivant est consacré à l'analyse et à la
+spécification des besoins.
+\clearpage
+
+%############################################################################
+%  CHAPITRE 2
+%############################################################################
+\chapter{Analyse et spécification des besoins}
+\minitoc
+\vspace{0.6cm}
+
+\section*{Introduction}
+Ce chapitre constitue le socle de la conception. Il vise à formaliser précisément les besoins
+auxquels la plateforme doit répondre. Nous commençons par identifier les acteurs du système,
+puis nous détaillons les besoins fonctionnels et non fonctionnels. Nous présentons ensuite le
+diagramme de cas d'utilisation global, raffinons les cas les plus significatifs à l'aide de
+descriptions textuelles, et établissons enfin le backlog du produit ainsi que la planification
+des releases et des sprints.
+
+\section{Identification des acteurs}
+Un acteur représente un rôle joué par une entité externe qui interagit avec l'application.
+Notre plateforme distingue \textbf{trois acteurs}, liés par une relation d'héritage :
+l'\textbf{organisateur} et l'\textbf{administrateur} héritent des fonctionnalités communes du
+\textbf{participant} (dont l'authentification).
+
+\begin{table}[H]\centering\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{3.2cm}|p{10.5cm}|}\hline
+\rowcolor{gray!15}\textbf{Acteur} & \textbf{Description} \\ \hline
+\textbf{Participant} & Collaborateur ou apprenant qui consulte le catalogue des sessions,
+demande son inscription, participe aux sessions, télécharge ses certificats et publie des
+avis. \\ \hline
+\textbf{Organisateur (Formateur)} & Formateur qui crée et gère ses propres sessions, en assure
+l'animation et procède au pointage des présences (check-in) le jour de la session. \\ \hline
+\textbf{Administrateur} & Responsable de la plateforme : il modère le catalogue, valide les
+demandes d'inscription, gère les collaborateurs et leurs rôles, communique avec les
+participants et supervise l'activité via des tableaux de bord. \\ \hline
+\end{tabular}
+\caption{Identification des acteurs du système}\label{tab:acteurs}
+\end{table}
+
+\section{Spécification des besoins fonctionnels}
+Les besoins fonctionnels décrivent les services que le système doit rendre à ses utilisateurs.
+Nous les présentons ci-dessous organisés par acteur.
+
+\subsection{Besoins communs à tous les acteurs}
+\begin{itemize}[leftmargin=1.2cm]
+  \item \textbf{S'authentifier} : tout utilisateur doit s'authentifier via le serveur Keycloak
+  avant d'accéder aux fonctionnalités qui le concernent.
+  \item \textbf{Gérer son profil} : consulter et mettre à jour ses informations personnelles.
+  \item \textbf{Consulter ses notifications et messages} : accéder à sa boîte de réception
+  (confirmations, rappels, annonces).
+  \item \textbf{Dialoguer avec l'assistant intelligent} : obtenir de l'aide et des
+  informations grâce au chatbot intégré.
+\end{itemize}
+
+\subsection{Besoins fonctionnels du participant}
+\begin{itemize}[leftmargin=1.2cm]
+  \item Consulter le catalogue des sessions et filtrer par catégorie, type ou mode.
+  \item Consulter le détail d'une session (description, formateur, date, lieu, places).
+  \item Demander une inscription à une session.
+  \item Consulter la liste de ses inscriptions et leur statut.
+  \item Annuler une demande d'inscription.
+  \item Télécharger son certificat de participation au format PDF.
+  \item Rejoindre une session en ligne (lien de visioconférence).
+  \item Publier un avis (note et commentaire) sur une session suivie.
+\end{itemize}
+
+\subsection{Besoins fonctionnels de l'organisateur}
+\begin{itemize}[leftmargin=1.2cm]
+  \item Créer une nouvelle session en renseignant ses caractéristiques.
+  \item Consulter et gérer la liste de ses propres sessions.
+  \item Modifier ou supprimer une session qu'il a créée.
+  \item Consulter la liste des participants inscrits à ses sessions.
+  \item Effectuer le pointage des présences (check-in) le jour de la session.
+  \item Consulter les statistiques relatives à ses sessions.
+\end{itemize}
+
+\subsection{Besoins fonctionnels de l'administrateur}
+\begin{itemize}[leftmargin=1.2cm]
+  \item Modérer les sessions soumises (approuver ou refuser leur publication).
+  \item Valider ou refuser les demandes d'inscription des participants.
+  \item Gérer les collaborateurs : consulter, créer, modifier et supprimer des comptes.
+  \item Attribuer et modifier les rôles des collaborateurs.
+  \item Diffuser des messages à l'ensemble ou à une catégorie de participants.
+  \item Consulter les tableaux de bord et les statistiques globales de la plateforme.
+\end{itemize}
+
+\section{Spécification des besoins non fonctionnels}
+Les besoins non fonctionnels définissent les contraintes de qualité que le système doit
+respecter. Ils sont déterminants pour l'acceptation de la solution.
+
+\begin{table}[H]\centering\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{3.4cm}|p{10.3cm}|}\hline
+\rowcolor{gray!15}\textbf{Exigence} & \textbf{Description} \\ \hline
+\textbf{Sécurité} & Authentification centralisée via Keycloak (OAuth2 / OpenID Connect),
+autorisation par rôle appliquée au niveau de la passerelle et de chaque service, protection
+des échanges par jetons JWT signés. \\ \hline
+\textbf{Performance} & Temps de réponse des pages et des requêtes maintenu faible ;
+architecture répartie permettant de traiter les requêtes de manière efficace. \\ \hline
+\textbf{Ergonomie (UX/UI)} & Interface claire, sobre et cohérente, adaptée à un usage
+professionnel interne, avec une navigation intuitive propre à chaque rôle. \\ \hline
+\textbf{Fiabilité} & Communication asynchrone fiable pour les notifications
+(file de messages) ; cohérence des statuts des inscriptions et des sessions. \\ \hline
+\textbf{Maintenabilité} & Code modulaire, découplé en microservices indépendants, facilitant
+l'évolution et la maintenance de chaque brique. \\ \hline
+\textbf{Scalabilité} & Possibilité de faire évoluer indépendamment chaque service selon la
+charge, grâce à l'architecture microservices et au registre de services. \\ \hline
+\textbf{Portabilité} & Déploiement homogène via la conteneurisation (Docker), indépendant de
+l'environnement hôte. \\ \hline
+\end{tabular}
+\caption{Besoins non fonctionnels}\label{tab:bnf}
+\end{table}
+
+\section{Diagramme de cas d'utilisation global}
+Le diagramme de cas d'utilisation global offre une vue d'ensemble des interactions entre les
+acteurs et le système. Il met en évidence les principales fonctionnalités offertes à chaque
+rôle. Le cas d'utilisation « S'authentifier » y occupe une place centrale : il est
+\textbf{inclus} (relation «~include~») par l'ensemble des fonctionnalités, qui requièrent
+toutes une authentification préalable.
+
+\begin{figure}[H]\centering
+  % \includegraphics[width=\textwidth]{images/usecase_global.png}
+  \ph[\textwidth]{[ Diagramme de cas d'utilisation global (voir fichier usecase.drawio) ]}
+  \caption{Diagramme de cas d'utilisation global}\label{fig:uc-global}
+\end{figure}
+
+\section{Raffinement des cas d'utilisation}
+À partir du diagramme de cas d'utilisation de la figure~\ref{fig:uc-global}, nous détaillons
+ci-dessous un cas d'utilisation représentatif par acteur, à l'aide de descriptions textuelles
+structurées : « S'authentifier » (cas commun), « Demander une inscription » (participant),
+« Créer une session » (organisateur) et « Valider les inscriptions » (administrateur).
+
+\subsection{Cas d'utilisation « S'authentifier »}
+\begin{table}[H]\centering\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|p{3.4cm}|p{10.3cm}|}\hline
+\rowcolor{gray!15}\textbf{Élément} & \textbf{Description} \\ \hline
+Cas d'utilisation & S'authentifier \\ \hline
+Acteurs & Participant, Organisateur, Administrateur \\ \hline
+Pré-condition & L'utilisateur possède un compte valide dans Keycloak. \\ \hline
+Post-condition & L'utilisateur est authentifié et redirigé vers son espace selon son rôle. \\ \hline
+Scénario nominal &
+1. L'utilisateur accède à la plateforme. \newline
+2. Le système le redirige vers la page de connexion Keycloak. \newline
+3. L'utilisateur saisit ses identifiants. \newline
+4. Keycloak valide les identifiants et délivre un jeton JWT. \newline
+5. Le système résout le rôle effectif et affiche l'espace correspondant. \\ \hline
+Scénario alternatif &
+3.a. Les identifiants sont incorrects : Keycloak affiche un message d'erreur et invite
+l'utilisateur à réessayer. \\ \hline
+\end{tabular}
+\caption{Description du cas d'utilisation « S'authentifier »}\label{tab:uc-auth}
+\end{table}
+
+\subsection{Cas d'utilisation « Demander une inscription »}
+\begin{table}[H]\centering\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|p{3.4cm}|p{10.3cm}|}\hline
+\rowcolor{gray!15}\textbf{Élément} & \textbf{Description} \\ \hline
+Cas d'utilisation & Demander une inscription \\ \hline
+Acteur & Participant \\ \hline
+Pré-condition & Le participant est authentifié ; la session est publiée et dispose de places. \\ \hline
+Post-condition & Une demande d'inscription au statut « en attente » est créée. \\ \hline
+Scénario nominal &
+1. Le participant consulte le détail d'une session. \newline
+2. Il clique sur « Demander une inscription ». \newline
+3. Le système enregistre la demande avec le statut \textit{PENDING}. \newline
+4. Une notification (courriel + in-app) confirme la réception de la demande. \\ \hline
+Scénario alternatif &
+2.a. La session est complète : le système désactive l'action et informe le participant. \newline
+3.a. Le participant est déjà inscrit : le système empêche le doublon. \\ \hline
+\end{tabular}
+\caption{Description du cas d'utilisation « Demander une inscription »}\label{tab:uc-ins}
+\end{table}
+
+\subsection{Cas d'utilisation « Créer une session »}
+\begin{table}[H]\centering\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|p{3.4cm}|p{10.3cm}|}\hline
+\rowcolor{gray!15}\textbf{Élément} & \textbf{Description} \\ \hline
+Cas d'utilisation & Créer une session \\ \hline
+Acteur & Organisateur \\ \hline
+Pré-condition & L'organisateur est authentifié. \\ \hline
+Post-condition & Une session au statut « en attente de modération » est créée. \\ \hline
+Scénario nominal &
+1. L'organisateur ouvre le formulaire de création de session. \newline
+2. Il renseigne les informations (titre, description, date, lieu, type, mode, places). \newline
+3. Il valide le formulaire. \newline
+4. Le système enregistre la session au statut \textit{PENDING} et notifie l'administrateur. \\ \hline
+Scénario alternatif &
+3.a. Des champs obligatoires sont manquants : le système signale les erreurs de saisie. \\ \hline
+\end{tabular}
+\caption{Description du cas d'utilisation « Créer une session »}\label{tab:uc-crea}
+\end{table}
+
+\subsection{Cas d'utilisation « Valider les inscriptions »}
+\begin{table}[H]\centering\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|p{3.4cm}|p{10.3cm}|}\hline
+\rowcolor{gray!15}\textbf{Élément} & \textbf{Description} \\ \hline
+Cas d'utilisation & Valider les inscriptions \\ \hline
+Acteur & Administrateur \\ \hline
+Pré-condition & Il existe au moins une demande d'inscription en attente. \\ \hline
+Post-condition & La demande passe au statut « confirmée » ou « refusée ». \\ \hline
+Scénario nominal &
+1. L'administrateur consulte la liste des inscriptions en attente. \newline
+2. Il sélectionne une demande et clique sur « Valider ». \newline
+3. Le système met à jour le statut en \textit{CONFIRMED} et décrémente les places. \newline
+4. Une notification informe le participant de la confirmation. \\ \hline
+Scénario alternatif &
+2.a. L'administrateur clique sur « Refuser » : le statut passe à \textit{REJECTED} et le
+participant en est informé. \\ \hline
+\end{tabular}
+\caption{Description du cas d'utilisation « Valider les inscriptions »}\label{tab:uc-val}
+\end{table}
+
+\section{Backlog du produit}
+Le backlog du produit recense l'ensemble des exigences sous forme de \textit{user stories},
+avec leur priorité (MoSCoW) et une estimation en points. Le tableau suivant en présente les
+principaux éléments.
+
+\renewcommand{\arraystretch}{1.2}
+\begin{longtable}{|p{0.8cm}|p{9.7cm}|p{2cm}|p{1.4cm}|}
+\caption{Extrait du backlog du produit}\label{tab:backlog}\\
+\hline
+\rowcolor{gray!15}\textbf{ID} & \textbf{User story} & \textbf{Priorité} & \textbf{Est.} \\ \hline
+\endfirsthead
+\multicolumn{4}{c}{\tablename\ \thetable\ -- \textit{suite}}\\
+\hline
+\rowcolor{gray!15}\textbf{ID} & \textbf{User story} & \textbf{Priorité} & \textbf{Est.} \\ \hline
+\endhead
+US1 & En tant qu'utilisateur, je veux m'authentifier afin d'accéder à mon espace. & Must & 5 \\ \hline
+US2 & En tant qu'utilisateur, je veux gérer mon profil afin de tenir mes informations à jour. & Should & 3 \\ \hline
+US3 & En tant qu'administrateur, je veux gérer les collaborateurs afin de contrôler les accès. & Must & 8 \\ \hline
+US4 & En tant qu'administrateur, je veux attribuer des rôles afin de définir les permissions. & Must & 5 \\ \hline
+US5 & En tant qu'organisateur, je veux créer une session afin de la proposer au catalogue. & Must & 8 \\ \hline
+US6 & En tant qu'organisateur, je veux gérer mes sessions afin de les maintenir à jour. & Must & 5 \\ \hline
+US7 & En tant qu'administrateur, je veux modérer les sessions afin de contrôler leur publication. & Must & 5 \\ \hline
+US8 & En tant que participant, je veux consulter le catalogue afin de trouver une session. & Must & 5 \\ \hline
+US9 & En tant que participant, je veux demander une inscription afin de réserver ma place. & Must & 8 \\ \hline
+US10 & En tant qu'administrateur, je veux valider les inscriptions afin de maîtriser les places. & Must & 8 \\ \hline
+US11 & En tant que participant, je veux recevoir des notifications afin de suivre mes demandes. & Must & 5 \\ \hline
+US12 & En tant que participant, je veux télécharger mon certificat afin d'attester ma participation. & Must & 8 \\ \hline
+US13 & En tant qu'organisateur, je veux pointer les présences afin de suivre la participation. & Should & 5 \\ \hline
+US14 & En tant qu'administrateur, je veux diffuser des messages afin de communiquer largement. & Should & 5 \\ \hline
+US15 & En tant qu'utilisateur, je veux dialoguer avec un assistant afin d'être guidé. & Could & 8 \\ \hline
+US16 & En tant que participant, je veux publier un avis afin d'évaluer une session. & Could & 3 \\ \hline
+US17 & En tant qu'administrateur, je veux consulter des tableaux de bord afin de piloter l'activité. & Should & 8 \\ \hline
+\end{longtable}
+
+\section{Planification des releases et des sprints}
+Le développement a été organisé en deux \textbf{releases}, chacune composée de trois
+\textbf{sprints}. Cette planification permet de livrer d'abord le cœur fonctionnel (catalogue,
+inscriptions, validation), puis les fonctionnalités à valeur ajoutée (certificats,
+communication, IA, supervision).
+
+\begin{table}[H]\centering\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{2.4cm}|p{2.2cm}|p{8.6cm}|}\hline
+\rowcolor{gray!15}\textbf{Release} & \textbf{Sprint} & \textbf{Objectif principal} \\ \hline
+\multirow{3}{*}{Release 1}
+ & Sprint 1 & Authentification et gestion des utilisateurs (US1, US2, US3, US4). \\ \cline{2-3}
+ & Sprint 2 & Gestion du catalogue des sessions (US5, US6, US7). \\ \cline{2-3}
+ & Sprint 3 & Inscriptions et workflow de validation (US8, US9, US10, US11). \\ \hline
+\multirow{3}{*}{Release 2}
+ & Sprint 4 & Certificats et notifications (US12, US13). \\ \cline{2-3}
+ & Sprint 5 & Communication et assistant intelligent (US14, US15, US16). \\ \cline{2-3}
+ & Sprint 6 & Tableau de bord, tests et déploiement (US17). \\ \hline
+\end{tabular}
+\caption{Planification des releases et des sprints}\label{tab:planning}
+\end{table}
+
+\section*{Conclusion}
+Ce chapitre a permis de formaliser les besoins de la plateforme : identification des acteurs,
+besoins fonctionnels et non fonctionnels, cas d'utilisation raffinés, backlog du produit et
+planification des sprints. Ces éléments constituent le point de départ de la phase de
+conception, objet du chapitre suivant.
+\clearpage
+
+%############################################################################
+%  CHAPITRE 3
+%############################################################################
+\chapter{Conception}
+\minitoc
+\vspace{0.6cm}
+
+\section*{Introduction}
+La phase de conception traduit les besoins spécifiés en une architecture logicielle et un
+modèle de données cohérents. Nous présentons d'abord la conception architecturale de la
+solution (architecture microservices et ses composants), puis la conception détaillée
+(diagramme de classes, diagrammes de séquence et d'états), et enfin la conception de la base
+de données.
+
+\section{Conception architecturale}
+
+\subsection{Choix d'une architecture microservices}
+Pour répondre aux exigences de maintenabilité, de scalabilité et de découplage, nous avons
+retenu une architecture en \textbf{microservices}. Contrairement à une architecture
+monolithique, où l'ensemble des fonctionnalités est regroupé dans une seule application, cette
+approche décompose le système en un ensemble de services autonomes, chacun responsable d'un
+domaine métier précis, communiquant entre eux via des interfaces bien définies (API REST et
+messagerie asynchrone).
+
+Cette architecture présente plusieurs avantages : chaque service peut être développé, déployé
+et mis à l'échelle indépendamment ; une panne d'un service n'entraîne pas nécessairement
+l'arrêt de l'ensemble ; et l'évolution du système est facilitée par le découplage.
+
+\begin{figure}[H]\centering
+  % \includegraphics[width=\textwidth]{images/architecture.png}
+  \ph[\textwidth]{[ Architecture microservices de la plateforme ]}
+  \caption{Architecture microservices de la plateforme}\label{fig:archi}
+\end{figure}
+
+\subsection{Les composants de l'architecture}
+L'architecture de la plateforme s'articule autour des composants suivants :
+
+\begin{itemize}[leftmargin=1.2cm]
+  \item \textbf{Config Server} (\textit{Spring Cloud Config}) : serveur de configuration
+  centralisée. Il fournit à chaque service sa configuration au démarrage, garantissant la
+  cohérence et facilitant la gestion des paramètres.
+  \item \textbf{Discovery Service} (\textit{Eureka}) : registre de services. Chaque
+  microservice s'y enregistre au démarrage, ce qui permet la découverte dynamique des services
+  et l'équilibrage de charge sans configuration statique des adresses.
+  \item \textbf{API Gateway} (\textit{Spring Cloud Gateway}) : point d'entrée unique de toutes
+  les requêtes du front-end. Elle assure le routage vers les services, la validation des
+  jetons de sécurité et le contrôle d'accès par rôle.
+  \item \textbf{User Service} : gestion des collaborateurs, de leurs profils et de leurs rôles.
+  \item \textbf{Event Service} : gestion du catalogue des sessions et de leur cycle de vie.
+  \item \textbf{Registration Service} : gestion des inscriptions, du workflow de validation et
+  de la génération des certificats.
+  \item \textbf{Notification Service} : envoi des notifications par courriel et in-app, à
+  l'écoute d'une file de messages.
+  \item \textbf{Feedback Service} : collecte et gestion des avis des participants.
+  \item \textbf{Ticket Service} : génération et vérification des billets (QR codes).
+  \item \textbf{AI Service} : service d'assistant intelligent s'appuyant sur un modèle de
+  langage.
+  \item \textbf{Keycloak} : serveur d'authentification et de gestion des identités (OAuth2 /
+  OpenID Connect).
+  \item \textbf{RabbitMQ} : courtier de messages assurant la communication asynchrone entre
+  les services (notamment pour les notifications).
+  \item \textbf{Bases de données} : PostgreSQL (données relationnelles des utilisateurs) et
+  MongoDB (données documentaires des sessions, inscriptions et notifications).
+\end{itemize}
+
+\subsection{Sécurité de la passerelle}
+La passerelle applique une défense en profondeur : toute requête est validée (signature et
+expiration du jeton) avant d'être routée, et les rôles issus du jeton Keycloak sont convertis
+en autorités Spring afin d'appliquer un contrôle d'accès par rôle. L'extrait de code suivant
+illustre la conversion des rôles du \textit{realm} Keycloak en autorités Spring.
+
+\begin{lstlisting}[language=Java,caption={Conversion des rôles Keycloak en autorités Spring (API Gateway)},label={lst:roles}]
+private Converter<Jwt, Mono<AbstractAuthenticationToken>> keycloakRolesConverter() {
+    JwtGrantedAuthoritiesConverter scopes = new JwtGrantedAuthoritiesConverter();
+    JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+    converter.setJwtGrantedAuthoritiesConverter(jwt -> {
+        Collection<GrantedAuthority> authorities = new HashSet<>(scopes.convert(jwt));
+        Map<String, Object> realmAccess = jwt.getClaim("realm_access");
+        if (realmAccess != null && realmAccess.get("roles") instanceof Collection<?> roles) {
+            authorities.addAll(roles.stream()
+                    .map(r -> new SimpleGrantedAuthority("ROLE_" + String.valueOf(r).toUpperCase()))
+                    .collect(Collectors.toSet()));
+        }
+        return authorities;
+    });
+    return new ReactiveJwtAuthenticationConverterAdapter(converter);
+}
+\end{lstlisting}
+
+\section{Conception détaillée}
+
+\subsection{Diagramme de classes global}
+Le diagramme de classes global décrit la structure statique du système : les entités métier,
+leurs attributs et les relations qui les lient. Les entités principales sont \texttt{User},
+\texttt{Event}, \texttt{Registration}, \texttt{Feedback} et \texttt{InAppMessage}, complétées
+par des énumérations décrivant les rôles, les types, les modes et les statuts.
+
+\begin{figure}[H]\centering
+  % \includegraphics[width=\textwidth]{images/class_global.png}
+  \ph[\textwidth]{[ Diagramme de classes global (voir fichier classe.drawio) ]}
+  \caption{Diagramme de classes global}\label{fig:cd-global}
+\end{figure}
+
+\subsection{Diagramme de séquence « Demander une inscription »}
+Le diagramme de séquence suivant illustre les interactions entre les composants lors d'une
+demande d'inscription : le participant émet la requête via le front-end, la passerelle la
+route vers le service d'inscription, qui persiste la demande et publie un message sur la file
+RabbitMQ ; le service de notification consomme ce message et envoie la confirmation.
+
+\begin{figure}[H]\centering
+  % \includegraphics[width=\textwidth]{images/seq_inscription.png}
+  \ph[\textwidth]{[ Diagramme de séquence « Demander une inscription » ]}
+  \caption{Diagramme de séquence « Demander une inscription »}\label{fig:seq-ins}
+\end{figure}
+
+\subsection{Diagramme de séquence « Valider une inscription »}
+\begin{figure}[H]\centering
+  % \includegraphics[width=\textwidth]{images/seq_validation.png}
+  \ph[\textwidth]{[ Diagramme de séquence « Valider une inscription » ]}
+  \caption{Diagramme de séquence « Valider une inscription »}\label{fig:seq-val}
+\end{figure}
+
+\subsection{Diagramme d'états d'une inscription}
+Une inscription suit un cycle de vie précis, depuis sa création jusqu'à sa confirmation, son
+refus ou son annulation. Le diagramme d'états suivant modélise ces transitions.
+
+\begin{figure}[H]\centering
+  % \includegraphics[width=0.85\textwidth]{images/etat_inscription.png}
+  \ph[0.85\textwidth]{[ Diagramme d'états d'une inscription : PENDING -> CONFIRMED / REJECTED / CANCELLED ]}
+  \caption{Diagramme d'états d'une inscription}\label{fig:etat-ins}
+\end{figure}
+
+\subsection{Diagramme d'états d'une session}
+De même, une session soumise par un organisateur passe par un processus de modération avant
+d'être publiée au catalogue.
+
+\begin{figure}[H]\centering
+  % \includegraphics[width=0.85\textwidth]{images/etat_session.png}
+  \ph[0.85\textwidth]{[ Diagramme d'états d'une session : PENDING -> APPROVED / REJECTED ]}
+  \caption{Diagramme d'états d'une session}\label{fig:etat-session}
+\end{figure}
+
+\section{Conception de la base de données}
+La plateforme adopte une approche de persistance polyglotte : chaque service gère sa propre
+base de données, conformément au principe d'indépendance des microservices. Les données
+relationnelles des utilisateurs sont stockées dans PostgreSQL, tandis que les données
+documentaires (sessions, inscriptions, notifications) sont stockées dans MongoDB.
+
+\begin{table}[H]\centering\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{3.6cm}|p{3.2cm}|p{6.4cm}|}\hline
+\rowcolor{gray!15}\textbf{Collection / Table} & \textbf{Base} & \textbf{Contenu} \\ \hline
+\texttt{users} & PostgreSQL & Comptes, profils et rôles des collaborateurs. \\ \hline
+\texttt{events} & MongoDB & Sessions du catalogue et leur statut. \\ \hline
+\texttt{registrations} & MongoDB & Inscriptions, statuts et données du billet. \\ \hline
+\texttt{feedbacks} & MongoDB & Avis (note et commentaire) des participants. \\ \hline
+\texttt{notifications} & MongoDB & Messages in-app reçus par les utilisateurs. \\ \hline
+\end{tabular}
+\caption{Organisation de la persistance des données}\label{tab:db}
+\end{table}
+
+\section*{Conclusion}
+Ce chapitre a présenté la conception de la solution, tant sur le plan architectural
+(microservices, passerelle, sécurité) que détaillé (classes, séquences, états) et sur celui de
+la persistance des données. Ces choix de conception guident la phase de réalisation, décrite
+dans les deux chapitres suivants.
+\clearpage
+
+%############################################################################
+%  CHAPITRE 4
+%############################################################################
+\chapter{Réalisation de la première release}
+\minitoc
+\vspace{0.6cm}
+
+\section*{Introduction}
+Ce chapitre est consacré à la réalisation de la première release. Nous présentons d'abord
+l'environnement de travail (matériel, logiciels, langages et frameworks) ainsi que
+l'architecture applicative mise en œuvre. Nous détaillons ensuite le déroulement des trois
+premiers sprints, en illustrant le résultat par des captures d'écran de l'application.
+
+\section{Environnement de travail}
+
+\subsection{Environnement matériel}
+Le développement a été réalisé sur un poste de travail disposant des caractéristiques
+suivantes : processeur multi-cœurs, mémoire vive de 16 Go et système d'exploitation Windows.
+Cette configuration permet d'exécuter simultanément l'ensemble des conteneurs de la plateforme
+en environnement de développement.
+
+\subsection{Environnement logiciel}
+Le tableau suivant récapitule les principaux outils et technologies utilisés.
+
+\begin{table}[H]\centering\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{3.6cm}|p{10.2cm}|}\hline
+\rowcolor{gray!15}\textbf{Technologie / Outil} & \textbf{Rôle} \\ \hline
+\textbf{Angular} & Framework front-end pour la construction de l'interface utilisateur. \\ \hline
+\textbf{Spring Boot} & Framework back-end pour le développement des microservices. \\ \hline
+\textbf{Spring Cloud} & Composants pour l'architecture répartie (Gateway, Eureka, Config). \\ \hline
+\textbf{Keycloak} & Serveur d'authentification et de gestion des identités (OAuth2 / OIDC). \\ \hline
+\textbf{PostgreSQL} & Système de gestion de base de données relationnelle. \\ \hline
+\textbf{MongoDB} & Base de données documentaire (NoSQL). \\ \hline
+\textbf{RabbitMQ} & Courtier de messages pour la communication asynchrone. \\ \hline
+\textbf{Docker} & Conteneurisation et orchestration des services (Docker Compose). \\ \hline
+\textbf{OpenShift} & Plateforme cloud d'orchestration (Kubernetes) pour le déploiement. \\ \hline
+\textbf{Google Gemini} & Modèle de langage utilisé par l'assistant intelligent. \\ \hline
+\textbf{Maven} & Outil de construction et de gestion des dépendances Java. \\ \hline
+\textbf{Git} & Système de gestion de versions du code source. \\ \hline
+\textbf{Visual Studio Code / IntelliJ} & Environnements de développement intégrés. \\ \hline
+\end{tabular}
+\caption{Environnement logiciel du projet}\label{tab:env}
+\end{table}
+
+\subsection{Langages de programmation}
+\begin{itemize}[leftmargin=1.2cm]
+  \item \textbf{Java} : langage utilisé pour l'ensemble des microservices back-end.
+  \item \textbf{TypeScript} : langage utilisé pour le développement front-end avec Angular.
+  \item \textbf{HTML / CSS} : structuration et mise en forme des interfaces.
+\end{itemize}
+
+\subsection{Architecture applicative et communication}
+Les échanges entre le front-end et le back-end s'effectuent via des API REST exposées par la
+passerelle. La communication asynchrone repose sur RabbitMQ : lorsqu'un événement métier se
+produit (inscription, confirmation, etc.), un message est publié sur un \textit{exchange} et
+routé vers une file consommée par le service de notification. L'extrait suivant présente la
+configuration de la file de messages.
+
+\begin{lstlisting}[language=Java,caption={Configuration RabbitMQ du service de notification},label={lst:rabbit}]
+@Configuration
+public class RabbitMQConfig {
+    public static final String QUEUE_NAME = "notification.queue";
+    public static final String EXCHANGE_NAME = "event.exchange";
+    public static final String ROUTING_KEY = "notification.routing.key";
+
+    @Bean public Queue queue() { return new Queue(QUEUE_NAME, true); }
+    @Bean public TopicExchange exchange() { return new TopicExchange(EXCHANGE_NAME); }
+    @Bean public Binding binding(Queue queue, TopicExchange exchange) {
+        return BindingBuilder.bind(queue).to(exchange).with(ROUTING_KEY);
+    }
+}
+\end{lstlisting}
+
+\subsection{Aperçu de l'environnement technique}
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Planche des logos des technologies : Angular, Spring Boot, Spring Cloud, Keycloak, MongoDB, PostgreSQL, RabbitMQ, MailHog, Docker, OpenShift, Maven, Git ]}
+  \caption{Ensemble des technologies et outils mobilisés pour le développement de la plateforme}\label{fig:env-tech}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Console web Eureka listant les instances UP : api-gateway, user, event, registration, notification, ticket, feedback, ai ]}
+  \caption{Tableau de bord Eureka affichant les microservices enregistrés}\label{fig:env-eureka}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Console d'administration RabbitMQ : files de notifications, exchanges et connexions actifs ]}
+  \caption{Interface de gestion RabbitMQ (messagerie asynchrone)}\label{fig:env-rabbit}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Interface web MailHog : liste des courriels de notification interceptés (objet, expéditeur, aperçu) ]}
+  \caption{Boîte de réception MailHog interceptant les courriels de la plateforme}\label{fig:env-mailhog}
+\end{figure}
+
+\section{Sprint 1 : Authentification et gestion des utilisateurs}
+
+\subsection{Objectif du sprint}
+Ce premier sprint met en place les fondations de la plateforme : l'authentification
+centralisée via Keycloak, la résolution des rôles et la gestion des collaborateurs par
+l'administrateur.
+
+\subsection{Sprint Backlog}
+\begin{table}[H]\centering\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|p{1cm}|p{10.5cm}|p{1.6cm}|}\hline
+\rowcolor{gray!15}\textbf{ID} & \textbf{Tâche} & \textbf{Statut} \\ \hline
+T1 & Configurer le realm Keycloak et les clients OAuth2. & Terminé \\ \hline
+T2 & Intégrer l'authentification côté front-end (keycloak-angular). & Terminé \\ \hline
+T3 & Résoudre le rôle effectif par priorité (Admin > Organisateur > Participant). & Terminé \\ \hline
+T4 & Développer la gestion des utilisateurs (CRUD) côté administrateur. & Terminé \\ \hline
+T5 & Implémenter l'attribution et la modification des rôles. & Terminé \\ \hline
+\end{tabular}
+\caption{Sprint Backlog du Sprint 1}\label{tab:sb1}
+\end{table}
+
+\subsection{Réalisation}
+L'authentification et la gestion des identités reposent sur \textbf{Keycloak}, un serveur
+de gestion des identités et des accès (IAM) que nous avons intégré comme fournisseur
+d'identité central de la plateforme.
+
+\subsubsection{Configuration du serveur Keycloak}
+Nous avons configuré un \textit{realm} dédié, \texttt{pfe-events}, qui regroupe l'ensemble des
+utilisateurs, des rôles et des clients de l'application. Deux clients y sont déclarés :
+
+\begin{table}[H]\centering\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{3.8cm}|p{2.6cm}|p{7cm}|}\hline
+\rowcolor{gray!15}\textbf{Client} & \textbf{Type} & \textbf{Rôle} \\ \hline
+\texttt{pfe-events-frontend} & Public (SPA) & Authentifie l'application Angular via le flux
+\textit{Authorization Code} avec PKCE. \\ \hline
+\texttt{pfe-events-api} & Confidentiel & Représente les services back-end (serveurs de
+ressources) qui valident les jetons. \\ \hline
+\end{tabular}
+\caption{Clients Keycloak du realm pfe-events}\label{tab:kc-clients}
+\end{table}
+
+Trois rôles applicatifs sont définis : \texttt{ADMIN}, \texttt{ORGANISATEUR} et
+\texttt{PARTICIPANT}. Le realm attribuant par défaut le rôle \textit{Participant} à tout
+nouvel utilisateur, le front-end résout le \textbf{rôle effectif} par ordre de priorité
+(\textsc{Admin} > \textsc{Organisateur} > \textsc{Participant}), afin de garantir une stricte
+séparation des vues.
+
+\subsubsection{Flux d'authentification (OAuth2 / OpenID Connect)}
+Le processus s'appuie sur les standards \textbf{OAuth2} et \textbf{OpenID Connect} :
+\begin{enumerate}[leftmargin=1.2cm]
+  \item l'utilisateur est redirigé vers la page de connexion Keycloak (thème LINSOFT) ;
+  \item après authentification, Keycloak délivre un \textbf{jeton JWT} signé ;
+  \item ce jeton accompagne chaque requête ; l'\textbf{API Gateway} en valide la signature et
+  l'expiration, puis convertit les rôles du realm en autorités Spring ;
+  \item chaque microservice re-valide le jeton (défense en profondeur).
+\end{enumerate}
+À la première connexion, le compte du collaborateur est automatiquement \textbf{provisionné}
+dans le service utilisateur.
+
+\subsubsection{Personnalisation de la page de connexion}
+Un \textbf{thème de connexion personnalisé} aux couleurs de LINSOFT (logo, arrière-plan,
+charte graphique rouge) a été développé et intégré à Keycloak, afin d'offrir une expérience de
+connexion cohérente avec l'identité de l'entreprise.
+
+\begin{figure}[H]\centering
+  \ph[0.72\textwidth]{[ Capture : page de connexion Keycloak (thème LINSOFT) ]}
+  \caption{Page de connexion personnalisée LINSOFT}\label{fig:kc-login}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Capture : console d'administration Keycloak (realm, rôles, clients) ]}
+  \caption{Console d'administration Keycloak}\label{fig:kc-admin}
+\end{figure}
+
+\subsubsection{Gestion des collaborateurs}
+L'administrateur dispose d'une interface de gestion des collaborateurs (consultation,
+création, modification, suppression) et peut y attribuer ou modifier les rôles.
+
+\begin{figure}[H]\centering
+  \ph[0.9\textwidth]{[ Capture : gestion des collaborateurs (administrateur) ]}
+  \caption{Interface de gestion des collaborateurs}\label{fig:users}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Onglet Roles du realm pfe-events : rôles Participant, Organisateur, Administrateur ]}
+  \caption{Définition des rôles applicatifs au niveau du realm Keycloak}\label{fig:kc-roles}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Formulaire « Add user » de Keycloak : username, email, prénom, nom, activation ]}
+  \caption{Création d'un utilisateur dans la console d'administration Keycloak}\label{fig:kc-adduser}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Menu d'affectation de rôle (Participant / Organisateur / Administrateur) sur une ligne collaborateur ]}
+  \caption{Attribution et modification du rôle d'un collaborateur}\label{fig:role-assign}
+\end{figure}
+
+\section{Sprint 2 : Gestion du catalogue des sessions}
+
+\subsection{Objectif du sprint}
+Ce sprint permet aux organisateurs de créer et de gérer leurs sessions, et à l'administrateur
+de les modérer avant publication au catalogue.
+
+\subsection{Sprint Backlog}
+\begin{table}[H]\centering\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|p{1cm}|p{10.5cm}|p{1.6cm}|}\hline
+\rowcolor{gray!15}\textbf{ID} & \textbf{Tâche} & \textbf{Statut} \\ \hline
+T6 & Développer le formulaire de création de session. & Terminé \\ \hline
+T7 & Gérer les types, modes et catégories de sessions. & Terminé \\ \hline
+T8 & Développer la modération des sessions (approuver / refuser). & Terminé \\ \hline
+T9 & Afficher le catalogue des sessions publiées. & Terminé \\ \hline
+\end{tabular}
+\caption{Sprint Backlog du Sprint 2}\label{tab:sb2}
+\end{table}
+
+\subsection{Réalisation}
+\begin{figure}[H]\centering
+  \ph[0.9\textwidth]{[ Capture : formulaire de création d'une session ]}
+  \caption{Formulaire de création d'une session}\label{fig:create-event}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.9\textwidth]{[ Capture : catalogue des sessions ]}
+  \caption{Catalogue des sessions}\label{fig:catalogue}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Page « Mes sessions » : sessions créées, badges de statut (En attente / Approuvée / Refusée), actions Éditer et Supprimer ]}
+  \caption{Liste « Mes sessions » de l'organisateur avec les statuts de modération}\label{fig:my-sessions}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Écran d'édition : formulaire pré-rempli (titre, type, mode, places, catégorie, niveau) prêt à être modifié ]}
+  \caption{Édition d'une session existante par l'organisateur}\label{fig:edit-session}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Page de modération : sessions en attente avec leurs détails et les boutons Approuver et Refuser ]}
+  \caption{Interface de modération des sessions (administrateur)}\label{fig:moderation}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Détail d'une session : description, type, mode, catégorie, niveau, certification, places, bouton d'inscription ]}
+  \caption{Page de détail d'une session consultée par le participant}\label{fig:session-detail}
+\end{figure}
+
+\section{Sprint 3 : Inscriptions et workflow de validation}
+
+\subsection{Objectif du sprint}
+Ce sprint implémente le cœur métier de la plateforme : la demande d'inscription par le
+participant et le workflow de validation par l'administrateur, avec notifications.
+
+\subsection{Sprint Backlog}
+\begin{table}[H]\centering\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|p{1cm}|p{10.5cm}|p{1.6cm}|}\hline
+\rowcolor{gray!15}\textbf{ID} & \textbf{Tâche} & \textbf{Statut} \\ \hline
+T10 & Développer la demande d'inscription (statut PENDING). & Terminé \\ \hline
+T11 & Développer la validation / le refus des inscriptions. & Terminé \\ \hline
+T12 & Gérer la décrémentation des places disponibles. & Terminé \\ \hline
+T13 & Développer les onglets de suivi des statuts d'inscription. & Terminé \\ \hline
+\end{tabular}
+\caption{Sprint Backlog du Sprint 3}\label{tab:sb3}
+\end{table}
+
+\subsection{Réalisation}
+\begin{figure}[H]\centering
+  \ph[0.9\textwidth]{[ Capture : liste des inscriptions à valider (administrateur) ]}
+  \caption{Validation des inscriptions}\label{fig:validation}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.9\textwidth]{[ Capture : mes inscriptions et leurs statuts (participant) ]}
+  \caption{Suivi des inscriptions du participant}\label{fig:my-reg}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Détail d'une session avec le bouton rouge LINSOFT « Demander une inscription » ]}
+  \caption{Demande d'inscription depuis le détail d'une session}\label{fig:demande-insc}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Vue planning / calendrier des sessions disponibles côté participant ]}
+  \caption{Vue planning des sessions accessible au participant}\label{fig:planning}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Sous-onglets « Approuvées » et « Refusées » : historique des demandes traitées (participant, session) ]}
+  \caption{Traçabilité des demandes traitées (sous-onglets Approuvées / Refusées)}\label{fig:val-tabs}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Notification in-app affichée au participant après validation ou refus de sa demande ]}
+  \caption{Notification in-app indiquant le nouveau statut de l'inscription}\label{fig:notif-inapp}
+\end{figure}
+
+\section*{Conclusion}
+Cette première release a livré le cœur fonctionnel de la plateforme : authentification et
+gestion des utilisateurs, gestion du catalogue et workflow d'inscription. Le chapitre suivant
+présente la seconde release, dédiée aux fonctionnalités à valeur ajoutée et au déploiement.
+\clearpage
+
+%############################################################################
+%  CHAPITRE 5
+%############################################################################
+\chapter{Réalisation de la seconde release}
+\minitoc
+\vspace{0.6cm}
+
+\section*{Introduction}
+Ce chapitre présente la seconde release, qui enrichit la plateforme des fonctionnalités à
+valeur ajoutée : la délivrance des certificats et les notifications, la communication et
+l'assistant intelligent, puis le tableau de bord, les tests et le déploiement.
+
+\section{Sprint 4 : Certificats et notifications}
+
+\subsection{Objectif du sprint}
+Ce sprint met en place la génération automatique des certificats de participation au format
+PDF, ainsi que le système de notifications par courriel et in-app déclenché par les événements
+métier.
+
+\subsection{Sprint Backlog}
+\begin{table}[H]\centering\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|p{1cm}|p{10.5cm}|p{1.6cm}|}\hline
+\rowcolor{gray!15}\textbf{ID} & \textbf{Tâche} & \textbf{Statut} \\ \hline
+T14 & Générer le certificat de participation en PDF. & Terminé \\ \hline
+T15 & Développer le service de notification à l'écoute de RabbitMQ. & Terminé \\ \hline
+T16 & Envoyer les courriels (confirmation, refus, rappel). & Terminé \\ \hline
+T17 & Persister et afficher les notifications in-app. & Terminé \\ \hline
+\end{tabular}
+\caption{Sprint Backlog du Sprint 4}\label{tab:sb4}
+\end{table}
+
+\subsection{Réalisation}
+Le service de notification consomme les messages de la file RabbitMQ. Pour chaque événement,
+il envoie un courriel formaté et persiste une notification in-app dans la boîte de réception du
+destinataire, comme le montre l'extrait suivant.
+
+\begin{lstlisting}[language=Java,caption={Traitement d'un message de notification (courriel + in-app)},label={lst:notiflistener}]
+@RabbitListener(queues = RabbitMQConfig.QUEUE_NAME)
+public void handle(String payload) {
+    try {
+        NotificationEvent evt = mapper.readValue(payload, NotificationEvent.class);
+        if (evt.getEmail() == null || evt.getEmail().isBlank()) return;
+        String subject = subjectFor(evt);
+        // 1) Email (MailHog en developpement)
+        emailService.sendHtml(evt.getEmail(), subject, htmlFor(evt));
+        // 2) Notification IN-APP dans la boite de reception du destinataire
+        messageRepository.save(new InAppMessage(evt.getEmail(), subject, plainFor(evt), "SYSTEM"));
+    } catch (Exception e) {
+        System.err.println("[Notification] Failed to process: " + e.getMessage());
+    }
+}
+\end{lstlisting}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Capture : certificat de participation (PDF) ]}
+  \caption{Certificat de participation}\label{fig:cert}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Capture : boîte de réception des notifications ]}
+  \caption{Boîte de réception des notifications}\label{fig:inbox}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Interface MailHog : liste des courriels (confirmation d'inscription, demande reçue, demande non retenue) ]}
+  \caption{Boîte de réception MailHog regroupant les notifications émises}\label{fig:mailhog-list}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Email ouvert dans MailHog : bandeau rouge LINSOFT, logo, message de confirmation, bouton d'action, pied de page ]}
+  \caption{Rendu HTML de l'email de confirmation (template LINSOFT)}\label{fig:email-render}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Panneau de détail d'un message de la messagerie interne (titre, corps, horodatage, marqué comme lu) ]}
+  \caption{Détail d'un message de la messagerie interne}\label{fig:msg-detail}
+\end{figure}
+
+\section{Sprint 5 : Communication et assistant intelligent}
+
+\subsection{Objectif du sprint}
+Ce sprint ajoute la diffusion de messages par l'administrateur, l'assistant intelligent
+(chatbot) et la publication d'avis par les participants.
+
+\subsection{Sprint Backlog}
+\begin{table}[H]\centering\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|p{1cm}|p{10.5cm}|p{1.6cm}|}\hline
+\rowcolor{gray!15}\textbf{ID} & \textbf{Tâche} & \textbf{Statut} \\ \hline
+T18 & Développer la diffusion de messages (administrateur). & Terminé \\ \hline
+T19 & Intégrer l'assistant intelligent basé sur un modèle de langage. & Terminé \\ \hline
+T20 & Développer la publication d'avis (note et commentaire). & Terminé \\ \hline
+\end{tabular}
+\caption{Sprint Backlog du Sprint 5}\label{tab:sb5}
+\end{table}
+
+\subsection{Réalisation}
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Capture : diffusion d'un message (administrateur) ]}
+  \caption{Diffusion d'un message aux participants}\label{fig:broadcast}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Capture : assistant intelligent (chatbot) ]}
+  \caption{Assistant intelligent de la plateforme}\label{fig:chatbot}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Carte « Une session » sélectionnée : liste déroulante de session et carte du nombre de destinataires ]}
+  \caption{Envoi d'une notification ciblée aux participants d'une session}\label{fig:com-target}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Formulaire de dépôt d'avis (participant) : sélecteur de note en étoiles et champ de commentaire ]}
+  \caption{Publication d'un avis par un participant (note et commentaire)}\label{fig:avis}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Encadré d'analyse IA en tête de la liste des avis : sentiment global (positif / neutre / négatif) et synthèse ]}
+  \caption{Analyse par intelligence artificielle des avis d'une session}\label{fig:ai-sentiment}
+\end{figure}
+
+\section{Sprint 6 : Tableau de bord, tests et déploiement}
+
+\subsection{Objectif du sprint}
+Ce dernier sprint met en place le tableau de bord de supervision, réalise les tests de la
+plateforme, puis procède à sa conteneurisation et à son déploiement sur le cloud
+\textbf{OpenShift}.
+
+\subsection{Sprint Backlog}
+\begin{table}[H]\centering\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|p{1cm}|p{10.5cm}|p{1.6cm}|}\hline
+\rowcolor{gray!15}\textbf{ID} & \textbf{Tâche} & \textbf{Statut} \\ \hline
+T21 & Développer le tableau de bord et les statistiques. & Terminé \\ \hline
+T22 & Réaliser les tests fonctionnels de bout en bout. & Terminé \\ \hline
+T23 & Conteneuriser les services (Docker) et déployer sur le cloud (OpenShift). & Terminé \\ \hline
+\end{tabular}
+\caption{Sprint Backlog du Sprint 6}\label{tab:sb6}
+\end{table}
+
+\subsection{Réalisation}
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Capture : tableau de bord de supervision ]}
+  \caption{Tableau de bord de supervision}\label{fig:dashboard}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Graphiques en barres : inscriptions par statut, événements par catégorie, utilisateurs par rôle, top événements ]}
+  \caption{Graphiques statistiques du tableau de bord}\label{fig:charts}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Barre d'export : boutons de téléchargement CSV (utilisateurs, événements, inscriptions) ]}
+  \caption{Export CSV des données du tableau de bord}\label{fig:export-csv}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Sortie d'exécution des tests unitaires et d'intégration : récapitulatif « BUILD SUCCESS » ]}
+  \caption{Exécution de la suite de tests des microservices}\label{fig:tests-run}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Docker Desktop : conteneurs des microservices, Keycloak, RabbitMQ, MailHog et bases de données à l'état Running ]}
+  \caption{Orchestration locale des conteneurs avec Docker}\label{fig:docker}
+\end{figure}
+
+\subsection{Tests}
+Afin de garantir la qualité et la fiabilité de la plateforme, plusieurs tests fonctionnels de
+bout en bout ont été réalisés. Le tableau suivant en présente une synthèse.
+
+\begin{table}[H]\centering\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{0.9cm}|p{7.5cm}|p{3cm}|p{1.8cm}|}\hline
+\rowcolor{gray!15}\textbf{N°} & \textbf{Scénario testé} & \textbf{Résultat attendu} & \textbf{Résultat} \\ \hline
+1 & Authentification avec identifiants valides & Accès accordé & OK \\ \hline
+2 & Accès à une route protégée sans jeton & Rejet (401) & OK \\ \hline
+3 & Accès administrateur par un participant & Rejet (403) & OK \\ \hline
+4 & Création d'une session par un organisateur & Session en attente & OK \\ \hline
+5 & Modération d'une session par l'administrateur & Session publiée & OK \\ \hline
+6 & Demande d'inscription par un participant & Demande en attente + notification & OK \\ \hline
+7 & Validation d'une inscription & Confirmation + courriel & OK \\ \hline
+8 & Diffusion d'un message par l'administrateur & Réception in-app + courriel & OK \\ \hline
+9 & Téléchargement d'un certificat & PDF généré & OK \\ \hline
+\end{tabular}
+\caption{Synthèse des tests réalisés}\label{tab:tests}
+\end{table}
+
+\subsection{Déploiement}
+
+\subsubsection{Conteneurisation avec Docker}
+Chaque microservice, ainsi que les composants d'infrastructure (Keycloak, RabbitMQ,
+PostgreSQL, MongoDB), a été \textbf{conteneurisé} à l'aide de Docker. Un fichier
+\textbf{Docker Compose} orchestre l'ensemble en environnement de développement et respecte
+l'ordre de démarrage requis (Config Server $\rightarrow$ Discovery $\rightarrow$ services
+métier $\rightarrow$ passerelle $\rightarrow$ front-end) au moyen de \textit{healthchecks} et
+de dépendances. Cette approche garantit un déploiement homogène et reproductible, indépendant
+de l'environnement hôte.
+
+\subsubsection{Déploiement sur le cloud OpenShift}
+Afin de valider le passage à l'échelle et l'exploitation en conditions réelles, la plateforme
+a été déployée sur \textbf{Red Hat OpenShift}, la plateforme d'orchestration de conteneurs
+d'entreprise basée sur Kubernetes. Le déploiement repose sur les objets suivants :
+
+\begin{table}[H]\centering\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{3.4cm}|p{10.3cm}|}\hline
+\rowcolor{gray!15}\textbf{Objet OpenShift} & \textbf{Rôle} \\ \hline
+\textbf{Deployment} & Décrit et maintient l'état désiré de chaque service (image, nombre de
+réplicas, sondes de démarrage et de vivacité). \\ \hline
+\textbf{Service} & Expose chaque composant en interne, résolu par nom DNS au sein du cluster. \\ \hline
+\textbf{Route} & Publie sur Internet, en HTTPS, le front-end, l'API Gateway et Keycloak. \\ \hline
+\textbf{ConfigMap} & Centralise la configuration partagée (découverte Eureka, bases de données,
+\textit{issuer} Keycloak). \\ \hline
+\textbf{Secret} & Stocke de façon sécurisée les identifiants sensibles (bases de données,
+messagerie). \\ \hline
+\end{tabular}
+\caption{Objets OpenShift utilisés pour le déploiement}\label{tab:os-objects}
+\end{table}
+
+Les \textbf{images} des microservices sont publiées sur un registre de conteneurs et tirées
+par le cluster lors du déploiement. La configuration propre à l'environnement (hôtes des
+bases, découverte des services, \textit{issuer} Keycloak public) est injectée par variables
+d'environnement, et l'authentification est assurée par un Keycloak déployé avec le
+\textbf{thème LINSOFT} intégré dans une image personnalisée. À l'issue du déploiement,
+l'ensemble des services est opérationnel et l'application est accessible via une
+\textbf{URL publique} sécurisée en HTTPS.
+
+\begin{figure}[H]\centering
+  \ph[0.9\textwidth]{[ Capture : pods de la plateforme en cours d'exécution sur OpenShift ]}
+  \caption{Pods de la plateforme déployés sur OpenShift}\label{fig:os-pods}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.9\textwidth]{[ Capture : application accessible via sa route publique OpenShift ]}
+  \caption{Application déployée sur OpenShift}\label{fig:os-app}
+\end{figure}
+
+\section*{Conclusion}
+Cette seconde release a enrichi la plateforme des fonctionnalités à forte valeur ajoutée
+(certificats, notifications, communication, assistant intelligent, tableau de bord) et a
+abouti à une solution testée et déployée. Le chapitre suivant dresse le bilan général du
+projet.
+\clearpage
+
+%############################################################################
+%  CONCLUSION GÉNÉRALE
+%############################################################################
+\chapter*{Conclusion générale et perspectives}
+\addcontentsline{toc}{chapter}{Conclusion générale et perspectives}
+\markboth{Conclusion générale et perspectives}{}
+
+Le projet présenté dans ce rapport avait pour objectif de concevoir et de développer une
+plateforme web centralisée dédiée à la gestion des formations et des événements du LinSoft
+Learning Center de la société LINSOFT. Il répondait à une problématique concrète : la
+dispersion des outils de gestion, l'absence d'un processus d'inscription maîtrisé et le
+caractère manuel de la communication et de la certification.
+
+Pour y répondre, nous avons suivi une démarche structurée. Après avoir situé le projet dans son
+cadre et étudié les solutions existantes, nous avons analysé et spécifié les besoins, puis
+conçu une architecture microservices moderne, sécurisée et évolutive. La réalisation, menée de
+façon itérative selon la méthodologie SCRUM et organisée en deux releases, a abouti à une
+plateforme fonctionnelle couvrant l'intégralité du cycle de vie des sessions : gestion du
+catalogue, workflow d'inscription avec validation, notifications automatiques, délivrance de
+certificats, communication de masse, assistant intelligent et tableaux de bord de supervision.
+
+Sur le plan technique, ce projet nous a permis de mettre en pratique et d'approfondir un
+ensemble de compétences : le développement d'applications réparties en microservices avec
+Spring Boot et Spring Cloud, la mise en œuvre d'une authentification centralisée avec Keycloak,
+la communication asynchrone via RabbitMQ, le développement d'interfaces modernes avec Angular,
+la conteneurisation avec Docker ainsi que le déploiement sur le cloud OpenShift. Il nous a
+également sensibilisé aux enjeux de
+sécurité, de séparation des responsabilités et de qualité logicielle.
+
+Au-delà des résultats obtenus, plusieurs perspectives d'évolution peuvent être envisagées afin
+d'enrichir la plateforme :
+
+\begin{itemize}[leftmargin=1.2cm]
+  \item le développement d'une \textbf{application mobile} native pour améliorer
+  l'accessibilité des participants ;
+  \item l'enrichissement de l'\textbf{assistant intelligent} par la connaissance directe du
+  catalogue et des inscriptions de l'utilisateur ;
+  \item l'exploitation du champ \textbf{département} pour l'affectation de formations
+  obligatoires par service ;
+  \item l'export des sessions au format \textbf{calendrier (.ics)} ;
+  \item la mise en place d'une chaîne d'\textbf{intégration et de déploiement continus}
+  (CI/CD) ;
+  \item l'ajout de \textbf{tableaux de bord analytiques} avancés (taux de complétion,
+  satisfaction, statistiques par technologie).
+\end{itemize}
+
+En conclusion, ce projet de fin d'études a constitué une expérience formatrice, tant sur le
+plan technique que méthodologique, et a abouti à une solution répondant aux besoins réels de
+l'organisme d'accueil, tout en ouvrant de nombreuses pistes d'amélioration.
+\clearpage
+
+%############################################################################
+%  BIBLIOGRAPHIE / WEBOGRAPHIE
+%############################################################################
+\begin{thebibliography}{99}
+\addcontentsline{toc}{chapter}{Bibliographie / Webographie}
+\markboth{Bibliographie / Webographie}{}
+
+\bibitem{linsoft} LINSOFT, \textit{Site officiel de LINSOFT}, \url{https://linsoft.com},
+consulté en 2026.
+\bibitem{learningcenter} LinSoft Learning Center, \textit{Centre de formation de LINSOFT},
+\url{https://training.linsoft.com}, consulté en 2026.
+\bibitem{redhat} Red Hat, \textit{Documentation officielle}, \url{https://www.redhat.com}.
+\bibitem{aws} Amazon Web Services, \textit{Documentation officielle},
+\url{https://aws.amazon.com}.
+\bibitem{spring} Spring, \textit{Spring Boot Reference Documentation},
+\url{https://spring.io/projects/spring-boot}.
+\bibitem{springcloud} Spring, \textit{Spring Cloud Documentation},
+\url{https://spring.io/projects/spring-cloud}.
+\bibitem{angular} Angular, \textit{Angular Documentation}, \url{https://angular.dev}.
+\bibitem{keycloak} Keycloak, \textit{Server Administration Guide},
+\url{https://www.keycloak.org/documentation}.
+\bibitem{rabbitmq} RabbitMQ, \textit{RabbitMQ Documentation}, \url{https://www.rabbitmq.com}.
+\bibitem{mongodb} MongoDB, \textit{MongoDB Manual}, \url{https://www.mongodb.com/docs}.
+\bibitem{docker} Docker, \textit{Docker Documentation}, \url{https://docs.docker.com}.
+\bibitem{scrum} Scrum.org, \textit{The Scrum Guide}, \url{https://www.scrum.org}.
+\bibitem{uml} OMG, \textit{Unified Modeling Language Specification},
+\url{https://www.omg.org/spec/UML}.
+\end{thebibliography}
+\clearpage
+
+%############################################################################
+%  RÉSUMÉ / ABSTRACT (quatrième de couverture)
+%############################################################################
+\thispagestyle{empty}
+\noindent{\large\bfseries Résumé}\\[0.3cm]
+\noindent Ce projet de fin d'études, réalisé au sein de la société LINSOFT, a pour objet la
+conception et le développement de « LINSOFT Learning Center », une plateforme web de gestion
+des formations et des événements. La solution centralise l'intégralité du cycle de vie des
+sessions : gestion du catalogue, workflow d'inscription avec validation, notifications
+automatiques, délivrance de certificats, communication et supervision. Elle repose sur une
+architecture microservices (Spring Boot, Spring Cloud), une authentification centralisée
+(Keycloak), une communication asynchrone (RabbitMQ), une interface Angular et un déploiement
+conteneurisé (Docker) et déployé sur le cloud OpenShift, le tout complété par un assistant
+intelligent.\\[0.3cm]
+\noindent\textbf{Mots clés :} microservices, Spring Boot, Angular, Keycloak, RabbitMQ, Docker, OpenShift,
+gestion de formations, intelligence artificielle.
+
+\vspace{1.2cm}
+\noindent{\large\bfseries Abstract}\\[0.3cm]
+\noindent This final year project, carried out at LINSOFT, focuses on the design and
+development of “LINSOFT Learning Center”, a web platform for managing trainings and events. The
+solution centralizes the entire lifecycle of sessions: catalog management, registration
+workflow with validation, automated notifications, certificate issuance, communication and
+supervision. It relies on a microservices architecture (Spring Boot, Spring Cloud), centralized
+authentication (Keycloak), asynchronous messaging (RabbitMQ), an Angular interface and a
+containerized deployment (Docker, OpenShift), complemented by an intelligent assistant.\\[0.3cm]
+\noindent\textbf{Keywords:} microservices, Spring Boot, Angular, Keycloak, RabbitMQ, Docker, OpenShift,
+training management, artificial intelligence.
+
+\end{document}

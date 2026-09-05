@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+      POM parent des microservices LINSOFT Learning Center.
+
+      Il hérite de spring-boot-starter-parent et les 10 services héritent de lui :
+      les versions, le BOM Spring Cloud, le BOM Testcontainers, la supervision
+      (Actuator + Prometheus) et toute la chaîne de test/qualité sont déclarés
+      UNE seule fois ici au lieu d'être recopiés dans chaque module.
+    -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.4</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>com.pfe.events</groupId>
+    <artifactId>backend-parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>Backend Parent POM</name>
+    <description>Parent POM for PFE Event Management Microservices</description>
+
+    <modules>
+        <module>config-service</module>
+        <module>discovery-service</module>
+        <module>api-gateway</module>
+        <module>user-service</module>
+        <module>event-service</module>
+        <module>registration-service</module>
+        <module>notification-service</module>
+        <module>ticket-service</module>
+        <module>feedback-service</module>
+        <module>ai-service</module>
+    </modules>
+
+    <properties>
+        <java.version>17</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <spring-cloud.version>2023.0.1</spring-cloud.version>
+        <springdoc.version>2.3.0</springdoc.version>
+        <!-- 1.20+ : négociation d'API et détection des contextes Docker Desktop
+             récents (Docker Engine 29.x). Les versions 1.19.x échouaient ici avec
+             « Could not find a valid Docker environment ». -->
+        <testcontainers.version>1.20.6</testcontainers.version>
+
+        <jacoco.version>0.8.12</jacoco.version>
+        <checkstyle.plugin.version>3.3.1</checkstyle.plugin.version>
+        <spotbugs.plugin.version>4.8.5.0</spotbugs.plugin.version>
+        <failsafe.version>3.2.5</failsafe.version>
+
+        <!-- Seuil de couverture des instructions, vérifié par `mvn verify`.
+             Relevé progressivement au fil de l'ajout des tests plutôt que fixé
+             haut d'emblée : un seuil inatteignable ne fait que pousser à
+             désactiver la vérification. -->
+        <jacoco.line.coverage>0.00</jacoco.line.coverage>
+
+        <!-- Analyse statique informative par défaut. La CI peut la rendre
+             bloquante via -Dcheckstyle.failOnViolation=true. -->
+        <checkstyle.failOnViolation>false</checkstyle.failOnViolation>
+        <spotbugs.failOnError>false</spotbugs.failOnError>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${testcontainers.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${springdoc.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!--
+          Supervision commune à TOUS les services.
+
+          Actuator manquait sur 7 services sur 10, alors que leurs Dockerfile
+          déclaraient déjà un HEALTHCHECK sur /actuator/health : la sonde
+          répondait 404 et ne prouvait donc rien. L'ajouter ici règle le
+          problème uniformément et rend possibles les sondes liveness/readiness
+          d'OpenShift.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <!-- Export des métriques au format Prometheus (/actuator/prometheus). -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+
+        <!-- Socle de test commun : JUnit 5, Mockito, AssertJ, MockMvc. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!--
+          Simulation de jetons JWT et de rôles dans les tests de contrôleur.
+          Indispensable pour vérifier réellement les règles d'autorisation
+          (un PARTICIPANT ne doit pas atteindre un endpoint ADMIN) plutôt que
+          de désactiver la sécurité pendant les tests.
+        -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${failsafe.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>${checkstyle.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.github.spotbugs</groupId>
+                    <artifactId>spotbugs-maven-plugin</artifactId>
+                    <version>${spotbugs.plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <!--
+              Séparation tests unitaires / tests d'intégration :
+                Surefire  -> *Test.java        (rapides, sans infrastructure)
+                Failsafe  -> *IT.java          (Testcontainers, Docker requis)
+              Permet `mvn test` en CI rapide et `mvn verify` pour la chaîne complète.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/*IT.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*IT.java</include>
+                    </includes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Couverture : rapports HTML + XML, et vérification du seuil. -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals><goal>prepare-agent</goal></goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals><goal>report</goal></goals>
+                    </execution>
+                    <execution>
+                        <id>check-coverage</id>
+                        <phase>verify</phase>
+                        <goals><goal>check</goal></goals>
+                        <configuration>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>INSTRUCTION</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>${jacoco.line.coverage}</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                            <excludes>
+                                <!-- Classes sans logique à couvrir. -->
+                                <exclude>**/*Application.class</exclude>
+                                <exclude>**/config/**</exclude>
+                                <exclude>**/dto/**</exclude>
+                                <exclude>**/entities/**</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <!--
+          Profil `quality` : analyse statique à la demande (et en CI), pour ne pas
+          alourdir le build local du quotidien.
+              mvn -Pquality verify
+        -->
+        <profile>
+            <id>quality</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-checkstyle-plugin</artifactId>
+                        <configuration>
+                            <!-- executionRootDirectory = dossier d'où `mvn` est lancé (backend/),
+                                 identique pour tous les modules du réacteur. -->
+                            <configLocation>${session.executionRootDirectory}/quality/checkstyle.xml</configLocation>
+                            <consoleOutput>true</consoleOutput>
+                            <failOnViolation>${checkstyle.failOnViolation}</failOnViolation>
+                            <violationSeverity>error</violationSeverity>
+                            <includeTestSourceDirectory>false</includeTestSourceDirectory>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>checkstyle</id>
+                                <phase>verify</phase>
+                                <goals><goal>check</goal></goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs-maven-plugin</artifactId>
+                        <configuration>
+                            <effort>Max</effort>
+                            <threshold>Medium</threshold>
+                            <failOnError>${spotbugs.failOnError}</failOnError>
+                            <xmlOutput>true</xmlOutput>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>spotbugs</id>
+                                <phase>verify</phase>
+                                <goals><goal>check</goal></goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
