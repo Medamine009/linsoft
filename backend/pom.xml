@@ -55,11 +55,19 @@
         <spotbugs.plugin.version>4.8.5.0</spotbugs.plugin.version>
         <failsafe.version>3.2.5</failsafe.version>
 
-        <!-- Seuil de couverture des instructions, vérifié par `mvn verify`.
-             Relevé progressivement au fil de l'ajout des tests plutôt que fixé
-             haut d'emblée : un seuil inatteignable ne fait que pousser à
-             désactiver la vérification. -->
-        <jacoco.line.coverage>0.00</jacoco.line.coverage>
+        <!--
+          Seuil de couverture des instructions, vérifié par `mvn verify` sur
+          chaque module (hors config/, entities/, dto/ et classes *Application).
+
+          Fixé juste sous le module le moins couvert du moment (28,6 %) : c'est
+          un cliquet anti-régression, pas une cible. Il se relève au fur et à
+          mesure que les tests progressent. Un seuil inatteignable posé d'emblée
+          ne produirait qu'une chose : la désactivation de la vérification.
+
+          Couverture actuelle : registration 61 %, event 53 %, user 41 %,
+          notification 33 %, ticket 31 %, feedback 29 %.
+        -->
+        <jacoco.line.coverage>0.25</jacoco.line.coverage>
 
         <!-- Analyse statique informative par défaut. La CI peut la rendre
              bloquante via -Dcheckstyle.failOnViolation=true. -->

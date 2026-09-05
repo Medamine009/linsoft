@@ -8,6 +8,11 @@
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
+    <properties>
+        <!-- Seuil de couverture neutralise : Passerelle : routage et securite declaratifs, couverts par les tests E2E. -->
+        <jacoco.line.coverage>0.00</jacoco.line.coverage>
+    </properties>
+
     <groupId>com.pfe.events</groupId>
     <artifactId>api-gateway</artifactId>
     <version>1.0.0-SNAPSHOT</version>
