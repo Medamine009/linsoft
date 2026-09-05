@@ -51,6 +51,15 @@
         <testcontainers.version>1.20.6</testcontainers.version>
 
         <jacoco.version>0.8.12</jacoco.version>
+        <sonar.plugin.version>3.11.0.3922</sonar.plugin.version>
+
+        <!--
+          Périmètre analysé par Sonar. On exclut ce que Sonar signalerait à tort
+          comme non couvert : classes d'amorçage, configuration déclarative,
+          entités et DTO (accesseurs générés).
+        -->
+        <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.coverage.exclusions>**/*Application.java,**/config/**,**/entities/**,**/dto/**</sonar.coverage.exclusions>
         <checkstyle.plugin.version>3.3.1</checkstyle.plugin.version>
         <spotbugs.plugin.version>4.8.5.0</spotbugs.plugin.version>
         <failsafe.version>3.2.5</failsafe.version>
@@ -64,10 +73,10 @@
           tests progressent. Un seuil inatteignable posé d'emblée ne produirait
           qu'une chose : la désactivation de la vérification.
 
-          Couverture actuelle : feedback 78 %, registration 61 %, event 53 %,
-          ai 42 %, user 41 %, notification 33 %, ticket 31 %.
+          Couverture actuelle : feedback 78 %, notification 74 %, ticket 71 %,
+          registration 61 %, event 53 %, ai 42 %, user 41 %.
         -->
-        <jacoco.line.coverage>0.30</jacoco.line.coverage>
+        <jacoco.line.coverage>0.40</jacoco.line.coverage>
 
         <!-- Analyse statique informative par défaut. La CI peut la rendre
              bloquante via -Dcheckstyle.failOnViolation=true. -->
@@ -155,6 +164,13 @@
                     <groupId>com.github.spotbugs</groupId>
                     <artifactId>spotbugs-maven-plugin</artifactId>
                     <version>${spotbugs.plugin.version}</version>
+                </plugin>
+                <!-- Version figée : le scanner Sonar n'est invoqué qu'en CI,
+                     et seulement si un jeton est configuré. -->
+                <plugin>
+                    <groupId>org.sonarsource.scanner.maven</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>${sonar.plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>

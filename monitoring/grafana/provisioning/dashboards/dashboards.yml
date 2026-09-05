@@ -1,0 +1,14 @@
+# Chargement automatique des tableaux de bord déposés dans le dossier.
+apiVersion: 1
+
+providers:
+  - name: LINSOFT
+    orgId: 1
+    folder: LINSOFT Learning Center
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/provisioning/dashboards
+      foldersFromFilesStructure: false
