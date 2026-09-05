@@ -203,6 +203,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # GHCR n'accepte que des noms d'image en minuscules, alors que
+      # `github.repository` conserve la casse du compte (Medamine009/linsoft).
+      # Sans cette normalisation, la publication échoue après un `docker login`
+      # pourtant réussi — symptôme trompeur.
+      - name: Normalisation du nom d'image
+        run: echo "IMAGE_BASE=${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
+
       # Les Dockerfile backend copient un JAR déjà construit : on réutilise
       # l'artefact du job de test plutôt que de recompiler dans chaque image.
       # Un seul build Maven pour dix images, et l'image publiée est exactement
@@ -258,8 +265,8 @@ jobs:
           context: backend/${{ matrix.service }}
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ github.repository }}/${{ matrix.service }}:${{ github.sha }}
-            ${{ env.REGISTRY }}/${{ github.repository }}/${{ matrix.service }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_BASE }}/${{ matrix.service }}:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_BASE }}/${{ matrix.service }}:latest
           cache-from: type=gha,scope=${{ matrix.service }}
 
   # ══════════════════════════════════════════════════════════
@@ -278,6 +285,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
+
+      # Voir le job précédent : GHCR exige un nom d'image en minuscules.
+      - name: Normalisation du nom d'image
+        run: echo "IMAGE_BASE=${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
 
       # Le Dockerfile frontend est déjà multi-stage (build Node puis nginx
       # non-root) : il se construit depuis les sources, sans artefact préalable.
@@ -322,8 +333,8 @@ jobs:
           context: frontend
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ github.repository }}/frontend:${{ github.sha }}
-            ${{ env.REGISTRY }}/${{ github.repository }}/frontend:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_BASE }}/frontend:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_BASE }}/frontend:latest
           cache-from: type=gha,scope=frontend
 
   # ══════════════════════════════════════════════════════════
