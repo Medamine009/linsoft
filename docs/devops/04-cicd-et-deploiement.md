@@ -209,12 +209,24 @@ oc logs -f deployment/registration-service
 oc describe pod -l app=registration-service   # état des sondes
 ```
 
-## 6. Limites connues
+## 6. Un défaut réel révélé par la première exécution
 
-- **Tests E2E Playwright** : non encore écrits. Le socle est présent (Playwright
-  est déjà une dépendance du projet et le navigateur est installé en CI).
+La première exécution du pipeline sur GitHub a fait échouer les **onze jobs
+d'images Docker** à l'étape « Set up job », c'est-à-dire *avant* leur première
+instruction. Cause : les tags du dépôt `aquasecurity/trivy-action` sont préfixés
+par `v`. La référence `@0.28.0` ne se résolvait pas, et GitHub Actions échoue au
+moment de résoudre les actions, pas à leur exécution — d'où un échec sans aucune
+trace dans les étapes. Corrigé en `@v0.36.0`.
+
+C'est exactement ce qu'un pipeline doit produire : une erreur invisible en local,
+attrapée à la première exécution réelle.
+
+## 7. Limites connues
+
 - **SonarQube** : non intégré. JaCoCo produit déjà le XML attendu par Sonar ;
   l'ajout se limiterait à un job et un token.
 - **Prometheus / Grafana** : les services *exposent* les métriques, mais aucune
   instance n'est déployée. C'est le prérequis, pas la pile complète.
-- **Seuil de couverture** à 0, à relever progressivement (voir document 03).
+- **Couverture** : seuil actif à 25 % par module, à relever au fil des tests
+  (voir document 03). `ai-service` et `feedback-service` sont les prochains
+  chantiers.
