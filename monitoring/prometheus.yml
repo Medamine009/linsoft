@@ -1,0 +1,47 @@
+# Configuration Prometheus — LINSOFT Learning Center
+#
+# Chaque service Spring Boot expose /actuator/prometheus via Micrometer.
+# Les cibles portent le nom de service Docker Compose : la résolution DNS est
+# assurée par le réseau du projet, aucun port publié n'est nécessaire.
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    plateforme: linsoft-learning-center
+
+scrape_configs:
+
+  # Prometheus se surveille lui-même : sans cela, on ne saurait pas qu'il a
+  # cessé de collecter.
+  - job_name: prometheus
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # ─── Microservices Spring Boot ───
+  #
+  # Un seul job avec toutes les cibles : les séries se distinguent par
+  # l'étiquette `application`, ajoutée par Micrometer côté service
+  # (management.metrics.tags.application), et par `instance`.
+  - job_name: microservices
+    metrics_path: /actuator/prometheus
+    scrape_interval: 15s
+    static_configs:
+      - targets:
+          - 'config-service:8888'
+          - 'discovery-service:8761'
+          - 'api-gateway:8080'
+          - 'user-service:8081'
+          - 'event-service:8082'
+          - 'registration-service:8083'
+          - 'notification-service:8084'
+          - 'feedback-service:8086'
+          - 'ticket-service:8087'
+          - 'ai-service:8088'
+    relabel_configs:
+      # `instance` par défaut vaut « host:port » : on garde le nom du service,
+      # bien plus lisible dans Grafana.
+      - source_labels: [__address__]
+        regex: '([^:]+):.*'
+        target_label: service
+        replacement: '$1'

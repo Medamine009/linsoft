@@ -59,15 +59,15 @@
           Seuil de couverture des instructions, vérifié par `mvn verify` sur
           chaque module (hors config/, entities/, dto/ et classes *Application).
 
-          Fixé juste sous le module le moins couvert du moment (28,6 %) : c'est
-          un cliquet anti-régression, pas une cible. Il se relève au fur et à
-          mesure que les tests progressent. Un seuil inatteignable posé d'emblée
-          ne produirait qu'une chose : la désactivation de la vérification.
+          Fixé juste sous le module le moins couvert du moment : c'est un cliquet
+          anti-régression, pas une cible. Il se relève au fur et à mesure que les
+          tests progressent. Un seuil inatteignable posé d'emblée ne produirait
+          qu'une chose : la désactivation de la vérification.
 
-          Couverture actuelle : registration 61 %, event 53 %, user 41 %,
-          notification 33 %, ticket 31 %, feedback 29 %.
+          Couverture actuelle : feedback 78 %, registration 61 %, event 53 %,
+          ai 42 %, user 41 %, notification 33 %, ticket 31 %.
         -->
-        <jacoco.line.coverage>0.25</jacoco.line.coverage>
+        <jacoco.line.coverage>0.30</jacoco.line.coverage>
 
         <!-- Analyse statique informative par défaut. La CI peut la rendre
              bloquante via -Dcheckstyle.failOnViolation=true. -->

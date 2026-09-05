@@ -135,6 +135,38 @@ règles `permitAll("/actuator/**")` peuvent atteindre.
 Chaque métrique porte une étiquette `application=<nom du service>`, sans quoi les
 séries des dix services seraient indistinguables dans Prometheus.
 
+### Collecte : Prometheus + Grafana
+
+Exposer des métriques ne sert à rien si personne ne les collecte. La pile est
+donc fournie, mais derrière un **profil Compose** : elle ne démarre pas avec la
+plateforme, car elle n'est pas nécessaire à son fonctionnement et alourdirait le
+démarrage courant.
+
+```bash
+docker compose --profile monitoring up -d
+```
+
+| Service | Port | Rôle |
+|---|---|---|
+| Prometheus | 9090 | Collecte les 10 services toutes les 15 s |
+| Grafana | 3000 | Visualisation (`admin` / `admin` par défaut, surchargeable) |
+
+La source de données Grafana est **provisionnée automatiquement** : aucune
+configuration manuelle après le démarrage.
+
+Vérification effectuée : les **11 cibles** (10 services + Prometheus lui-même)
+remontent `up`, avec des métriques réelles — mémoire JVM par service et
+compteurs `http_server_requests_seconds_count` par application.
+
+```bash
+curl 'http://localhost:9090/api/v1/query?query=up{job="microservices"}'
+curl 'http://localhost:9090/api/v1/query?query=sum by (application) (http_server_requests_seconds_count)'
+```
+
+Chaque série porte l'étiquette `application` (ajoutée côté service par
+Micrometer) et `service` (ajoutée au relabel) : sans elles, les séries des dix
+services seraient indistinguables.
+
 ### Journalisation
 
 Format console commun défini dans la configuration partagée, incluant le nom du
@@ -250,8 +282,9 @@ et la publication des onze images sur GHCR.
 
 - **SonarQube** : non intégré. JaCoCo produit déjà le XML attendu par Sonar ;
   l'ajout se limiterait à un job et un token.
-- **Prometheus / Grafana** : les services *exposent* les métriques, mais aucune
-  instance n'est déployée. C'est le prérequis, pas la pile complète.
-- **Couverture** : seuil actif à 25 % par module, à relever au fil des tests
-  (voir document 03). `ai-service` et `feedback-service` sont les prochains
-  chantiers.
+- **Couverture** : seuil actif à 30 % par module, à relever au fil des tests
+  (voir document 03). `ticket-service` (31 %) et `notification-service` (33 %)
+  sont les prochains chantiers.
+- **Tableaux de bord Grafana** : la source de données est provisionnée, mais
+  aucun tableau de bord n'est livré — ils se construisent depuis l'interface à
+  partir des métriques déjà collectées.

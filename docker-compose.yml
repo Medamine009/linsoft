@@ -269,6 +269,42 @@ services:
       start_period: 60s
     ports: ["8088:8088"]
 
+
+  # ════════════════════ SUPERVISION (profil « monitoring ») ════════════════════
+  # Ces deux services ne demarrent pas par defaut : ils ne sont pas necessaires
+  # au fonctionnement de la plateforme et alourdiraient le demarrage courant.
+  #   docker compose --profile monitoring up -d
+  prometheus:
+    image: prom/prometheus:v2.53.0
+    container_name: eventify-prometheus
+    profiles: ["monitoring"]
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=7d
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    ports: ["9090:9090"]
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9090/-/healthy"]
+      interval: 20s
+      retries: 5
+
+  grafana:
+    image: grafana/grafana:11.1.0
+    container_name: eventify-grafana
+    profiles: ["monitoring"]
+    depends_on:
+      - prometheus
+    environment:
+      # Identifiants de demonstration locale, surchargeables via .env.
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - grafana_data:/var/lib/grafana
+    ports: ["3000:3000"]
   # ════════════════════ GATEWAY ════════════════════
   api-gateway:
     build: ./backend/api-gateway
@@ -294,6 +330,8 @@ services:
     ports: ["4200:8080"]
 
 volumes:
+  prometheus_data:
+  grafana_data:
   postgres_data:
   mongodb_data:
   rabbitmq_data:

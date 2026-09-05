@@ -252,6 +252,7 @@ cd frontend && npm run test-ci
 ```
 
 Rapports de couverture : `backend/<service>/target/site/jacoco/index.html`.
+Seuil actif : **30 % par module**, vérifié par `mvn verify`.
 
 Les tests d'intégration (`*IT.java`) démarrent de vraies bases via
 **Testcontainers** : aucune base locale à lancer. Ils s'ignorent automatiquement
@@ -267,6 +268,21 @@ curl http://localhost:8083/actuator/health/readiness
 curl http://localhost:8083/actuator/prometheus | head
 ```
 
+### Supervision (Prometheus + Grafana)
+
+Les métriques sont exposées par tous les services ; la pile de collecte démarre
+à la demande, derrière un profil Compose :
+
+```bash
+docker compose --profile monitoring up -d
+```
+
+| Outil | URL | Accès |
+|---|---|---|
+| Prometheus | http://localhost:9090 | — |
+| Grafana | http://localhost:3000 | `admin` / `admin` (surchargeable via `.env`) |
+
+La source de données Grafana est provisionnée automatiquement.
 ### Intégration continue
 
 `.github/workflows/ci.yml` — tests backend (unitaires, API/sécurité, intégration),

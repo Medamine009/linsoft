@@ -201,10 +201,30 @@ pour être imposé à chaque pull request.
 JaCoCo produit des rapports **HTML et XML** par module
 (`backend/<service>/target/site/jacoco/`), publiés comme artefact de CI.
 
-Le seuil (`jacoco.line.coverage`) est **volontairement à 0 aujourd'hui** et
-destiné à être relevé au fur et à mesure : un seuil inatteignable fixé d'emblée ne
-produit qu'une chose, la désactivation de la vérification. L'objectif visé reste
-70–80 % sur le code métier.
+Le seuil (`jacoco.line.coverage`) est **actif à 30 % par module** et vérifié à
+chaque `mvn verify`. Il a été confirmé réellement bloquant : en forçant 0,90 sur
+`feedback-service`, le build échoue avec
+`Rule violated … covered ratio is 0.28, but expected minimum is 0.90`.
+
+C'est un **cliquet anti-régression**, pas une cible : il est relevé au fur et à
+mesure que les tests progressent (0 → 25 % → 30 %). Un seuil inatteignable fixé
+d'emblée ne produit qu'une chose, la désactivation de la vérification.
+L'objectif visé reste 70–80 % sur le code métier.
+
+| Module | Couverture (hors config/entities/dto) |
+|---|---|
+| `feedback-service` | 78 % |
+| `registration-service` | 61 % |
+| `event-service` | 53 % |
+| `ai-service` | 42 % |
+| `user-service` | 41 % |
+| `notification-service` | 33 % |
+| `ticket-service` | 31 % |
+
+Le seuil est neutralisé, avec justification écrite dans chaque POM, sur
+`config-service`, `discovery-service` et `api-gateway` : ces modules ne
+contiennent qu'une classe d'amorçage et de la configuration déclarative,
+couverte de fait par les tests E2E.
 
 ## 9. Commandes
 
