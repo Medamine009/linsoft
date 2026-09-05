@@ -139,7 +139,64 @@ Stack : **Vitest en mode navigateur** (Chromium via Playwright), builder
    KeycloakService`) depuis que le composant délègue à Keycloak. La spec datait du
    gabarit CoreUI. Réparée et enrichie plutôt que supprimée.
 
-## 7. Couverture
+## 7. Tests de bout en bout (Playwright)
+
+14 scénarios exécutés dans un vrai Chromium contre la plateforme complète
+(`frontend/e2e/`). C'est le seul étage qui prouve que la chaîne entière — clic,
+redirection Keycloak, jeton, gateway, microservice, rendu Angular — fonctionne
+ensemble.
+
+### Authentification et rôles (`auth-roles.spec.ts`)
+
+| Scénario | Vérifie |
+|---|---|
+| Visiteur non authentifié sur `/user` | Renvoi sur l'accueil public par l'AuthGuard |
+| Identifiant invalide | Refus par Keycloak, message du realm, **et aucun accès ensuite** |
+| Participant / administrateur / formateur | Chacun atteint bien son espace |
+| Participant → `/admin` | Détourné : il ne voit jamais la page d'administration |
+| Participant → `/users` | Détourné |
+| Formateur → `/admin?tab=certificates` | Détourné : la délivrance est réservée à l'administration |
+
+### Parcours métier (`certificats.spec.ts`)
+
+| Scénario | Vérifie |
+|---|---|
+| Espace participant | Les quatre libellés de certificat sont lisibles, dont « votre certificat est en cours de préparation » |
+| Progression | Pourcentage et jalons (« Inscription validée », « Session terminée ») affichés |
+| Téléchargement | Le bouton PDF n'apparaît **que** sur un certificat délivré (1 seul dans le jeu de données) |
+| File administrateur | Certificats groupés par session, avec « Envoyer » et « Garder en attente » |
+| Tableau de bord admin | Signale les certificats à délivrer |
+| Catalogue | Les sessions publiées apparaissent, celle en attente de modération **non** |
+
+### Deux particularités du parcours réel qu'il a fallu prendre en compte
+
+1. **L'application ne redirige pas vers Keycloak.** Elle s'initialise en
+   `check-sso` ; un visiteur non authentifié est envoyé sur `/welcome`, d'où la
+   connexion est une action explicite. Le helper suit donc le parcours réel :
+   `/welcome` → clic → Keycloak → retour.
+2. **Un écran d'accueil animé (`SplashComponent`) recouvre l'application** et ne
+   révèle son bouton qu'après 1,4 s. `isVisible()` répond immédiatement et
+   concluait donc à tort à son absence : il faut réellement attendre son
+   apparition avec `waitFor({ state: 'visible' })`.
+
+### Prérequis et lancement
+
+```bash
+docker compose up -d
+pwsh -File scripts/seed-test-data.ps1     # jeu de données déterministe
+
+cd frontend
+npx playwright install chromium           # première fois
+npm run e2e                               # sans interface
+npm run e2e:headed                        # en observant le navigateur
+npm run e2e:report                        # rapport HTML
+```
+
+En intégration continue, ces tests ne tournent que sur la branche principale et
+en déclenchement manuel : ils démarrent 16 conteneurs, ce qui est trop lourd
+pour être imposé à chaque pull request.
+
+## 8. Couverture
 
 JaCoCo produit des rapports **HTML et XML** par module
 (`backend/<service>/target/site/jacoco/`), publiés comme artefact de CI.
@@ -149,7 +206,7 @@ destiné à être relevé au fur et à mesure : un seuil inatteignable fixé d'e
 produit qu'une chose, la désactivation de la vérification. L'objectif visé reste
 70–80 % sur le code métier.
 
-## 8. Commandes
+## 9. Commandes
 
 ```bash
 # Backend — tests unitaires seuls (rapide)
@@ -169,4 +226,7 @@ cd frontend && npm run test-ci
 
 # Frontend — première exécution : installer le navigateur
 cd frontend && npx playwright install chromium
+
+# E2E (plateforme démarrée + jeu de données seedé)
+cd frontend && npm run e2e
 ```

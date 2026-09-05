@@ -341,7 +341,9 @@ foreach ($u in $dataset.users) {
 }
 [void]$sql.AppendLine('COMMIT;')
 
-$sqlFile = Join-Path $env:TEMP 'linsoft-seed-users.sql'
+# [IO.Path]::GetTempPath() plutôt que $env:TEMP : ce dernier n'existe pas sous
+# Linux, où le script doit tourner tel quel dans le pipeline d'intégration.
+$sqlFile = Join-Path ([IO.Path]::GetTempPath()) 'linsoft-seed-users.sql'
 [IO.File]::WriteAllText($sqlFile, $sql.ToString(), (New-Object Text.UTF8Encoding($false)))
 docker cp $sqlFile "${PostgresContainer}:/tmp/seed-users.sql" | Out-Null
 $pgOut = docker exec -e PGCLIENTENCODING=UTF8 $PostgresContainer psql -U postgres -d user_db -v ON_ERROR_STOP=1 -f /tmp/seed-users.sql
@@ -482,7 +484,7 @@ foreach ($f in $dataset.feedbacks) {
 [void]$js.AppendLine('print("notifications=" + nfDb.inapp_messages.countDocuments());')
 [void]$js.AppendLine('print("feedbacks="     + fbDb.feedbacks.countDocuments());')
 
-$jsFile = Join-Path $env:TEMP 'linsoft-seed.js'
+$jsFile = Join-Path ([IO.Path]::GetTempPath()) 'linsoft-seed.js'
 [IO.File]::WriteAllText($jsFile, $js.ToString(), (New-Object Text.UTF8Encoding($false)))
 docker cp $jsFile "${MongoContainer}:/tmp/seed.js" | Out-Null
 $mongoOut = docker exec $MongoContainer mongosh --quiet --file /tmp/seed.js
