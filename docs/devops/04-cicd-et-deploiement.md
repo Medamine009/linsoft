@@ -209,17 +209,42 @@ oc logs -f deployment/registration-service
 oc describe pod -l app=registration-service   # état des sondes
 ```
 
-## 6. Un défaut réel révélé par la première exécution
+## 6. Deux défauts réels révélés par les premières exécutions
 
-La première exécution du pipeline sur GitHub a fait échouer les **onze jobs
-d'images Docker** à l'étape « Set up job », c'est-à-dire *avant* leur première
-instruction. Cause : les tags du dépôt `aquasecurity/trivy-action` sont préfixés
-par `v`. La référence `@0.28.0` ne se résolvait pas, et GitHub Actions échoue au
-moment de résoudre les actions, pas à leur exécution — d'où un échec sans aucune
-trace dans les étapes. Corrigé en `@v0.36.0`.
+Aucun des deux n'était détectable en local : c'est précisément ce qu'un pipeline
+doit produire.
 
-C'est exactement ce qu'un pipeline doit produire : une erreur invisible en local,
-attrapée à la première exécution réelle.
+### 6.1 Référence d'action non résolue
+
+Les onze jobs d'images ont échoué à l'étape « Set up job », c'est-à-dire *avant*
+leur première instruction. Les tags du dépôt `aquasecurity/trivy-action` sont
+préfixés par `v` : la référence `@0.28.0` ne se résolvait pas. GitHub Actions
+résout les actions avant de les exécuter, d'où un échec sans aucune trace dans
+les étapes. Corrigé en `@v0.36.0`.
+
+### 6.2 Nom d'image refusé par GHCR
+
+Une fois la résolution corrigée, la construction, l'analyse Trivy, la remontée
+SARIF **et le `docker login` réussissaient**, mais la publication échouait sur
+les onze images — symptôme trompeur, puisque l'authentification était au vert.
+
+Cause : le compte s'écrit `Medamine009`, et `github.repository` conserve cette
+majuscule. **GHCR n'accepte que des noms d'image en minuscules.** Le nom est
+désormais normalisé avant usage :
+
+```yaml
+- name: Normalisation du nom d'image
+  run: echo "IMAGE_BASE=${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
+```
+
+### Résultat
+
+Pipeline complet au vert : **16 jobs sur 16**, incluant les tests d'intégration
+Testcontainers, les 14 scénarios E2E sur la plateforme démarrée par le pipeline,
+et la publication des onze images sur GHCR.
+
+> Les paquets GHCR sont **privés par défaut**. Pour les rendre publics :
+> onglet *Packages* du compte → paquet → *Package settings* → *Change visibility*.
 
 ## 7. Limites connues
 
