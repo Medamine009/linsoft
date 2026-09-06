@@ -1883,7 +1883,9 @@ export class AdminComponent implements OnInit {
 
   shortId(id: any): string {
     const s = String(id || '');
-    return s.length > 12 ? s.slice(0, 8) + '…' : s || '—';
+    // Derniers caractères : le début d'un ObjectId MongoDB est un horodatage,
+    // identique pour tout un lot créé dans la même seconde.
+    return s.length > 12 ? s.slice(-8).toUpperCase() : s || '—';
   }
 
   deleteUser(keycloakId: string): void {

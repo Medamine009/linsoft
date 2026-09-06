@@ -1740,7 +1740,18 @@ export class UserComponent implements OnInit {
     return (m === 'EN_LIGNE' || m === 'HYBRIDE') && !!e?.visioLink;
   }
 
-  shortId(id: any): string { return String(id || '').slice(0, 8).toUpperCase(); }
+  /**
+   * Référence courte affichée à l'utilisateur.
+   *
+   * On prend les DERNIERS caractères : les quatre premiers octets d'un ObjectId
+   * MongoDB encodent l'horodatage de création, donc toutes les inscriptions
+   * créées dans la même seconde partagent les huit premiers caractères — la
+   * référence ne distinguait alors plus rien.
+   */
+  shortId(id: any): string {
+    const s = String(id || '');
+    return s.slice(-8).toUpperCase();
+  }
 
   getQrUrl(regId: string): string {
     return this.apiService.getQrCodeUrl(`LINSOFT-TICKET-${regId}`, 144);

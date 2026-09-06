@@ -230,7 +230,8 @@ public class RegistrationController {
             HttpHeaders h = new HttpHeaders();
             h.setContentType(MediaType.APPLICATION_PDF);
             h.setContentDisposition(ContentDisposition.inline()
-                    .filename("certificat-" + id.substring(0, Math.min(8, id.length())) + ".pdf").build());
+                    // Même référence que celle imprimée sur le document.
+                    .filename("certificat-" + CertificateService.shortRef(id) + ".pdf").build());
             return new ResponseEntity<>(pdf, h, HttpStatus.OK);
         }).orElse(ResponseEntity.notFound().build());
     }

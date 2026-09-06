@@ -81,6 +81,27 @@ class CertificateServiceTest {
     }
 
     @Test
+    void shortRef_usesTheDistinctivePartOfAnObjectId() {
+        // Deux inscriptions créées dans la même seconde : leurs ObjectId
+        // partagent les huit premiers caractères (l'horodatage). Prendre le
+        // début produisait donc la même référence pour toute une promotion.
+        String a = "6a9b659d2b6b63f3e38de66e";
+        String b = "6a9b659d2b6b63f3e38de673";
+        assertEquals(a.substring(0, 8), b.substring(0, 8), "prémisse : même horodatage");
+
+        assertNotEquals(CertificateService.shortRef(a), CertificateService.shortRef(b),
+                "la référence doit distinguer deux dossiers du même lot");
+        assertEquals("E38DE66E", CertificateService.shortRef(a));
+    }
+
+    @Test
+    void shortRef_handlesShortOrMissingIdentifiers() {
+        assertEquals("—", CertificateService.shortRef(null));
+        assertEquals("—", CertificateService.shortRef("  "));
+        assertEquals("AB", CertificateService.shortRef("ab"));
+    }
+
+    @Test
     void generate_referenceVariesWithTheRegistrationId() {
         // La référence courte (8 premiers caractères de l'identifiant) rend la
         // pièce rattachable à un dossier : elle doit bien dépendre de l'inscription.

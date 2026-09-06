@@ -195,7 +195,8 @@ export class TicketViewComponent implements OnInit {
     });
   }
 
-  shortId(id: any): string { return String(id || '').slice(0, 8).toUpperCase(); }
+  /** Derniers caractères : le début d'un ObjectId est un horodatage, non distinctif. */
+  shortId(id: any): string { return String(id || '').slice(-8).toUpperCase(); }
 
   initials(name: string): string {
     const parts = (name || '').split(' ').filter(Boolean);

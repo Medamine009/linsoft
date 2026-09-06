@@ -219,5 +219,17 @@ public class CertificateService {
 
     private String safe(String v, String fallback) { return notBlank(v) ? v : fallback; }
     private boolean notBlank(String s) { return s != null && !s.isBlank(); }
-    private String shortRef(String id) { return id == null ? "—" : id.substring(0, Math.min(8, id.length())).toUpperCase(); }
+    /**
+     * Référence courte imprimée sur le certificat.
+     *
+     * <p>On prend les DERNIERS caractères de l'identifiant, pas les premiers :
+     * les quatre premiers octets d'un ObjectId MongoDB encodent l'horodatage de
+     * création, si bien que toutes les inscriptions créées dans la même seconde
+     * partagent les huit premiers caractères. Une référence censée désigner un
+     * dossier précis était donc identique pour toute une promotion.</p>
+     */
+    public static String shortRef(String id) {
+        if (id == null || id.isBlank()) return "—";
+        return id.substring(Math.max(0, id.length() - 8)).toUpperCase();
+    }
 }

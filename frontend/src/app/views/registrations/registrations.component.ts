@@ -204,8 +204,9 @@ export class RegistrationsComponent implements OnInit {
 
   catColor(cat: string): string { return categoryColor(cat); }
 
+  /** Derniers caractères : le début d'un ObjectId est un horodatage, non distinctif. */
   shortId(id: any): string {
-    return String(id || '').slice(0, 8).toUpperCase();
+    return String(id || '').slice(-8).toUpperCase();
   }
 
   showToast(message: string, type: 'success' | 'error'): void {

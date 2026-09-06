@@ -59,3 +59,15 @@ backend/package-lock.json
 **/.$*.drawio.bkp
 **/*.drawio.bkp
 **/*.drawio.dtmp
+
+# Fichiers auxiliaires LaTeX (le PDF se regenere)
+rapport-pfe/*.aux
+rapport-pfe/*.log
+rapport-pfe/*.out
+rapport-pfe/*.toc
+rapport-pfe/*.lof
+rapport-pfe/*.lot
+rapport-pfe/*.mtc*
+rapport-pfe/*.maf
+rapport-pfe/*.synctex.gz
+rapport-pfe/main.pdf
