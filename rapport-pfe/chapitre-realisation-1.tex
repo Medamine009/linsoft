@@ -1,0 +1,283 @@
+%############################################################################
+%  CHAPITRE 4 — RÉALISATION DE LA PREMIÈRE RELEASE
+%############################################################################
+\chapter{Réalisation de la première release}
+\minitoc
+\vspace{0.6cm}
+
+\section*{Introduction}
+Ce chapitre est consacré à la réalisation de la première release. Nous présentons d'abord
+l'environnement de travail (matériel, logiciels, langages et frameworks) ainsi que
+l'architecture applicative mise en œuvre. Nous détaillons ensuite le déroulement des deux
+premiers sprints, en illustrant le résultat par des captures d'écran de l'application.
+
+\section{Environnement de travail}
+
+\subsection{Environnement matériel}
+Le développement a été réalisé sur un poste de travail disposant des caractéristiques
+suivantes : processeur multi-cœurs, mémoire vive de 16 Go et système d'exploitation Windows.
+Cette configuration permet d'exécuter simultanément l'ensemble des conteneurs de la plateforme
+en environnement de développement.
+
+\subsection{Environnement logiciel}
+Le tableau suivant récapitule les principaux outils et technologies utilisés.
+
+\begin{table}[H]\centering\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{3.6cm}|p{10.2cm}|}\hline
+\rowcolor{gray!15}\textbf{Technologie / Outil} & \textbf{Rôle} \\ \hline
+\textbf{Angular} & Framework front-end pour la construction de l'interface utilisateur. \\ \hline
+\textbf{Spring Boot} & Framework back-end pour le développement des microservices. \\ \hline
+\textbf{Spring Cloud} & Composants pour l'architecture répartie (Gateway, Eureka, Config). \\ \hline
+\textbf{Keycloak} & Serveur d'authentification et de gestion des identités (OAuth2 / OIDC). \\ \hline
+\textbf{PostgreSQL} & Système de gestion de base de données relationnelle. \\ \hline
+\textbf{MongoDB} & Base de données documentaire (NoSQL). \\ \hline
+\textbf{RabbitMQ} & Courtier de messages pour la communication asynchrone. \\ \hline
+\textbf{Docker} & Conteneurisation et orchestration des services (Docker Compose). \\ \hline
+\textbf{OpenShift} & Plateforme cloud d'orchestration (Kubernetes) pour le déploiement. \\ \hline
+\textbf{Google Gemini} & Modèle de langage utilisé par l'assistant intelligent. \\ \hline
+\textbf{Maven} & Outil de construction et de gestion des dépendances Java. \\ \hline
+\textbf{Git} & Système de gestion de versions du code source. \\ \hline
+\textbf{Visual Studio Code / IntelliJ} & Environnements de développement intégrés. \\ \hline
+\end{tabular}
+\caption{Environnement logiciel du projet}\label{tab:env}
+\end{table}
+
+\subsection{Langages de programmation}
+\begin{itemize}[leftmargin=1.2cm]
+  \item \textbf{Java} : langage utilisé pour l'ensemble des microservices back-end.
+  \item \textbf{TypeScript} : langage utilisé pour le développement front-end avec Angular.
+  \item \textbf{HTML / CSS} : structuration et mise en forme des interfaces.
+\end{itemize}
+
+\subsection{Architecture applicative et communication}
+Les échanges entre le front-end et le back-end s'effectuent via des API REST exposées par la
+passerelle. La communication asynchrone repose sur RabbitMQ : lorsqu'un événement métier se
+produit (inscription, confirmation, etc.), un message est publié sur un \textit{exchange} et
+routé vers une file consommée par le service de notification. L'extrait suivant présente la
+configuration de la file de messages.
+
+\begin{lstlisting}[language=Java,caption={Configuration RabbitMQ du service de notification},label={lst:rabbit}]
+@Configuration
+public class RabbitMQConfig {
+    public static final String QUEUE_NAME = "notification.queue";
+    public static final String EXCHANGE_NAME = "event.exchange";
+    public static final String ROUTING_KEY = "notification.routing.key";
+
+    @Bean public Queue queue() { return new Queue(QUEUE_NAME, true); }
+    @Bean public TopicExchange exchange() { return new TopicExchange(EXCHANGE_NAME); }
+    @Bean public Binding binding(Queue queue, TopicExchange exchange) {
+        return BindingBuilder.bind(queue).to(exchange).with(ROUTING_KEY);
+    }
+}
+\end{lstlisting}
+
+\subsection{Aperçu de l'environnement technique}
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Planche des logos des technologies : Angular, Spring Boot, Spring Cloud, Keycloak, MongoDB, PostgreSQL, RabbitMQ, MailHog, Docker, OpenShift, Maven, Git ]}
+  \caption{Ensemble des technologies et outils mobilisés pour le développement de la plateforme}\label{fig:env-tech}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Console web Eureka listant les instances UP : api-gateway, user, event, registration, notification, ticket, feedback, ai ]}
+  \caption{Tableau de bord Eureka affichant les microservices enregistrés}\label{fig:env-eureka}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Console d'administration RabbitMQ : files de notifications, exchanges et connexions actifs ]}
+  \caption{Interface de gestion RabbitMQ (messagerie asynchrone)}\label{fig:env-rabbit}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Interface web MailHog : liste des courriels de notification interceptés (objet, expéditeur, aperçu) ]}
+  \caption{Boîte de réception MailHog interceptant les courriels de la plateforme}\label{fig:env-mailhog}
+\end{figure}
+
+\section{Sprint 1 : Authentification et gestion des utilisateurs}
+
+\subsection{Objectif du sprint}
+Ce premier sprint met en place les fondations de la plateforme : l'authentification
+centralisée via Keycloak, la résolution des rôles et la gestion des collaborateurs par
+l'administrateur.
+
+\subsection{Sprint Backlog}
+\begin{table}[H]\centering\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|p{1cm}|p{10.5cm}|p{1.6cm}|}\hline
+\rowcolor{gray!15}\textbf{ID} & \textbf{Tâche} & \textbf{Statut} \\ \hline
+T1 & Configurer le realm Keycloak et les clients OAuth2. & Terminé \\ \hline
+T2 & Intégrer l'authentification côté front-end (keycloak-angular). & Terminé \\ \hline
+T3 & Résoudre le rôle effectif par priorité (Admin > Organisateur > Participant). & Terminé \\ \hline
+T4 & Développer la gestion des utilisateurs (CRUD) côté administrateur. & Terminé \\ \hline
+T5 & Implémenter l'attribution et la modification des rôles. & Terminé \\ \hline
+\end{tabular}
+\caption{Sprint Backlog du Sprint 1}\label{tab:sb1}
+\end{table}
+
+\subsection{Réalisation}
+L'authentification et la gestion des identités reposent sur \textbf{Keycloak}, un serveur
+de gestion des identités et des accès (IAM) que nous avons intégré comme fournisseur
+d'identité central de la plateforme.
+
+\subsubsection{Configuration du serveur Keycloak}
+Nous avons configuré un \textit{realm} dédié, \texttt{pfe-events}, qui regroupe l'ensemble des
+utilisateurs, des rôles et des clients de l'application. Deux clients y sont déclarés :
+
+\begin{table}[H]\centering\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{3.8cm}|p{2.6cm}|p{7cm}|}\hline
+\rowcolor{gray!15}\textbf{Client} & \textbf{Type} & \textbf{Rôle} \\ \hline
+\texttt{pfe-events-frontend} & Public (SPA) & Authentifie l'application Angular via le flux
+\textit{Authorization Code} avec PKCE. \\ \hline
+\texttt{pfe-events-api} & Confidentiel & Représente les services back-end (serveurs de
+ressources) qui valident les jetons. \\ \hline
+\end{tabular}
+\caption{Clients Keycloak du realm pfe-events}\label{tab:kc-clients}
+\end{table}
+
+Trois rôles applicatifs sont définis : \texttt{ADMIN}, \texttt{ORGANISATEUR} et
+\texttt{PARTICIPANT}. Le realm attribuant par défaut le rôle \textit{Participant} à tout
+nouvel utilisateur, le front-end résout le \textbf{rôle effectif} par ordre de priorité
+(\textsc{Admin} > \textsc{Organisateur} > \textsc{Participant}), afin de garantir une stricte
+séparation des vues.
+
+\subsubsection{Flux d'authentification (OAuth2 / OpenID Connect)}
+Le processus s'appuie sur les standards \textbf{OAuth2} et \textbf{OpenID Connect} :
+\begin{enumerate}[leftmargin=1.2cm]
+  \item l'utilisateur est redirigé vers la page de connexion Keycloak (thème LINSOFT) ;
+  \item après authentification, Keycloak délivre un \textbf{jeton JWT} signé ;
+  \item ce jeton accompagne chaque requête ; l'\textbf{API Gateway} en valide la signature et
+  l'expiration, puis convertit les rôles du realm en autorités Spring ;
+  \item chaque microservice re-valide le jeton (défense en profondeur).
+\end{enumerate}
+À la première connexion, le compte du collaborateur est automatiquement \textbf{provisionné}
+dans le service utilisateur.
+
+\subsubsection{Personnalisation de la page de connexion}
+Un \textbf{thème de connexion personnalisé} aux couleurs de LINSOFT (logo, arrière-plan,
+charte graphique rouge) a été développé et intégré à Keycloak, afin d'offrir une expérience de
+connexion cohérente avec l'identité de l'entreprise.
+
+\begin{figure}[H]\centering
+  \ph[0.72\textwidth]{[ Capture : page de connexion Keycloak (thème LINSOFT) ]}
+  \caption{Page de connexion personnalisée LINSOFT}\label{fig:kc-login}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Capture : console d'administration Keycloak (realm, rôles, clients) ]}
+  \caption{Console d'administration Keycloak}\label{fig:kc-admin}
+\end{figure}
+
+\subsubsection{Gestion des collaborateurs}
+L'administrateur dispose d'une interface de gestion des collaborateurs (consultation,
+création, modification, suppression) et peut y attribuer ou modifier les rôles.
+
+\begin{figure}[H]\centering
+  \ph[0.9\textwidth]{[ Capture : gestion des collaborateurs (administrateur) ]}
+  \caption{Interface de gestion des collaborateurs}\label{fig:users}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Onglet Roles du realm pfe-events : rôles Participant, Organisateur, Administrateur ]}
+  \caption{Définition des rôles applicatifs au niveau du realm Keycloak}\label{fig:kc-roles}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Formulaire « Add user » de Keycloak : username, email, prénom, nom, activation ]}
+  \caption{Création d'un utilisateur dans la console d'administration Keycloak}\label{fig:kc-adduser}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Menu d'affectation de rôle (Participant / Organisateur / Administrateur) sur une ligne collaborateur ]}
+  \caption{Attribution et modification du rôle d'un collaborateur}\label{fig:role-assign}
+\end{figure}
+
+\section{Sprint 2 : Gestion des sessions et des inscriptions}
+
+\subsection{Objectif du sprint}
+Ce sprint couvre le cœur métier de la plateforme. Il permet d'abord aux organisateurs de créer
+et de gérer leurs sessions, et à l'administrateur de les modérer avant publication au
+catalogue ; il implémente ensuite la demande d'inscription par le participant et son workflow
+de validation, notifications comprises.
+
+\subsection{Sprint Backlog}
+\begin{table}[H]\centering\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|p{1cm}|p{10.5cm}|p{1.6cm}|}\hline
+\rowcolor{gray!15}\textbf{ID} & \textbf{Tâche} & \textbf{Statut} \\ \hline
+T6 & Développer le formulaire de création de session. & Terminé \\ \hline
+T7 & Gérer les types, modes et catégories de sessions. & Terminé \\ \hline
+T8 & Développer la modération des sessions (approuver / refuser). & Terminé \\ \hline
+T9 & Afficher le catalogue des sessions publiées. & Terminé \\ \hline
+T10 & Développer la demande d'inscription (statut PENDING). & Terminé \\ \hline
+T11 & Développer la validation / le refus des inscriptions. & Terminé \\ \hline
+T12 & Gérer la décrémentation des places disponibles. & Terminé \\ \hline
+T13 & Développer les onglets de suivi des statuts d'inscription. & Terminé \\ \hline
+\end{tabular}
+\caption{Sprint Backlog du Sprint 2}\label{tab:sb2}
+\end{table}
+
+\subsection{Gestion du catalogue des sessions}
+\begin{figure}[H]\centering
+  \ph[0.9\textwidth]{[ Capture : formulaire de création d'une session ]}
+  \caption{Formulaire de création d'une session}\label{fig:create-event}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.9\textwidth]{[ Capture : catalogue des sessions ]}
+  \caption{Catalogue des sessions}\label{fig:catalogue}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Page « Mes sessions » : sessions créées, badges de statut (En attente / Approuvée / Refusée), actions Éditer et Supprimer ]}
+  \caption{Liste « Mes sessions » de l'organisateur avec les statuts de modération}\label{fig:my-sessions}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Écran d'édition : formulaire pré-rempli (titre, type, mode, places, catégorie, niveau) prêt à être modifié ]}
+  \caption{Édition d'une session existante par l'organisateur}\label{fig:edit-session}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Page de modération : sessions en attente avec leurs détails et les boutons Approuver et Refuser ]}
+  \caption{Interface de modération des sessions (administrateur)}\label{fig:moderation}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Détail d'une session : description, type, mode, catégorie, niveau, certification, places, bouton d'inscription ]}
+  \caption{Page de détail d'une session consultée par le participant}\label{fig:session-detail}
+\end{figure}
+
+\subsection{Inscriptions et workflow de validation}
+\begin{figure}[H]\centering
+  \ph[0.9\textwidth]{[ Capture : liste des inscriptions à valider (administrateur) ]}
+  \caption{Validation des inscriptions}\label{fig:validation}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.9\textwidth]{[ Capture : mes inscriptions et leurs statuts (participant) ]}
+  \caption{Suivi des inscriptions du participant}\label{fig:my-reg}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Détail d'une session avec le bouton rouge LINSOFT « Demander une inscription » ]}
+  \caption{Demande d'inscription depuis le détail d'une session}\label{fig:demande-insc}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Vue planning / calendrier des sessions disponibles côté participant ]}
+  \caption{Vue planning des sessions accessible au participant}\label{fig:planning}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Sous-onglets « Approuvées » et « Refusées » : historique des demandes traitées (participant, session) ]}
+  \caption{Traçabilité des demandes traitées (sous-onglets Approuvées / Refusées)}\label{fig:val-tabs}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Notification in-app affichée au participant après validation ou refus de sa demande ]}
+  \caption{Notification in-app indiquant le nouveau statut de l'inscription}\label{fig:notif-inapp}
+\end{figure}
+
+\section*{Conclusion}
+Cette première release a livré le cœur fonctionnel de la plateforme : authentification et
+gestion des utilisateurs, gestion du catalogue et workflow d'inscription. Le chapitre suivant
+présente la seconde release, dédiée aux fonctionnalités à valeur ajoutée, à l'industrialisation
+et au déploiement.
+\clearpage

@@ -1,24 +1,12 @@
 %############################################################################
-%  CHAPITRE — TESTS, QUALITÉ ET DÉMARCHE DEVOPS
-%
-%  Inclus depuis main.tex par \input{chapitre-devops}
-%  Les captures référencées se trouvent dans rapport-pfe/captures/
+%  Demarche DevOps - contenu du Sprint 4
+%  Inclus depuis chapitre-realisation-2.tex
+%  Niveaux : subsection / subsubsection (le sprint est deja une section)
 %############################################################################
-\chapter{Tests, qualité et démarche DevOps}
-\minitoc
 
-\section*{Introduction}
-Une plateforme composée de dix microservices ne se valide pas en la parcourant à la main :
-le nombre de combinaisons de rôles, d'états et de services rend la vérification manuelle
-à la fois incomplète et non reproductible. Ce chapitre présente la stratégie de test mise
-en place, les outils de mesure de la qualité, la chaîne d'intégration continue et le
-dispositif de supervision. Chaque choix y est justifié par le défaut qu'il permet de
-détecter, et les résultats présentés sont ceux réellement obtenus sur la plateforme.
+\subsection{Stratégie de test}
 
-%============================================================================
-\section{Stratégie de test}
-
-\subsection{Pyramide de test retenue}
+\subsubsection{Pyramide de test retenue}
 Quatre niveaux de test se répondent, chacun apportant une garantie que les autres ne
 peuvent pas fournir.
 
@@ -33,14 +21,14 @@ Bout en bout & Playwright, Chromium & Le parcours utilisateur fonctionne-t-il en
 \caption{Niveaux de test et rôle de chacun}\label{tab:pyramide}
 \end{table}
 
-\subsection{Séparation des tests rapides et des tests d'infrastructure}
+\subsubsection{Séparation des tests rapides et des tests d'infrastructure}
 La convention de nommage pilote l'exécution, configurée une seule fois dans le POM parent :
 les classes \texttt{*Test} sont exécutées par Surefire pendant la phase \texttt{test}, les
 classes \texttt{*IT} par Failsafe pendant la phase \texttt{verify}. Le développeur dispose
 ainsi d'une boucle de retour courte (\texttt{mvn test}, sans infrastructure), tandis que
 l'intégration continue exécute la chaîne complète (\texttt{mvn verify}).
 
-\subsection{Répartition obtenue}
+\subsubsection{Répartition obtenue}
 \begin{table}[H]\centering\renewcommand{\arraystretch}{1.25}
 \begin{tabular}{|p{5cm}|p{2.6cm}|p{2.6cm}|}\hline
 \rowcolor{gray!15}\textbf{Périmètre} & \textbf{Avant} & \textbf{Après} \\ \hline
@@ -52,7 +40,7 @@ Mesure de couverture & aucune & JaCoCo, seuil à 40~\% \\ \hline
 \caption{Évolution de la couverture de test du projet}\label{tab:devops-tests}
 \end{table}
 
-\subsection{Exemples de règles protégées}
+\subsubsection{Exemples de règles protégées}
 Les tests ne visent pas le taux de couverture pour lui-même, mais les règles dont la
 défaillance produirait un défaut visible :
 
@@ -70,7 +58,7 @@ défaillance produirait un défaut visible :
         le calcul retombe sur une journée type.
 \end{itemize}
 
-\subsection{Tests de sécurité}
+\subsubsection{Tests de sécurité}
 Les tests de contrôleur chargent la \textbf{configuration de sécurité de production}
 (\texttt{@Import(SecurityConfig.class)}) et non une sécurité désactivée : ce qui est
 vérifié est donc bien ce qui s'appliquera en exploitation. Des jetons JWT sont simulés
@@ -93,14 +81,14 @@ La distinction entre \texttt{403} et \texttt{409} est délibérée : elle permet
 d'afficher « vous n'avez pas le droit » ou « votre certificat n'est pas encore délivré »,
 deux messages très différents pour l'utilisateur.
 
-\subsection{Tests d'intégration avec Testcontainers}
+\subsubsection{Tests d'intégration avec Testcontainers}
 Les tests d'intégration démarrent un conteneur \textbf{MongoDB} éphémère, créé et détruit
 par le test lui-même : aucune base locale n'est requise, et le résultat ne dépend pas du
 poste du développeur. Ils valident ce que des simulacres ne peuvent pas prouver — les
 requêtes réellement exécutées, et la persistance complète de l'entité, horodatages compris.
 
 %============================================================================
-\section{Tests de bout en bout}
+\subsection{Tests de bout en bout}
 
 Quatorze scénarios sont exécutés dans un navigateur Chromium réel, contre la plateforme
 entièrement démarrée. C'est le seul niveau capable de prouver que la chaîne complète — clic,
@@ -124,9 +112,9 @@ certificats.
 \end{figure}
 
 %============================================================================
-\section{Qualité du code et couverture}
+\subsection{Qualité du code et couverture}
 
-\subsection{Outils d'analyse}
+\subsubsection{Outils d'analyse}
 L'analyse statique (\textbf{Checkstyle} et \textbf{SpotBugs}) est regroupée dans un profil
 Maven \texttt{quality}, activé à la demande et en intégration continue. Le jeu de règles
 Checkstyle cible délibérément les défauts réels — comparaison de chaînes par
@@ -134,7 +122,7 @@ Checkstyle cible délibérément les défauts réels — comparaison de chaînes
 \texttt{switch} sans \texttt{default} — plutôt que la mise en forme : un jeu de règles trop
 bavard finit systématiquement désactivé.
 
-\subsection{Couverture mesurée}
+\subsubsection{Couverture mesurée}
 \textbf{JaCoCo} produit des rapports HTML et XML par module. Le seuil est vérifié à chaque
 \texttt{mvn verify} et fait échouer le build s'il n'est pas atteint.
 
@@ -160,7 +148,7 @@ décoratif. Son caractère réellement bloquant a été vérifié en le forçant
 90~\%, ce qui provoque bien l'échec du build.
 
 %============================================================================
-\section{Conteneurisation}
+\subsection{Conteneurisation}
 
 Chacun des onze composants dispose de son image. Les images backend reposent sur
 \texttt{eclipse-temurin:17-jre-alpine} et appliquent \texttt{chgrp -R 0 /app}, condition
@@ -168,7 +156,7 @@ nécessaire sur OpenShift, qui exécute les conteneurs avec un identifiant utili
 aléatoire appartenant au groupe~0. Le frontend est construit en deux étapes
 (\texttt{node:20-alpine} puis \texttt{nginx-unprivileged}) et s'exécute sans privilèges.
 
-\subsection{Un défaut de conception corrigé}
+\subsubsection{Un défaut de conception corrigé}
 Les images déclaraient déjà une directive \texttt{HEALTHCHECK} interrogeant
 \texttt{/actuator/health}, \textbf{mais sept services sur dix n'embarquaient pas Actuator} :
 la sonde recevait une réponse 404. Le fichier \texttt{docker-compose.yml} contournait le
@@ -178,9 +166,9 @@ Actuator a été ajouté à tous les services via le POM parent, et les contourn
 remplacés par de véritables vérifications.
 
 %============================================================================
-\section{Intégration et livraison continues}
+\subsection{Intégration et livraison continues}
 
-\subsection{Architecture du pipeline}
+\subsubsection{Architecture du pipeline}
 La chaîne est décrite dans \texttt{.github/workflows/ci.yml} et s'exécute sur
 \textbf{GitHub Actions} à chaque poussée et à chaque \emph{pull request}.
 
@@ -198,7 +186,7 @@ Tests E2E & Plateforme complète démarrée, jeu de données semé, Playwright \
 \caption{Étapes de la chaîne d'intégration continue}\label{tab:pipeline}
 \end{table}
 
-\subsection{Choix : ne pas compiler dans les images}
+\subsubsection{Choix : ne pas compiler dans les images}
 Les fichiers \texttt{Dockerfile} du backend copient une archive JAR déjà construite plutôt
 que de la compiler. Une construction multi-étapes par service recompilerait dix fois le même
 réacteur Maven, pour un résultat identique. Le réacteur est donc construit \textbf{une
@@ -206,13 +194,13 @@ seule fois}, les archives circulent en artefact entre les étapes, et chaque ima
 assemblée à partir du binaire validé : l'artefact testé et l'artefact publié sont ainsi le
 même objet.
 
-\subsection{Garde-fou contre les faux positifs}
+\subsubsection{Garde-fou contre les faux positifs}
 Une étape vérifie explicitement qu'\textbf{aucun test d'intégration n'a été ignoré} alors
 que Docker était disponible. Sans ce contrôle, un environnement dépourvu de Docker
 produirait un pipeline vert trompeur, puisque les tests Testcontainers s'ignorent
 automatiquement en l'absence de démon.
 
-\subsection{Deux défauts révélés par les premières exécutions}
+\subsubsection{Deux défauts révélés par les premières exécutions}
 Aucun des deux n'était détectable en local, ce qui illustre précisément l'apport d'une
 chaîne d'intégration continue.
 
@@ -230,15 +218,15 @@ chaîne d'intégration continue.
 \end{enumerate}
 
 %============================================================================
-\section{Supervision et observabilité}
+\subsection{Supervision et observabilité}
 
-\subsection{Points de mesure}
+\subsubsection{Points de mesure}
 Tous les services exposent, via Actuator et Micrometer, un agrégat de santé, des sondes
 distinctes de \emph{liveness} et de \emph{readiness}, ainsi que leurs métriques au format
 Prometheus. L'exposition est volontairement restreinte aux points réellement utilisés :
 \texttt{env}, \texttt{beans} et \texttt{heapdump} restent fermés.
 
-\subsection{Collecte et visualisation}
+\subsubsection{Collecte et visualisation}
 Prometheus interroge les dix services toutes les quinze secondes ; Grafana en propose la
 lecture. L'ensemble est placé derrière un profil Docker Compose afin de ne pas alourdir le
 démarrage courant de la plateforme.
@@ -271,7 +259,7 @@ les séries des dix services seraient indistinguables.
 \end{figure}
 
 %============================================================================
-\section{Sécurité de la chaîne}
+\subsection{Sécurité de la chaîne}
 
 \begin{itemize}
   \item \textbf{Analyse des images} : Trivy inspecte chaque image et remonte les
@@ -285,7 +273,7 @@ les séries des dix services seraient indistinguables.
 \end{itemize}
 
 %============================================================================
-\section{Illustrations du parcours fonctionnel}
+\subsection{Illustrations du parcours fonctionnel}
 
 Les captures suivantes montrent le résultat obtenu sur les fonctionnalités les plus
 structurantes, avec le jeu de données de démonstration.
@@ -320,8 +308,8 @@ certificat successivement \emph{en préparation}, \emph{en attente de validation
 \end{figure}
 
 %============================================================================
-\section*{Conclusion}
-La démarche présentée dans ce chapitre a fait passer le projet de dix-huit tests sans mesure
+\subsection{Bilan de la démarche DevOps}
+La démarche présentée dans ce sprint a fait passer le projet de dix-huit tests sans mesure
 de couverture à près de trois cents tests répartis sur quatre niveaux, adossés à une chaîne
 d'intégration continue de dix-sept tâches et à un dispositif de supervision opérationnel.
 Au-delà des chiffres, cette démarche a démontré sa valeur en révélant des défauts réels et

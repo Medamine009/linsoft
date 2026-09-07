@@ -1,0 +1,234 @@
+%############################################################################
+%  CHAPITRE 5 — RÉALISATION DE LA SECONDE RELEASE
+%############################################################################
+\chapter{Réalisation de la seconde release}
+\minitoc
+\vspace{0.6cm}
+
+\section*{Introduction}
+Ce chapitre présente la seconde release, qui enrichit la plateforme des fonctionnalités à
+valeur ajoutée — certificats, notifications, tableau de bord et assistant intelligent — puis
+l'industrialise : communication, démarche DevOps complète et déploiement sur le cloud.
+
+\section{Sprint 3 : Statistiques, certificats et assistant IA}
+
+\subsection{Objectif du sprint}
+Ce sprint met en place la génération automatique des certificats de participation au format
+PDF et le système de notifications déclenché par les événements métier, puis le tableau de
+bord de pilotage et l'assistant intelligent d'aide aux utilisateurs.
+
+\subsection{Sprint Backlog}
+\begin{table}[H]\centering\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|p{1cm}|p{10.5cm}|p{1.6cm}|}\hline
+\rowcolor{gray!15}\textbf{ID} & \textbf{Tâche} & \textbf{Statut} \\ \hline
+T14 & Générer le certificat de participation en PDF. & Terminé \\ \hline
+T15 & Développer le service de notification à l'écoute de RabbitMQ. & Terminé \\ \hline
+T16 & Envoyer les courriels (confirmation, refus, rappel). & Terminé \\ \hline
+T17 & Persister et afficher les notifications in-app. & Terminé \\ \hline
+T18 & Développer le tableau de bord et les statistiques. & Terminé \\ \hline
+T19 & Intégrer l'assistant intelligent basé sur un modèle de langage. & Terminé \\ \hline
+T20 & Développer la publication d'avis (note et commentaire). & Terminé \\ \hline
+\end{tabular}
+\caption{Sprint Backlog du Sprint 3}\label{tab:sb3}
+\end{table}
+
+\subsection{Certificats et notifications}
+Le service de notification consomme les messages de la file RabbitMQ. Pour chaque événement,
+il envoie un courriel formaté et persiste une notification in-app dans la boîte de réception du
+destinataire, comme le montre l'extrait suivant.
+
+\begin{lstlisting}[language=Java,caption={Traitement d'un message de notification (courriel + in-app)},label={lst:notiflistener}]
+@RabbitListener(queues = RabbitMQConfig.QUEUE_NAME)
+public void handle(String payload) {
+    try {
+        NotificationEvent evt = mapper.readValue(payload, NotificationEvent.class);
+        if (evt.getEmail() == null || evt.getEmail().isBlank()) return;
+        String subject = subjectFor(evt);
+        // 1) Email (MailHog en developpement)
+        emailService.sendHtml(evt.getEmail(), subject, htmlFor(evt));
+        // 2) Notification IN-APP dans la boite de reception du destinataire
+        messageRepository.save(new InAppMessage(evt.getEmail(), subject, plainFor(evt), "SYSTEM"));
+    } catch (Exception e) {
+        System.err.println("[Notification] Failed to process: " + e.getMessage());
+    }
+}
+\end{lstlisting}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Capture : certificat de participation (PDF) ]}
+  \caption{Certificat de participation}\label{fig:cert}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Capture : boîte de réception des notifications ]}
+  \caption{Boîte de réception des notifications}\label{fig:inbox}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Interface MailHog : liste des courriels (confirmation d'inscription, demande reçue, demande non retenue) ]}
+  \caption{Boîte de réception MailHog regroupant les notifications émises}\label{fig:mailhog-list}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Email ouvert dans MailHog : bandeau rouge LINSOFT, logo, message de confirmation, bouton d'action, pied de page ]}
+  \caption{Rendu HTML de l'email de confirmation (template LINSOFT)}\label{fig:email-render}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Panneau de détail d'un message de la messagerie interne (titre, corps, horodatage, marqué comme lu) ]}
+  \caption{Détail d'un message de la messagerie interne}\label{fig:msg-detail}
+\end{figure}
+
+\subsection{Tableau de bord et statistiques}
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Capture : tableau de bord de supervision ]}
+  \caption{Tableau de bord de supervision}\label{fig:dashboard}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Graphiques en barres : inscriptions par statut, événements par catégorie, utilisateurs par rôle, top événements ]}
+  \caption{Graphiques statistiques du tableau de bord}\label{fig:charts}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Barre d'export : boutons de téléchargement CSV (utilisateurs, événements, inscriptions) ]}
+  \caption{Export CSV des données du tableau de bord}\label{fig:export-csv}
+\end{figure}
+
+\subsection{Assistant intelligent et avis}
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Capture : assistant intelligent (chatbot) ]}
+  \caption{Assistant intelligent de la plateforme}\label{fig:chatbot}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Formulaire de dépôt d'avis (participant) : sélecteur de note en étoiles et champ de commentaire ]}
+  \caption{Publication d'un avis par un participant (note et commentaire)}\label{fig:avis}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Encadré d'analyse IA en tête de la liste des avis : sentiment global (positif / neutre / négatif) et synthèse ]}
+  \caption{Analyse par intelligence artificielle des avis d'une session}\label{fig:ai-sentiment}
+\end{figure}
+
+\section{Sprint 4 : Communication, DevOps et déploiement}
+
+\subsection{Objectif du sprint}
+Ce dernier sprint ajoute la diffusion de messages par l'administrateur, puis industrialise la
+plateforme : stratégie de test complète, mesure de la qualité, chaîne d'intégration continue,
+supervision, et enfin conteneurisation et déploiement sur le cloud \textbf{OpenShift}.
+
+\subsection{Sprint Backlog}
+\begin{table}[H]\centering\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|p{1cm}|p{10.5cm}|p{1.6cm}|}\hline
+\rowcolor{gray!15}\textbf{ID} & \textbf{Tâche} & \textbf{Statut} \\ \hline
+T21 & Développer la diffusion de messages (administrateur). & Terminé \\ \hline
+T22 & Mettre en place la stratégie de test (unitaires, API, intégration, bout en bout). & Terminé \\ \hline
+T23 & Intégrer la mesure de couverture et l'analyse statique du code. & Terminé \\ \hline
+T24 & Automatiser la chaîne d'intégration continue (GitHub Actions). & Terminé \\ \hline
+T25 & Mettre en place la supervision (Actuator, Prometheus, Grafana). & Terminé \\ \hline
+T26 & Conteneuriser les services et orchestrer avec Docker Compose. & Terminé \\ \hline
+T27 & Déployer la plateforme sur le cloud OpenShift. & Terminé \\ \hline
+\end{tabular}
+\caption{Sprint Backlog du Sprint 4}\label{tab:sb4}
+\end{table}
+
+\subsection{Communication avec les participants}
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Capture : diffusion d'un message (administrateur) ]}
+  \caption{Diffusion d'un message aux participants}\label{fig:broadcast}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Carte « Une session » sélectionnée : liste déroulante de session et carte du nombre de destinataires ]}
+  \caption{Envoi d'une notification ciblée aux participants d'une session}\label{fig:com-target}
+\end{figure}
+
+%--- Démarche DevOps (contenu détaillé) ---
+\input{sprint4-devops}
+
+\subsection{Validation fonctionnelle}
+Afin de garantir la qualité et la fiabilité de la plateforme, plusieurs tests fonctionnels de
+bout en bout ont été réalisés. Le tableau suivant en présente une synthèse.
+
+\begin{table}[H]\centering\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{0.9cm}|p{7.5cm}|p{3cm}|p{1.8cm}|}\hline
+\rowcolor{gray!15}\textbf{N°} & \textbf{Scénario testé} & \textbf{Résultat attendu} & \textbf{Résultat} \\ \hline
+1 & Authentification avec identifiants valides & Accès accordé & OK \\ \hline
+2 & Accès à une route protégée sans jeton & Rejet (401) & OK \\ \hline
+3 & Accès administrateur par un participant & Rejet (403) & OK \\ \hline
+4 & Création d'une session par un organisateur & Session en attente & OK \\ \hline
+5 & Modération d'une session par l'administrateur & Session publiée & OK \\ \hline
+6 & Demande d'inscription par un participant & Demande en attente + notification & OK \\ \hline
+7 & Validation d'une inscription & Confirmation + courriel & OK \\ \hline
+8 & Diffusion d'un message par l'administrateur & Réception in-app + courriel & OK \\ \hline
+9 & Téléchargement d'un certificat & PDF généré & OK \\ \hline
+\end{tabular}
+\caption{Synthèse des tests réalisés}\label{tab:tests}
+\end{table}
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Sortie d'exécution des tests unitaires et d'intégration : récapitulatif « BUILD SUCCESS » ]}
+  \caption{Exécution de la suite de tests des microservices}\label{fig:tests-run}
+\end{figure}
+
+\subsection{Déploiement}
+
+\subsubsection{Conteneurisation avec Docker}
+Chaque microservice, ainsi que les composants d'infrastructure (Keycloak, RabbitMQ,
+PostgreSQL, MongoDB), a été \textbf{conteneurisé} à l'aide de Docker. Un fichier
+\textbf{Docker Compose} orchestre l'ensemble en environnement de développement et respecte
+l'ordre de démarrage requis (Config Server $\rightarrow$ Discovery $\rightarrow$ services
+métier $\rightarrow$ passerelle $\rightarrow$ front-end) au moyen de \textit{healthchecks} et
+de dépendances. Cette approche garantit un déploiement homogène et reproductible, indépendant
+de l'environnement hôte.
+
+\begin{figure}[H]\centering
+  \ph[0.85\textwidth]{[ Docker Desktop : conteneurs des microservices, Keycloak, RabbitMQ, MailHog et bases de données à l'état Running ]}
+  \caption{Orchestration locale des conteneurs avec Docker}\label{fig:docker}
+\end{figure}
+
+\subsubsection{Déploiement sur le cloud OpenShift}
+Afin de valider le passage à l'échelle et l'exploitation en conditions réelles, la plateforme
+a été déployée sur \textbf{Red Hat OpenShift}, la plateforme d'orchestration de conteneurs
+d'entreprise basée sur Kubernetes. Le déploiement repose sur les objets suivants :
+
+\begin{table}[H]\centering\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{3.4cm}|p{10.3cm}|}\hline
+\rowcolor{gray!15}\textbf{Objet OpenShift} & \textbf{Rôle} \\ \hline
+\textbf{Deployment} & Décrit et maintient l'état désiré de chaque service (image, nombre de
+réplicas, sondes de démarrage et de vivacité). \\ \hline
+\textbf{Service} & Expose chaque composant en interne, résolu par nom DNS au sein du cluster. \\ \hline
+\textbf{Route} & Publie sur Internet, en HTTPS, le front-end, l'API Gateway et Keycloak. \\ \hline
+\textbf{ConfigMap} & Centralise la configuration partagée (découverte Eureka, bases de données,
+\textit{issuer} Keycloak). \\ \hline
+\textbf{Secret} & Stocke de façon sécurisée les identifiants sensibles (bases de données,
+messagerie). \\ \hline
+\end{tabular}
+\caption{Objets OpenShift utilisés pour le déploiement}\label{tab:os-objects}
+\end{table}
+
+Les \textbf{images} des microservices sont publiées sur un registre de conteneurs et tirées
+par le cluster lors du déploiement. La configuration propre à l'environnement (hôtes des
+bases, découverte des services, \textit{issuer} Keycloak public) est injectée par variables
+d'environnement, et l'authentification est assurée par un Keycloak déployé avec le
+\textbf{thème LINSOFT} intégré dans une image personnalisée. À l'issue du déploiement,
+l'ensemble des services est opérationnel et l'application est accessible via une
+\textbf{URL publique} sécurisée en HTTPS.
+
+\begin{figure}[H]\centering
+  \ph[0.9\textwidth]{[ Capture : pods de la plateforme en cours d'exécution sur OpenShift ]}
+  \caption{Pods de la plateforme déployés sur OpenShift}\label{fig:os-pods}
+\end{figure}
+
+\begin{figure}[H]\centering
+  \ph[0.9\textwidth]{[ Capture : application accessible via sa route publique OpenShift ]}
+  \caption{Application déployée sur OpenShift}\label{fig:os-app}
+\end{figure}
+
+\section*{Conclusion}
+Cette seconde release a enrichi la plateforme des fonctionnalités à forte valeur ajoutée et
+l'a industrialisée : une stratégie de test à quatre niveaux, une chaîne d'intégration continue
+automatisée, un dispositif de supervision opérationnel et un déploiement sur OpenShift. Le
+chapitre suivant dresse le bilan général du projet.
+\clearpage
