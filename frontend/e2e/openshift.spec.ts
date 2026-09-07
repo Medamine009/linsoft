@@ -63,6 +63,32 @@ test.describe('Captures OpenShift', () => {
       await entrer.click();
       await page.waitForTimeout(2500);
     }
-    await page.screenshot({ path: `${d!.img}/openshift-app.png` });
+
+    // Une capture nue ne prouve rien : rien n'y distingue le cluster d'un poste
+    // local. On la replace donc dans une fenêtre portant la route publique.
+    const vue = (await page.screenshot()).toString('base64');
+    const cadre = `
+      <style>
+        body { margin:0; background:#e8eaf0; font-family:'Segoe UI',system-ui,sans-serif; }
+        .fen { margin:24px; border-radius:10px; overflow:hidden;
+               box-shadow:0 10px 40px rgba(0,0,0,.22); background:#fff; }
+        .chrome { display:flex; align-items:center; gap:10px; padding:10px 14px; background:#dee1e6; }
+        .pt { width:12px; height:12px; border-radius:50%; }
+        .url { flex:1; background:#fff; border-radius:14px; padding:6px 14px;
+               font-size:13px; color:#202124; display:flex; align-items:center; gap:8px; }
+        .cadenas { color:#1a73e8; font-size:12px; }
+        img { display:block; width:100%; }
+      </style>
+      <div class="fen">
+        <div class="chrome">
+          <span class="pt" style="background:#ff5f57"></span>
+          <span class="pt" style="background:#febc2e"></span>
+          <span class="pt" style="background:#28c840"></span>
+          <div class="url"><span class="cadenas">&#128274;</span>${d!.url}</div>
+        </div>
+        <img src="data:image/png;base64,${vue}">
+      </div>`;
+    await page.setContent(cadre);
+    await page.locator('.fen').screenshot({ path: `${d!.img}/openshift-app.png` });
   });
 });
