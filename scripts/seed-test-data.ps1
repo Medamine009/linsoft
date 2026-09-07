@@ -469,8 +469,13 @@ foreach ($m in $notifs) {
 $rows = @()
 foreach ($f in $dataset.feedbacks) {
     $ev = $eventById[$f.event]
+    # Le nom de l'auteur est recopie sur l'avis, comme le fait le service a la
+    # creation : sans lui l'interface n'aurait que l'identifiant Keycloak a
+    # afficher sous le commentaire.
+    $auteur = $userByKey[$f.user]
     $rows += ('{ eventId: EV["' + $f.event + '"].toHexString()' +
         ', userId: '    + (JsVal $idByKey[$f.user]) +
+        ', userName: '  + (JsVal "$($auteur.firstName) $($auteur.lastName)") +
         ', rating: '    + (JsNum $f.rating) +
         ', comment: '   + (JsVal $f.comment) +
         ', createdAt: ' + (JsDate $ev.end.AddDays([double]$f.daysAfterEnd)) +

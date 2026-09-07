@@ -5,6 +5,7 @@ import com.pfe.events.feedbackservice.config.SecurityConfig;
 import com.pfe.events.feedbackservice.entities.Feedback;
 import com.pfe.events.feedbackservice.services.FeedbackService;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -17,6 +18,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -89,6 +91,59 @@ class FeedbackControllerTest {
         mvc.perform(post("/api/feedback").contentType("application/json").content(BODY))
                 .andExpect(status().isUnauthorized());
         verify(feedbackService, never()).createFeedback(any());
+    }
+
+    @Test
+    void createFeedback_copiesTheAuthorNameFromTheToken() throws Exception {
+        // Sans ce nom recopié, l'interface n'aurait que l'identifiant Keycloak à
+        // afficher sous l'avis.
+        when(feedbackService.createFeedback(any(Feedback.class))).thenReturn(feedback("f1", 5));
+
+        mvc.perform(post("/api/feedback")
+                        .with(jwt().jwt(j -> j.subject("kc-1").claim("name", "Yassine Gharbi"))
+                                .authorities(new SimpleGrantedAuthority("ROLE_PARTICIPANT")))
+                        .contentType("application/json").content(BODY))
+                .andExpect(status().isCreated());
+
+        ArgumentCaptor<Feedback> capture = ArgumentCaptor.forClass(Feedback.class);
+        verify(feedbackService).createFeedback(capture.capture());
+        assertThat(capture.getValue().getUserName()).isEqualTo("Yassine Gharbi");
+    }
+
+    @Test
+    void createFeedback_fallsBackToTheUsernameWhenTheTokenCarriesNoFullName() throws Exception {
+        when(feedbackService.createFeedback(any(Feedback.class))).thenReturn(feedback("f1", 5));
+
+        mvc.perform(post("/api/feedback")
+                        .with(jwt().jwt(j -> j.subject("kc-1").claim("preferred_username", "y.gharbi"))
+                                .authorities(new SimpleGrantedAuthority("ROLE_PARTICIPANT")))
+                        .contentType("application/json").content(BODY))
+                .andExpect(status().isCreated());
+
+        ArgumentCaptor<Feedback> capture = ArgumentCaptor.forClass(Feedback.class);
+        verify(feedbackService).createFeedback(capture.capture());
+        assertThat(capture.getValue().getUserName()).isEqualTo("y.gharbi");
+    }
+
+    @Test
+    void createFeedback_ignoresTheAuthorAnnouncedInTheBody() throws Exception {
+        // Un appelant qui se déclare « kc-victime » dans le corps ne doit pas
+        // pouvoir publier un avis sous l'identité d'un autre participant.
+        when(feedbackService.createFeedback(any(Feedback.class))).thenReturn(feedback("f1", 5));
+        String usurpation =
+                "{\"eventId\":\"ev-1\",\"userId\":\"kc-victime\",\"userName\":\"Quelqu'un d'autre\","
+                        + "\"rating\":5,\"comment\":\"Avis usurpé\"}";
+
+        mvc.perform(post("/api/feedback")
+                        .with(jwt().jwt(j -> j.subject("kc-1").claim("name", "Yassine Gharbi"))
+                                .authorities(new SimpleGrantedAuthority("ROLE_PARTICIPANT")))
+                        .contentType("application/json").content(usurpation))
+                .andExpect(status().isCreated());
+
+        ArgumentCaptor<Feedback> capture = ArgumentCaptor.forClass(Feedback.class);
+        verify(feedbackService).createFeedback(capture.capture());
+        assertThat(capture.getValue().getUserId()).isEqualTo("kc-1");
+        assertThat(capture.getValue().getUserName()).isEqualTo("Yassine Gharbi");
     }
 
     // ─────────────── Consultation ───────────────

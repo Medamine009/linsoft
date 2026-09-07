@@ -543,9 +543,9 @@ import * as L from 'leaflet';
                 <div class="reviews-list" *ngIf="reviews.length > 0">
                   <div *ngFor="let r of reviews" class="review-item">
                     <div class="review-head">
-                      <div class="review-ava">{{ initialsOf(r.userId) }}</div>
+                      <div class="review-ava">{{ initialsOf(authorOf(r)) }}</div>
                       <div>
-                        <div class="review-user">{{ r.userId | slice:0:8 }}…</div>
+                        <div class="review-user">{{ authorOf(r) }}</div>
                         <div class="review-date">{{ r.createdAt | date:'dd MMM yyyy' }}</div>
                       </div>
                       <div class="review-stars">
@@ -1706,8 +1706,23 @@ export class UserComponent implements OnInit {
     });
   }
 
-  initialsOf(userId: string): string {
-    return (userId || '?').substring(0, 2).toUpperCase();
+  /**
+   * Nom affichable de l'auteur d'un avis.
+   *
+   * Les avis déposés avant l'ajout de `userName` ne portent que l'identifiant
+   * Keycloak : plutôt que d'afficher une chaîne technique, on les attribue à un
+   * participant anonyme.
+   */
+  authorOf(r: any): string {
+    const nom = (r?.userName || '').trim();
+    return nom || 'Participant';
+  }
+
+  /** Initiales pour la pastille : deux premières lettres des mots du nom. */
+  initialsOf(nom: string): string {
+    const mots = (nom || '?').trim().split(/\s+/).filter(Boolean);
+    if (mots.length >= 2) return (mots[0][0] + mots[1][0]).toUpperCase();
+    return (mots[0] || '?').substring(0, 2).toUpperCase();
   }
 
   /** Pourcentage des places RÉSERVÉES (0 = vide, 100 = complet). */
