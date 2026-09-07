@@ -17,10 +17,11 @@
                     "watch":  "ng build --watch --configuration development",
                     "test-ci":  "ng test --watch=false",
                     "test":  "ng test",
-                    "e2e":  "playwright test --grep-invert \"Captures pour le rapport\"",
+                    "e2e":  "playwright test --grep-invert \"Captures\"",
                     "e2e:headed":  "playwright test --headed",
                     "e2e:report":  "playwright show-report",
-                    "captures":  "playwright test captures.spec.ts"
+                    "captures":  "playwright test captures.spec.ts",
+                    "captures:rapport":  "playwright test captures-rapport.spec.ts"
                 },
     "private":  true,
     "dependencies":  {
